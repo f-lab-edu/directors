@@ -1,26 +1,24 @@
 package com.directors.domain.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
-@Builder
 @AllArgsConstructor
 @Getter
 public class User {
-    String userId;
+    private String userId;
 
-    String password;
+    private String password;
 
-    String name;
+    private String name;
 
-    String nickname;
+    private String nickname;
 
-    String email;
+    private String email;
 
-    String phoneNumber;
+    private String phoneNumber;
 
-    String region;
+    private String region;
 
-    long reward;
+    private long reward;
 }

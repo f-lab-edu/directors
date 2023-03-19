@@ -18,16 +18,9 @@ public class SignUpService {
 
     @Transactional
     public void signUp(SignUpRequest signUpRequest) {
-        isDuplicatedUser(signUpRequest.userId());
+        User newUser = UserConverter.toEntity(signUpRequest);
 
-        User newUser = User.builder()
-                .userId(signUpRequest.userId())
-                .password(pm.encodePassword(signUpRequest.password()))
-                .name(signUpRequest.name())
-                .nickname(signUpRequest.nickname())
-                .email(signUpRequest.email())
-                .phoneNumber(signUpRequest.phoneNumber())
-                .build();
+        isDuplicatedUser(newUser.getUserId());
 
         userRepository.saveUser(newUser);
     }
