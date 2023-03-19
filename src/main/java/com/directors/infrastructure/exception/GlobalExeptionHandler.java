@@ -32,6 +32,7 @@ public class GlobalExeptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateIdException.class)
     public ErrorMessage DuplicateIdExceptionHandler(DuplicateIdException e) {
+        log.info("DuplicateIdException occured. duplicatedId: " + e.duplicatedId);
         return new ErrorMessage(e.getMessage());
     }
 }

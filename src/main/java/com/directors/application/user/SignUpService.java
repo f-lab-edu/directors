@@ -28,7 +28,7 @@ public class SignUpService {
     @Transactional
     public void isDuplicatedUser(String id) {
         if (userRepository.findUserById(id) != null) {
-            throw new DuplicateIdException("이미 존재하는 Id입니다");
+            throw new DuplicateIdException(id);
         }
     }
 }
