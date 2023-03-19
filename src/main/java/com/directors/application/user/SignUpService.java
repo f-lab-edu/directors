@@ -22,6 +22,8 @@ public class SignUpService {
 
         isDuplicatedUser(newUser.getUserId());
 
+        newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
+
         userRepository.saveUser(newUser);
     }
 

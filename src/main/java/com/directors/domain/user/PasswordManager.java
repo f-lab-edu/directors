@@ -1,7 +1,7 @@
 package com.directors.domain.user;
 
 public interface PasswordManager {
-    String encodePassword(String password);
+    String encryptPassword(String password);
 
     boolean checkPassword(String password, String hashedPassword);
 }

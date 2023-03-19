@@ -21,4 +21,8 @@ public class User {
     private String region;
 
     private long reward;
+
+    public void setPasswordByEncryption(String encryptedPassword) {
+        this.password = encryptedPassword;
+    }
 }

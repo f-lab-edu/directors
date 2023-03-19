@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class PasswordManagerAdapter implements PasswordManager {
 
     @Override
-    public String encodePassword(String password) {
+    public String encryptPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
