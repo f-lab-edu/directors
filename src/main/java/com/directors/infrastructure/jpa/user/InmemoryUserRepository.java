@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class UserRepositoryAdapter implements UserRepository {
-    
+public class InmemoryUserRepository implements UserRepository {
     // 더미 데이터 사용
     private final Map<String, User> userMap = new HashMap<>() {{
         put("song0229", new User("song0229", "12341234", "송은석", "song0229",
