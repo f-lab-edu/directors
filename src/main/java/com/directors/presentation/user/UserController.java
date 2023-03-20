@@ -4,6 +4,7 @@ import com.directors.application.user.LogInService;
 import com.directors.application.user.SignUpService;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.SignUpRequest;
+import com.directors.presentation.user.response.LogInResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -38,11 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/logIn")
-    public ResponseEntity<String> logIn(@Valid @RequestBody LogInRequest loginRequest) {
-        String tokenData = logInService.logIn(loginRequest);
-
-        // TODO: 2023/03/19 jwt 발급 로직 추가 후 응답 로직 수정
-        
-        return new ResponseEntity<>(tokenData, HttpStatus.OK);
+    public ResponseEntity<LogInResponse> logIn(@Valid @RequestBody LogInRequest loginRequest) {
+        return new ResponseEntity<>(new LogInResponse(logInService.logIn(loginRequest)), HttpStatus.OK);
     }
 }

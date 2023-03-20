@@ -1,5 +1,6 @@
 package com.directors.application.user;
 
+import com.directors.domain.AuthenticationManager;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
@@ -15,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LogInService {
 
     private final UserRepository userRepository;
-    private final PasswordManager passwordManager;
+    private final PasswordManager pm;
+    private final AuthenticationManager ap;
 
     @Transactional
     public String logIn(LogInRequest loginRequest) {
@@ -24,16 +26,15 @@ public class LogInService {
 
         User user = userRepository.findUserById(userId);
 
+        // TODO: 2023/03/19 AuthenticationManager로 분리하기
         if (user == null) {
             throw new NoSuchUserException(userId);
         }
 
-        if (!passwordManager.checkPassword(password, user.getPassword())) {
+        if (!pm.checkPassword(password, user.getPassword())) {
             throw new AuthenticationFailedException(user.getUserId());
         }
 
-        // TODO: 2023/03/19 jwt 발급 로직 추가 필요
-
-        return "LoginSuccessToken";
+        return ap.generateAuthenticationToken(userId);
     }
 }
