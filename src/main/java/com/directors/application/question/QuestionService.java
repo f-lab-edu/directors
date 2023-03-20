@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
-import com.directors.presentation.qeustion.response.QuestionResponseDto;
+import com.directors.domain.user.UserRepository;
+import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
+import com.directors.presentation.qeustion.response.SentQuestionResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,20 +16,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuestionService {
 	private final QuestionRepository questionRepository;
+	private final UserRepository userRepository;
 
-	public List<QuestionResponseDto> getSendList(String questionerID) {
+	public List<SentQuestionResponse> getSendList(String questionerID) {
 		List<Question> sentQuestions = questionRepository.findByQuestionerId(questionerID);
-		return getQuestionResponseDtos(sentQuestions);
-	}
-
-	public List<QuestionResponseDto> getReceiveList(String directorId) {
-		List<Question> receivedQuestions = questionRepository.findByDirectorId(directorId);
-		return getQuestionResponseDtos(receivedQuestions);
-	}
-
-	private List<QuestionResponseDto> getQuestionResponseDtos(List<Question> sentQuestions) {
 		return sentQuestions.stream()
-			.map(QuestionResponseDto::from)
+			.map(SentQuestionResponse::from)
+			.toList();
+	}
+
+	public List<ReceivedQuestionResponse> getReceiveList(String directorId) {
+		List<Question> receivedQuestions = questionRepository.findByDirectorId(directorId);
+		return receivedQuestions.stream()
+			.map(question -> ReceivedQuestionResponse.from(question))
 			.toList();
 	}
 }

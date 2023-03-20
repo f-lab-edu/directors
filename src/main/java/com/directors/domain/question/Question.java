@@ -3,10 +3,12 @@ package com.directors.domain.question;
 import java.time.LocalDateTime;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 @Builder(access = AccessLevel.PUBLIC)
 public class Question {
 	private Long id;
