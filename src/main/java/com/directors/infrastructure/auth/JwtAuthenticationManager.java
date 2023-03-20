@@ -28,8 +28,12 @@ public class JwtAuthenticationManager implements AuthenticationManager {
                 .setIssuer("directors.com") // 토큰 발급자
                 .setIssuedAt(now) // 발급 시간(iat)
                 .setExpiration(new Date(now.getTime() + Duration.ofDays(7).toMillis())) // 만료 시간(exp)
-                .setSubject("userAuth")
+                .setSubject(userId)
                 .signWith(signingKey, SignatureAlgorithm.HS512)
                 .compact();
+    }
+
+    public String getSecretKey() {
+        return secretKey;
     }
 }
