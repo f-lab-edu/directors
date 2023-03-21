@@ -6,5 +6,5 @@ public interface QuestionRepository {
 
 	List<Question> findByDirectorId(String directorId);
 
-	List<Question> findByQuestionerId(String questionerID);
+	List<Question> findByQuestionerId(String questionerId);
 }
