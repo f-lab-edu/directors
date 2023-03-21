@@ -49,7 +49,6 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 		return questionMap.values()
 			.stream()
 			.filter(question -> question.getQuestionerId().equals(questionerID))
-			.filter(question -> question.getStatus() != QuestionStatus.COMPLETE)
 			.collect(Collectors.toList());
 	}
 }
