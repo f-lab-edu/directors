@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,16 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/question")
 public class QuestionController {
 	private final QuestionService questionService;
+	private final String loginId = "dummyUser";
 
-	@GetMapping("/sent/{questionerId}")
-	public ResponseEntity<List<SentQuestionResponse>> sendList(@PathVariable String questionerId) {
-		List<SentQuestionResponse> questionDtos = questionService.getSendList(questionerId);
+	@GetMapping("/sent")
+	public ResponseEntity<List<SentQuestionResponse>> sendList(String loginUserId) {
+		List<SentQuestionResponse> questionDtos = questionService.getSendList(loginId);
 		return new ResponseEntity<>(questionDtos, HttpStatus.OK);
 	}
 
-	@GetMapping("/received/{directorId}")
-	public ResponseEntity<List<ReceivedQuestionResponse>> receiveList(@PathVariable String directorId) {
-		List<ReceivedQuestionResponse> questionDtos = questionService.getReceiveList(directorId);
+	@GetMapping("/received")
+	public ResponseEntity<List<ReceivedQuestionResponse>> receiveList(String loginUserId) {
+		List<ReceivedQuestionResponse> questionDtos = questionService.getReceiveList(loginId);
 		return new ResponseEntity<>(questionDtos, HttpStatus.OK);
 	}
 }
