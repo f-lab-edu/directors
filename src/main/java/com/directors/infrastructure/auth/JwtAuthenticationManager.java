@@ -1,39 +1,80 @@
 package com.directors.infrastructure.auth;
 
-import com.directors.domain.AuthenticationManager;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Date;
 
+@Slf4j
 @Component
-public class JwtAuthenticationManager implements AuthenticationManager {
+public class JwtAuthenticationManager {
 
     @Value("${jwtSecretKey}")
     private String secretKey;
 
-    @Override
-    public String generateAuthenticationToken(String userId) {
+    public String generateJwtToken(String userId) {
         Date now = new Date();
-        Key signingKey = Keys.hmacShaKeyFor(secretKey.getBytes());
 
-        return Jwts.builder()
+        String compact = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuer("directors.com") // 토큰 발급자
-                .setIssuedAt(now) // 발급 시간(iat)
-                .setExpiration(new Date(now.getTime() + Duration.ofDays(7).toMillis())) // 만료 시간(exp)
+                .setIssuer("directors.com")
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + Duration.ofDays(1).toMillis())) // 유효 기간: 1일
                 .setSubject(userId)
-                .signWith(signingKey, SignatureAlgorithm.HS512)
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
+        return compact;
     }
 
-    public String getSecretKey() {
-        return secretKey;
+    public String getUsernameFromJwt(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public Authentication getAuthentication(String token) {
+        String userId = Jwts
+                .parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody().getSubject();
+
+        return userId != null ? new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList()) : null;
+    }
+
+
+    public boolean validateToken(String authToken) {
+        try {
+            Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(authToken);
+            return true;
+        } catch (Exception e) {
+            // TODO: 2023/03/22 예외 처리 생각해보기
+            log.info(e + " occured.");
+        }
+
+        return false;
+    }
+
+    private Key getSecretKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 }
