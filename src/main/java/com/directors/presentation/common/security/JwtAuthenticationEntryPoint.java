@@ -23,9 +23,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("AuthenticationException occured.");
-
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().println("{ \"message\": \"" + "인증 정보가 유효하지 않습니다." + "\" }");
+        response.getWriter().println("{ \"message\": \"" + "인증 정보가 유효하지 않습니다." + "\" }");
     }
 }
