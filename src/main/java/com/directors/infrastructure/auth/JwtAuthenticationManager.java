@@ -36,16 +36,6 @@ public class JwtAuthenticationManager {
         return compact;
     }
 
-    public String getUsernameFromJwt(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
     public Authentication getAuthentication(String token) {
         String userId = Jwts
                 .parserBuilder()
@@ -55,23 +45,6 @@ public class JwtAuthenticationManager {
                 .getBody().getSubject();
 
         return userId != null ? new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList()) : null;
-    }
-
-
-    public boolean validateToken(String authToken) {
-        try {
-            Jwts
-                    .parserBuilder()
-                    .setSigningKey(getSecretKey())
-                    .build()
-                    .parseClaimsJws(authToken);
-            return true;
-        } catch (Exception e) {
-            // TODO: 2023/03/22 예외 처리 생각해보기
-            log.info(e + " occured.");
-        }
-
-        return false;
     }
 
     private Key getSecretKey() {

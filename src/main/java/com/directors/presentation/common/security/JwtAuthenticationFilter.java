@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationManager jm;
@@ -28,11 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 토큰을 통해 인증 확인
+        // 토큰을 통한 인증 확인
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 인증 데이터입니다.");
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -40,10 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             Authentication authentication = jm.getAuthentication(token);
-
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), null, authentication.getAuthorities()));
-        } catch (JwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 실패했습니다.");
+        } catch (JwtException | UsernameNotFoundException e) {
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
