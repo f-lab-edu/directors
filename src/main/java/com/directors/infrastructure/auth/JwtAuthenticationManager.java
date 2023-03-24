@@ -22,7 +22,7 @@ public class JwtAuthenticationManager {
     private String secretKey;
 
     public String generateAccessToken(String userId) {
-        return generateJwtTokenWithDay(userId, 0);
+        return generateJwtTokenWithDay(userId, 1);
     }
 
     public String generateRefreshToken(String userId) {
