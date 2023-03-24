@@ -1,6 +1,5 @@
 package com.directors.infrastructure.config;
 
-import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.presentation.common.security.JwtAuthenticationEntryPoint;
 import com.directors.presentation.common.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -20,7 +17,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final JwtAuthenticationManager jm;
     private final JwtAuthenticationEntryPoint je;
     private final JwtAuthenticationFilter jf;
 
@@ -40,13 +36,5 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
-    }
-
-    // TODO: 03.24 유지할지 여부 생각해보기
-    @Bean
-    public FilterChainProxy filterChainProxy(HttpSecurity http) throws Exception {
-        SecurityFilterChain securityFilterChain = new DefaultSecurityFilterChain(
-                new AntPathRequestMatcher("/**"), jf);
-        return new FilterChainProxy(securityFilterChain);
     }
 }

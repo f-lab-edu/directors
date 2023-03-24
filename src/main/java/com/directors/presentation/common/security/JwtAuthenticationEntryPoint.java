@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 /**
  * API 요청에 대한 JwtAuthenticationFilter에서의 토큰 검증이 실패할 경우,
  * 스프링 시큐리티 컨텍스트에서 사용할 Authentication를 획득하지 못하므로 아래의 commence 메서드를 통해 요청이 처리됩니다.
@@ -22,9 +24,8 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-//        log.info("AuthenticationException occured.");
-//        response.setContentType("application/json;charset=UTF-8");
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        response.getWriter().println("{ \"message\": \"" + "인증 정보가 유효하지 않습니다." + "\" }");
+        log.info("AuthenticationException occurred.");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(APPLICATION_JSON_VALUE);
     }
 }
