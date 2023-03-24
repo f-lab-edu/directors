@@ -30,7 +30,8 @@ public class WebSecurityConfig {
                 authorizeHttpRequests()
                 .requestMatchers(
                         new AntPathRequestMatcher("/user/signUp", "POST"),
-                        new AntPathRequestMatcher("/user/logIn", "POST")
+                        new AntPathRequestMatcher("/user/logIn", "POST"),
+                        new AntPathRequestMatcher("/user/refreshAuthentication", "POST")
                 ).permitAll()
                 .anyRequest().authenticated().and() // 인증 정보가 없을 경우 JwtAuthenticationEntryPoint.commerce() 메서드로 처리
                 .addFilterBefore(jf, UsernamePasswordAuthenticationFilter.class)
@@ -41,6 +42,7 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    // TODO: 03.24 유지할지 여부 생각해보기
     @Bean
     public FilterChainProxy filterChainProxy(HttpSecurity http) throws Exception {
         SecurityFilterChain securityFilterChain = new DefaultSecurityFilterChain(

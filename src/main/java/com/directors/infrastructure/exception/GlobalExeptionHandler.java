@@ -3,6 +3,7 @@ package com.directors.infrastructure.exception;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
 import com.directors.infrastructure.exception.user.NoSuchUserException;
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -34,21 +35,28 @@ public class GlobalExeptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateIdException.class)
     public ErrorMessage DuplicateIdExceptionHandler(DuplicateIdException e) {
-        log.info("DuplicateIdException occured. duplicatedId: " + e.duplicatedId);
+        log.info("DuplicateIdException occurred. duplicatedId: " + e.duplicatedId);
         return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchUserException.class)
     public ErrorMessage NosuchUserExceptionHandler(NoSuchUserException e) {
-        log.info("NosuchUserException occured. requested userId: " + e.requestedUserId);
+        log.info("NosuchUserException occurred. requested userId: " + e.requestedUserId);
         return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationFailedException.class)
     public ErrorMessage AuthenticationFailedExceptionHandler(AuthenticationFailedException e) {
-        log.info("AuthenticationFailedException occured. requested userId:" + e.requestedUserId);
+        log.info("AuthenticationFailedException occurred. requested userId:" + e.requestedUserId);
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JwtException.class)
+    public ErrorMessage JwtExceptionHandler(JwtException e) {
+        log.info("JwtException occurred.");
         return new ErrorMessage(e.getMessage());
     }
 }

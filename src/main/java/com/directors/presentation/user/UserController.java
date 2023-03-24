@@ -1,10 +1,12 @@
 package com.directors.presentation.user;
 
-import com.directors.application.user.LogInService;
+import com.directors.application.user.AuthenticationService;
 import com.directors.application.user.SignUpService;
 import com.directors.presentation.user.request.LogInRequest;
+import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.request.SignUpRequest;
 import com.directors.presentation.user.response.LogInResponse;
+import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final SignUpService signUpService;
-    private final LogInService logInService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -41,11 +43,16 @@ public class UserController {
 
     @PostMapping("/logIn")
     public ResponseEntity<LogInResponse> logIn(@Valid @RequestBody LogInRequest loginRequest) {
-        return new ResponseEntity<>(new LogInResponse(logInService.logIn(loginRequest)), HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.logIn(loginRequest), HttpStatus.OK);
     }
 
     @GetMapping("/test")
     public String test(@AuthenticationPrincipal String userId) {
         return userId;
+    }
+
+    @PostMapping("/refreshAuthentication")
+    public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@RequestBody RefreshAuthenticationRequest request) {
+        return new ResponseEntity<>(authenticationService.refreshAuthentication(request), HttpStatus.OK);
     }
 }
