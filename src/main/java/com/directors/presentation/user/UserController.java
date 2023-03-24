@@ -3,6 +3,7 @@ package com.directors.presentation.user;
 import com.directors.application.user.AuthenticationService;
 import com.directors.application.user.SignUpService;
 import com.directors.presentation.user.request.LogInRequest;
+import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.request.SignUpRequest;
 import com.directors.presentation.user.response.LogInResponse;
@@ -44,6 +45,12 @@ public class UserController {
     @PostMapping("/logIn")
     public ResponseEntity<LogInResponse> logIn(@Valid @RequestBody LogInRequest loginRequest) {
         return new ResponseEntity<>(authenticationService.logIn(loginRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/logOut")
+    public ResponseEntity<HttpStatus> logOut(@RequestBody LogOutRequest logOutRequest) {
+        authenticationService.logOut(logOutRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/test")

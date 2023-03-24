@@ -9,6 +9,7 @@ import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.infrastructure.exception.user.NoSuchUserException;
 import com.directors.presentation.user.request.LogInRequest;
+import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.response.LogInResponse;
 import com.directors.presentation.user.response.RefreshAuthenticationResponse;
@@ -53,6 +54,11 @@ public class AuthenticationService {
     }
 
     @Transactional
+    public void logOut(LogOutRequest logOutRequest) {
+        tokenRepository.deleteToken(logOutRequest.refreshToken());
+    }
+
+    @Transactional
     public RefreshAuthenticationResponse refreshAuthentication(RefreshAuthenticationRequest request) {
         String accessToken = request.accessToken();
         String refreshToken = request.refreshToken();
@@ -87,7 +93,7 @@ public class AuthenticationService {
         // 유효 기간이 일주일 보다 적게 남았을 경우 리프레시 토큰 재발급
         if (refreshExpirationDay < 7) {
             tokenRepository.deleteToken(refreshToken);
-            
+
             refreshToken = jm.generateRefreshToken(userId);
             Date expiration = jm.getExpirationByToken(refreshToken);
 
