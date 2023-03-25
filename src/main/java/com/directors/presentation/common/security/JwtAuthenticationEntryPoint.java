@@ -18,7 +18,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  * 만약 유저의 ROLE(USER, ADMIN..)을 설정한다면 다른 처리가 필요할 수 있지만,
  * 현재는 USER ROLE만 있으므로 스프링 시큐리티에서 Authentication를 소유하고 있는지 여부만 판별하여 유저 인증 절차가 처리되도록 했습니다.
  */
-// TODO: 유지 여부 검토 필요
 @Slf4j
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
