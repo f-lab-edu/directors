@@ -1,7 +1,13 @@
 package com.directors.presentation.user;
 
+import com.directors.application.user.AuthenticationService;
 import com.directors.application.user.SignUpService;
+import com.directors.presentation.user.request.LogInRequest;
+import com.directors.presentation.user.request.LogOutRequest;
+import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.request.SignUpRequest;
+import com.directors.presentation.user.response.LogInResponse;
+import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -18,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final SignUpService signUpService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -32,5 +40,26 @@ public class UserController {
     ) {
         signUpService.isDuplicatedUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/logIn")
+    public ResponseEntity<LogInResponse> logIn(@Valid @RequestBody LogInRequest loginRequest) {
+        return new ResponseEntity<>(authenticationService.logIn(loginRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/logOut")
+    public ResponseEntity<HttpStatus> logOut(@RequestBody LogOutRequest logOutRequest) {
+        authenticationService.logOut(logOutRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public String test(@AuthenticationPrincipal String userId) {
+        return userId;
+    }
+
+    @PostMapping("/refreshAuthentication")
+    public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@RequestBody RefreshAuthenticationRequest request) {
+        return new ResponseEntity<>(authenticationService.refreshAuthentication(request), HttpStatus.OK);
     }
 }

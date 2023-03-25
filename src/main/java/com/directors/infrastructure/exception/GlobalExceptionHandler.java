@@ -1,5 +1,11 @@
 package com.directors.infrastructure.exception;
 
+import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.infrastructure.exception.user.DuplicateIdException;
+import com.directors.infrastructure.exception.user.NoSuchUserException;
+import io.jsonwebtoken.JwtException;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,41 +18,61 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.directors.infrastructure.exception.user.DuplicateIdException;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	/**
-	 * 상속한 ResponseEntityExceptionHandler 클래스에 handleMethodArgumentNotValid 메소드가 있기 때문에
-	 * 이를 오버라이드하여 구현했습니다.
-	 */
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-		HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		BindingResult bindingResult = ex.getBindingResult();
-		return new ResponseEntity<>(new ErrorMessage(bindingResult.getFieldErrors().get(0).getDefaultMessage()),
-			HttpStatus.BAD_REQUEST);
-	}
+    /**
+     * 상속한 ResponseEntityExceptionHandler 클래스에 handleMethodArgumentNotValid 메소드가 있기 때문에
+     * 이를 오버라이드하여 구현했습니다.
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
+        return new ResponseEntity<>(new ErrorMessage(bindingResult.getFieldErrors().get(0).getDefaultMessage()), HttpStatus.BAD_REQUEST);
+    }
 
-	@ResponseStatus(HttpStatus.CONFLICT)
-	@ExceptionHandler(DuplicateIdException.class)
-	public ErrorMessage duplicateIdExceptionHandler(DuplicateIdException ex) {
-		log.info("DuplicateIdException occurred. duplicatedId: " + ex.duplicatedId);
-		return new ErrorMessage(ex.getMessage());
-	}
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DuplicateIdException.class)
+    public ErrorMessage DuplicateIdExceptionHandler(DuplicateIdException e) {
+        log.info("DuplicateIdException occurred. duplicatedId: " + e.duplicatedId);
+        return new ErrorMessage(e.getMessage());
+    }
 
-	@Getter
-	private class ErrorMessage {
-		private final String message;
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchUserException.class)
+    public ErrorMessage NosuchUserExceptionHandler(NoSuchUserException e) {
+        log.info("NosuchUserException occurred. requested userId: " + e.requestedUserId);
+        return new ErrorMessage(e.getMessage());
+    }
 
-		ErrorMessage(String message) {
-			this.message = message;
-		}
-	}
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ErrorMessage AuthenticationFailedExceptionHandler(AuthenticationFailedException e) {
+        log.info("AuthenticationFailedException occurred. requested userId:" + e.requestedUserId);
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JwtException.class)
+    public ErrorMessage JwtExceptionHandler(JwtException e) {
+        log.info("JwtException occurred.");
+        return new ErrorMessage("유효하지 않은 토큰입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<HttpStatus> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+        log.info("IllegalArgumentException occurred.");
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
 }
 
+@Getter
+class ErrorMessage {
+    private final String message;
+
+    ErrorMessage(String message) {
+        this.message = message;
+    }
+}
