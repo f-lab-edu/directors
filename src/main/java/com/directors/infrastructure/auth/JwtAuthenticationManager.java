@@ -1,6 +1,5 @@
 package com.directors.infrastructure.auth;
 
-import com.directors.infrastructure.exception.auth.JwtExceptionWrapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -54,41 +53,25 @@ public class JwtAuthenticationManager {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    private String generateJwtTokenWithDay(String userId, int day) throws JwtExceptionWrapper {
+    private String generateJwtTokenWithDay(String userId, int day) throws JwtException {
         Date now = new Date();
-        String jwtToken = null;
 
-        try {
-            jwtToken = Jwts.builder()
-                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                    .setIssuer("directors.com")
-                    .setIssuedAt(now)
-                    .setExpiration(new Date(now.getTime() + Duration.ofDays(day).toMillis()))
-                    .setSubject(userId)
-                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
-                    .compact();
-
-        } catch (JwtException e) {
-            throw new JwtExceptionWrapper();
-        }
-
-        return jwtToken;
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("directors.com")
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + Duration.ofDays(day).toMillis()))
+                .setSubject(userId)
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private Claims getBodyByToken(String token) throws JwtException {
-        Claims bodyByToken = null;
-
-        try {
-            bodyByToken = Jwts
-                    .parserBuilder()
-                    .setSigningKey(getSecretKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (JwtException e) {
-            throw new JwtExceptionWrapper();
-        }
-
-        return bodyByToken;
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
