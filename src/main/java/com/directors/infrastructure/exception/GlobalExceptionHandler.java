@@ -57,7 +57,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ErrorMessage JwtExceptionHandler(JwtException e) {
         log.info("JwtException occurred.");
-        return new ErrorMessage(e.getMessage());
+        return new ErrorMessage("유효하지 않은 토큰입니다.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<HttpStatus> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+        log.info("IllegalArgumentException occurred.");
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }
 

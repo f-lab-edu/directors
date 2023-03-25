@@ -6,13 +6,13 @@ import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.infrastructure.auth.JwtAuthenticationManager;
+import com.directors.infrastructure.exception.auth.JwtExceptionWrapper;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.response.LogInResponse;
 import com.directors.presentation.user.response.RefreshAuthenticationResponse;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +78,7 @@ public class AuthenticationService {
         String userIdByRefreshToken = jm.getUserIdByToken(refreshToken);
 
         if (userIdByAccessToken == null || userIdByRefreshToken == null || !userIdByAccessToken.equals(userIdByRefreshToken)) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
+            throw new JwtExceptionWrapper();
         }
 
         return userIdByAccessToken;
@@ -86,19 +86,19 @@ public class AuthenticationService {
 
     private void validateUserIdByToken(String userIdByToken) {
         if (userRepository.findUserById(userIdByToken) == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
+            throw new JwtExceptionWrapper();
         }
     }
 
     private long validateRefreshToken(String refreshToken) {
         Token tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
         if (tokenByTokenString == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
+            throw new JwtExceptionWrapper();
         }
 
         long refreshExpirationDay = jm.getExpirationDayByToken(refreshToken);
         if (refreshExpirationDay < 0) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
+            throw new JwtExceptionWrapper();
         }
 
         return refreshExpirationDay;

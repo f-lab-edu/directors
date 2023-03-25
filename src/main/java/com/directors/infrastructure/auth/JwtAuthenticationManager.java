@@ -1,5 +1,6 @@
 package com.directors.infrastructure.auth;
 
+import com.directors.infrastructure.exception.auth.JwtExceptionWrapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -49,28 +50,45 @@ public class JwtAuthenticationManager {
         return getBodyByToken(token).getExpiration();
     }
 
-    private Key getSecretKey() throws JwtException {
+    private Key getSecretKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    private String generateJwtTokenWithDay(String userId, int day) throws JwtException {
+    private String generateJwtTokenWithDay(String userId, int day) throws JwtExceptionWrapper {
         Date now = new Date();
-        return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuer("directors.com")
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + Duration.ofDays(day).toMillis()))
-                .setSubject(userId)
-                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
-                .compact();
+        String jwtToken = null;
+
+        try {
+            jwtToken = Jwts.builder()
+                    .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                    .setIssuer("directors.com")
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime() + Duration.ofDays(day).toMillis()))
+                    .setSubject(userId)
+                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (JwtException e) {
+            throw new JwtExceptionWrapper();
+        }
+
+        return jwtToken;
     }
 
     private Claims getBodyByToken(String token) throws JwtException {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims bodyByToken = null;
+
+        try {
+            bodyByToken = Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException e) {
+            throw new JwtExceptionWrapper();
+        }
+
+        return bodyByToken;
     }
 }
