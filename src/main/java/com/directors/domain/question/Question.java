@@ -21,6 +21,6 @@ public class Question {
 	private String questionerId;
 	private String directorId;
 	private String category; // 카테고리 결정되면 enum으로 변경 예정
-	private String scheduledId;
+	private Long scheduledId;
 	private LocalDateTime startTime;
 }

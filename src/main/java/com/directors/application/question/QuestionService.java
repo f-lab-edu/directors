@@ -8,9 +8,11 @@ import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.question.QuestionStatus;
 import com.directors.domain.user.UserRepository;
+import com.directors.presentation.qeustion.request.CreateQuestionRequest;
 import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
 import com.directors.presentation.qeustion.response.SentQuestionResponse;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -32,5 +34,13 @@ public class QuestionService {
 			.filter(question -> question.getStatus() != QuestionStatus.COMPLETE)
 			.map(question -> ReceivedQuestionResponse.from(question))
 			.toList();
+	}
+
+	@Transactional
+	public void create(CreateQuestionRequest request, String questionerId) {
+		//시간이 올바른지 확인, 못하면 Exception 던지기, userId로부터 scheduled 가져오기.
+		Long scheduleId = 1234L;
+		//적절한 question class 만들어서 생성
+		questionRepository.save(QuestionConverter.of(request, questionerId, scheduleId));
 	}
 }

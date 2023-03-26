@@ -19,22 +19,24 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 		{
 			put(1234L, new Question(1234L, LocalDateTime.now(), "hello", "f-lab, mentoring",
 				QuestionStatus.WAITING, false, false, "dummyUser",
-				"song0209", "reading", "1123",
-				LocalDateTime.of(2023, Month.MARCH, 12, 9, 0)));
+				"song0209", "reading", 1123L,
+				LocalDateTime.of(2023, Month.APRIL, 12, 9, 0)));
 			put(3562L, new Question(3541L, LocalDateTime.now(), "nice", "contents",
 				QuestionStatus.CHATTING, false, false, "song0209",
-				"dummyUser", "fishing", "4431",
-				LocalDateTime.of(2023, Month.MARCH, 3, 14, 0)));
+				"dummyUser", "fishing", 4431L,
+				LocalDateTime.of(2023, Month.APRIL, 3, 14, 0)));
 			put(6543L, new Question(6543L, LocalDateTime.now(), "haha", "contents12",
 				QuestionStatus.COMPLETE, false, false, "dummyUser",
-				"dohyun12", "cook", "4431",
-				LocalDateTime.of(2023, Month.MARCH, 2, 20, 0)));
+				"dohyun12", "cook", 4431L,
+				LocalDateTime.of(2023, Month.APRIL, 3, 20, 0)));
 			put(2324L, new Question(2324L, LocalDateTime.now(), "good", "contents44",
 				QuestionStatus.COMPLETE, false, false, "dohyun12",
-				"dummyUser", "drawing", "4431",
-				LocalDateTime.of(2023, Month.MARCH, 2, 20, 0)));
+				"dummyUser", "drawing", 4431L,
+				LocalDateTime.of(2023, Month.APRIL, 2, 20, 0)));
 		}
 	};
+
+	private static Long questionId = 3000L;
 
 	@Override
 	public List<Question> findByDirectorId(String directorId) {
@@ -50,5 +52,11 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 			.stream()
 			.filter(question -> question.getQuestionerId().equals(questionerID))
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public Question save(Question question) {
+		questionMap.put(++questionId, question);
+		return question;
 	}
 }
