@@ -6,4 +6,6 @@ public interface TokenRepository {
     void saveToken(Token token);
 
     void deleteToken(String tokenString);
+
+    void deleteAllTokenByUserId(String userId);
 }

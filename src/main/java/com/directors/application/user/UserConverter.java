@@ -1,7 +1,10 @@
 package com.directors.application.user;
 
 import com.directors.domain.user.User;
+import com.directors.domain.user.UserStatus;
 import com.directors.presentation.user.request.SignUpRequest;
+
+import java.util.Date;
 
 public class UserConverter {
     public static User toEntity(SignUpRequest signUpRequest) {
@@ -13,6 +16,6 @@ public class UserConverter {
                 signUpRequest.nickname(),
                 signUpRequest.email(),
                 signUpRequest.phoneNumber(),
-                "", 0);
+                "", 0, UserStatus.JOINED, new Date(), null);
     }
 }

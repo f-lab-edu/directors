@@ -29,7 +29,7 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        if (userRepository.findUserById(id) != null) {
+        if (userRepository.findJoinedUserById(id) != null) {
             throw new DuplicateIdException(id);
         }
     }

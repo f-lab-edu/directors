@@ -33,7 +33,7 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        User user = userRepository.findUserById(userId);
+        User user = userRepository.findJoinedUserById(userId);
 
         if (user == null) {
             throw new AuthenticationFailedException(userId);
@@ -85,7 +85,7 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        if (userRepository.findUserById(userIdByToken) == null) {
+        if (userRepository.findJoinedUserById(userIdByToken) == null) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
     }

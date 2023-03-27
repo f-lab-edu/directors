@@ -2,10 +2,8 @@ package com.directors.presentation.user;
 
 import com.directors.application.user.AuthenticationService;
 import com.directors.application.user.SignUpService;
-import com.directors.presentation.user.request.LogInRequest;
-import com.directors.presentation.user.request.LogOutRequest;
-import com.directors.presentation.user.request.RefreshAuthenticationRequest;
-import com.directors.presentation.user.request.SignUpRequest;
+import com.directors.application.user.WithdrawService;
+import com.directors.presentation.user.request.*;
 import com.directors.presentation.user.response.LogInResponse;
 import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import jakarta.validation.Valid;
@@ -26,6 +24,7 @@ public class UserController {
 
     private final SignUpService signUpService;
     private final AuthenticationService authenticationService;
+    private final WithdrawService withdrawService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -61,5 +60,11 @@ public class UserController {
     @PostMapping("/refreshAuthentication")
     public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@RequestBody RefreshAuthenticationRequest request) {
         return new ResponseEntity<>(authenticationService.refreshAuthentication(request), HttpStatus.OK);
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<HttpStatus> withdraw(@RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
+        withdrawService.withdraw(withdrawRequest, userIdByToken);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
