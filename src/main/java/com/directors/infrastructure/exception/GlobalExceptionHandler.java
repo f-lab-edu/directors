@@ -14,8 +14,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
+import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
+import com.directors.infrastructure.exception.user.NoSuchUserException;
 
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,9 +40,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DuplicateIdException.class)
-	public ErrorMessage duplicateIdExceptionHandler(DuplicateIdException ex) {
-		log.info("DuplicateIdException occurred. duplicatedId: " + ex.duplicatedId);
-		return new ErrorMessage(ex.getMessage());
+	public ErrorMessage DuplicateIdExceptionHandler(DuplicateIdException e) {
+		log.info("DuplicateIdException occurred. duplicatedId: " + e.duplicatedId);
+		return new ErrorMessage(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NoSuchUserException.class)
+	public ErrorMessage NosuchUserExceptionHandler(NoSuchUserException e) {
+		log.info("NosuchUserException occurred. requested userId: " + e.requestedUserId);
+		return new ErrorMessage(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(AuthenticationFailedException.class)
+	public ErrorMessage AuthenticationFailedExceptionHandler(AuthenticationFailedException e) {
+		log.info("AuthenticationFailedException occurred. requested userId:" + e.requestedUserId);
+		return new ErrorMessage(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(JwtException.class)
+	public ErrorMessage JwtExceptionHandler(JwtException e) {
+		log.info("JwtException occurred.");
+		return new ErrorMessage("유효하지 않은 토큰입니다.");
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<HttpStatus> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+		log.info("IllegalArgumentException occurred.");
+		return new ResponseEntity(HttpStatus.BAD_REQUEST);
 	}
 
 	@ResponseStatus(HttpStatus.CONFLICT)
@@ -56,14 +87,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		log.info(String.format("InvalidMeetingTimeException occurred. userId = %s", ex.getUserId()));
 		return new ErrorMessage(ex.getMessage());
 	}
+}
 
-	@Getter
-	private class ErrorMessage {
-		private final String message;
+@Getter
+class ErrorMessage {
+	private final String message;
 
-		ErrorMessage(String message) {
-			this.message = message;
-		}
+	ErrorMessage(String message) {
+		this.message = message;
 	}
 }
 
