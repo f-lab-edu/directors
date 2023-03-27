@@ -24,9 +24,9 @@ public class InmemoryUserRepository implements UserRepository {
     }};
 
     @Override
-    public User findJoinedUserById(String id) {
+    public User findUserByIdAndUserStatus(String id, UserStatus userStatus) {
         User user = userMap.get(id);
-        return user.getStatus() == UserStatus.JOINED ? user : null;
+        return user.getStatus() == userStatus ? user : null;
     }
 
     @Override

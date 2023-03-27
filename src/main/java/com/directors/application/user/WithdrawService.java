@@ -29,7 +29,7 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        User user = userRepository.findJoinedUserById(userId);
+        User user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
 
         if (user == null) {
             throw new NoSuchUserException(userId);

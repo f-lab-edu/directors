@@ -5,6 +5,7 @@ import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.presentation.user.request.LogInRequest;
@@ -33,7 +34,7 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        User user = userRepository.findJoinedUserById(userId);
+        User user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
 
         if (user == null) {
             throw new AuthenticationFailedException(userId);
@@ -85,7 +86,7 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        if (userRepository.findJoinedUserById(userIdByToken) == null) {
+        if (userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED) == null) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
     }

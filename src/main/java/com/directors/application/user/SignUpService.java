@@ -3,6 +3,7 @@ package com.directors.application.user;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
 import com.directors.presentation.user.request.SignUpRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        if (userRepository.findJoinedUserById(id) != null) {
+        if (userRepository.findUserByIdAndUserStatus(id, UserStatus.JOINED) != null) {
             throw new DuplicateIdException(id);
         }
     }

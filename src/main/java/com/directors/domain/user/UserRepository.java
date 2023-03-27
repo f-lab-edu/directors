@@ -1,7 +1,7 @@
 package com.directors.domain.user;
 
 public interface UserRepository {
-    User findJoinedUserById(String id);
+    User findUserByIdAndUserStatus(String id, UserStatus userStatus);
 
     void saveUser(User user);
 }
