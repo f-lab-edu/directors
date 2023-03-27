@@ -2,6 +2,8 @@ package com.directors.domain.question;
 
 import java.time.LocalDateTime;
 
+import com.directors.presentation.qeustion.request.CreateQuestionRequest;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +25,20 @@ public class Question {
 	private String category; // 카테고리 결정되면 enum으로 변경 예정
 	private Long scheduledId;
 	private LocalDateTime startTime;
+
+	public static Question of(CreateQuestionRequest createRequest, String questionerId, Long scheduledId) {
+		return Question.builder()
+			.title(createRequest.getTitle())
+			.content(createRequest.getContent())
+			.status(QuestionStatus.WAITING)
+			.questionCheck(false)
+			.directorCheck(false)
+			.questionerId(questionerId)
+			.directorId(createRequest.getDirectorId())
+			.category(createRequest.getCategory())
+			.scheduledId(scheduledId)
+			.startTime(createRequest.getStartTime())
+			.createTime(LocalDateTime.now())
+			.build();
+	}
 }

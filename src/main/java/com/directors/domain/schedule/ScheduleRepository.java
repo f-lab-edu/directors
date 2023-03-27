@@ -5,4 +5,6 @@ import java.util.Optional;
 
 public interface ScheduleRepository {
 	Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId);
+
+	void save(Schedule schedule);
 }

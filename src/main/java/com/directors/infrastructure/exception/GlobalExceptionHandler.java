@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
+import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
 
 import lombok.Getter;
@@ -37,6 +39,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(DuplicateIdException.class)
 	public ErrorMessage duplicateIdExceptionHandler(DuplicateIdException ex) {
 		log.info("DuplicateIdException occurred. duplicatedId: " + ex.duplicatedId);
+		return new ErrorMessage(ex.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(ClosedScheduleException.class)
+	public ErrorMessage closedScheduleExceptionHandler(ClosedScheduleException ex) {
+		log.info(String.format("ClosedScheduleException occurred. time = %s, userId = %s", ex.getStartTime(),
+			ex.getUserId()));
+		return new ErrorMessage(ex.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidMeetingTimeException.class)
+	public ErrorMessage invalidMeetingTimeException(InvalidMeetingTimeException ex) {
+		log.info(String.format("InvalidMeetingTimeException occurred. userId = %s", ex.getUserId()));
 		return new ErrorMessage(ex.getMessage());
 	}
 
