@@ -1,5 +1,6 @@
 package com.directors.presentation.user.request;
 
+import com.directors.domain.user.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -25,4 +26,15 @@ public record SignUpRequest(
         @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", message = "올바른 휴대전화 형식이 아닙니다.")
         String phoneNumber
 ) {
+    public User toEntity() {
+        // region은 회원 가입 후, 추가로 설정할 수 있는 로직을 만들 예정입니다.
+        return User.builder()
+                .userId(userId)
+                .password(password)
+                .name(name)
+                .nickname(nickname)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+    }
 }

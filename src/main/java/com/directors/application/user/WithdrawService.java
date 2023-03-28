@@ -39,8 +39,7 @@ public class WithdrawService {
             throw new AuthenticationFailedException(user.getUserId());
         }
 
-        user.setWithdrawalDate(new Date());
-        user.setStatus(UserStatus.WITHDRAWN);
+        user.withdrawal(new Date());
 
         userRepository.saveUser(user);
 
