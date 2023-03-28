@@ -84,7 +84,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(InvalidMeetingTimeException.class)
 	public ErrorMessage invalidMeetingTimeException(InvalidMeetingTimeException ex) {
-		log.info(String.format("InvalidMeetingTimeException occurred. userId = %s", ex.getUserId()));
+		log.info("InvalidMeetingTimeException occurred. userId = {} startTIme = {} ", ex.getUserId(),
+			ex.getStartTime());
 		return new ErrorMessage(ex.getMessage());
 	}
 }

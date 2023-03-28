@@ -2,8 +2,6 @@ package com.directors.domain.question;
 
 import java.time.LocalDateTime;
 
-import com.directors.presentation.qeustion.request.CreateQuestionRequest;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,18 +24,19 @@ public class Question {
 	private Long scheduledId;
 	private LocalDateTime startTime;
 
-	public static Question of(CreateQuestionRequest createRequest, String questionerId, Long scheduledId) {
+	public static Question of(String title, String content, String directorId, String category, LocalDateTime startTime,
+		String questionerId, Long scheduledId) {
 		return Question.builder()
-			.title(createRequest.getTitle())
-			.content(createRequest.getContent())
+			.title(title)
+			.content(content)
 			.status(QuestionStatus.WAITING)
 			.questionCheck(false)
 			.directorCheck(false)
 			.questionerId(questionerId)
-			.directorId(createRequest.getDirectorId())
-			.category(createRequest.getCategory())
+			.directorId(directorId)
+			.category(category)
 			.scheduledId(scheduledId)
-			.startTime(createRequest.getStartTime())
+			.startTime(startTime)
 			.createTime(LocalDateTime.now())
 			.build();
 	}

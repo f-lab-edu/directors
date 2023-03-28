@@ -2,7 +2,6 @@ package com.directors.application.question;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -55,14 +54,17 @@ public class QuestionService {
 			Schedule.of(scheduleId, request.getStartTime(), ScheduleStatus.CLOSED, request.getDirectorId()));
 
 		//적절한 question class 만들어서 생성
-		questionRepository.save(Question.of(request, questionerId, scheduleId));
+		questionRepository.save(Question.of(request.getTitle(), request.getContent(), request.getDirectorId(),
+			request.getCategory(), request.getStartTime(), questionerId, scheduleId));
 	}
 
 	private void validateTime(LocalDateTime startTime, String userId) {
-		Optional<Schedule> optionalSchedule = scheduleRepository.findByStartTimeAndUserId(startTime, userId);
+		Schedule schedule = scheduleRepository.findByStartTimeAndUserId(startTime, userId)
+			.orElseThrow(() -> {
+				throw new InvalidMeetingTimeException(startTime, userId);
+			});
 
-		if (optionalSchedule.orElseThrow(() -> new InvalidMeetingTimeException(userId))
-			.getStatus() != ScheduleStatus.OPENED) {
+		if (schedule.getStatus() != ScheduleStatus.OPENED) {
 			throw new ClosedScheduleException(startTime, userId);
 		}
 

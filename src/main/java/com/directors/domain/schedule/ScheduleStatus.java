@@ -1,7 +1,7 @@
 package com.directors.domain.schedule;
 
 public enum ScheduleStatus {
-	OPENED("opend"), CLOSED("closed");
+	OPENED("opened"), CLOSED("closed");
 	private final String value;
 
 	ScheduleStatus(String value) {
