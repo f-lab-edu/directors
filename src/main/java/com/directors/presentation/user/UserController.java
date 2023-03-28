@@ -2,6 +2,7 @@ package com.directors.presentation.user;
 
 import com.directors.application.user.AuthenticationService;
 import com.directors.application.user.SignUpService;
+import com.directors.application.user.UpdateUserService;
 import com.directors.application.user.WithdrawService;
 import com.directors.presentation.user.request.*;
 import com.directors.presentation.user.response.LogInResponse;
@@ -25,6 +26,8 @@ public class UserController {
     private final SignUpService signUpService;
     private final AuthenticationService authenticationService;
     private final WithdrawService withdrawService;
+    private final UpdateUserService updateUserService;
+
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -67,4 +70,19 @@ public class UserController {
         withdrawService.withdraw(withdrawRequest, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/updatePassword")
+    public ResponseEntity<HttpStatus> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @AuthenticationPrincipal String userIdByToken) {
+        updateUserService.updatePassword(updatePasswordRequest, userIdByToken);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // TODO: 03.28 추후 이메일 인증 로직 추가. 현재는 인증 없이 변경 가능.
+    @PostMapping("/updateEmail")
+    public ResponseEntity<HttpStatus> updateEmail(@RequestBody UpdateEmailRequest updateEmailRequest, @AuthenticationPrincipal String userIdByToken) {
+        updateUserService.updateEmail(updateEmailRequest, userIdByToken);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // TODO: 03.28 추후 당근과 같은 지역 인증 로직이 필요함. 요청 데이터로는 현재 유저의 좌표값이 올 것.
 }
