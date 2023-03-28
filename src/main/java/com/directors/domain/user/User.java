@@ -44,6 +44,10 @@ public class User {
         this.email = email;
     }
 
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
+    }
+
     public void withdrawal(Date withdrawalDate) {
         this.status = UserStatus.WITHDRAWN;
         this.withdrawalDate = withdrawalDate;

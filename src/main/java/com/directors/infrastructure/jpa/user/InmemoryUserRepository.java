@@ -14,13 +14,13 @@ public class InmemoryUserRepository implements UserRepository {
     // 더미 데이터 사용
     private final Map<String, User> userMap = new HashMap<>() {{
         put("song0229", new User("song0229", "12341234", "송은석", "song0229",
-                "thddmstjrwkd@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null));
+                "thddmstjrwkd@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null, null));
         put("park1234", new User("park1234", "park1234", "박도현", "park1234",
-                "park1234@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null));
+                "park1234@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null, null));
         put("eunseok999", new User("eunseok999", "eunseok999", "은석송", "eunseok999",
-                "eunseok999@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null));
+                "eunseok999@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null, null));
         put("dohyun777", new User("dohyun777", "dohyun777", "도현박", "dohyun777",
-                "dohyun777@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null));
+                "dohyun777@naver.com", "010-7702-1045", "", 0, UserStatus.JOINED, new Date(), null, null));
     }};
 
     @Override
