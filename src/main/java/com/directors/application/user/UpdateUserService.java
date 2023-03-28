@@ -49,14 +49,14 @@ public class UpdateUserService {
         return user;
     }
 
-    private static void validateEmail(String oldEmail, User user) {
-        if (user.getEmail().equals(oldEmail)) {
+    private static void validateEmail(String email, User user) {
+        if (user.getEmail().equals(email)) {
             throw new AuthenticationFailedException(user.getUserId());
         }
     }
 
-    private void validatePassword(String oldPassword, User user) {
-        if (passwordManager.checkPassword(user.getPassword(), oldPassword)) {
+    private void validatePassword(String password, User user) {
+        if (passwordManager.checkPassword(user.getPassword(), password)) {
             throw new AuthenticationFailedException(user.getUserId());
         }
     }

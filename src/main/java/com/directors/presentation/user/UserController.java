@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/logOut")
-    public ResponseEntity<HttpStatus> logOut(@RequestBody LogOutRequest logOutRequest) {
+    public ResponseEntity<HttpStatus> logOut(@Valid @RequestBody LogOutRequest logOutRequest) {
         authenticationService.logOut(logOutRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -61,25 +61,25 @@ public class UserController {
     }
 
     @PostMapping("/refreshAuthentication")
-    public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@RequestBody RefreshAuthenticationRequest request) {
+    public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@Valid @RequestBody RefreshAuthenticationRequest request) {
         return new ResponseEntity<>(authenticationService.refreshAuthentication(request), HttpStatus.OK);
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<HttpStatus> withdraw(@RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
+    public ResponseEntity<HttpStatus> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
         withdrawService.withdraw(withdrawRequest, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/updatePassword")
-    public ResponseEntity<HttpStatus> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @AuthenticationPrincipal String userIdByToken) {
+    public ResponseEntity<HttpStatus> updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest, @AuthenticationPrincipal String userIdByToken) {
         updateUserService.updatePassword(updatePasswordRequest, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // TODO: 03.28 추후 이메일 인증 로직 추가. 현재는 인증 없이 변경 가능.
     @PostMapping("/updateEmail")
-    public ResponseEntity<HttpStatus> updateEmail(@RequestBody UpdateEmailRequest updateEmailRequest, @AuthenticationPrincipal String userIdByToken) {
+    public ResponseEntity<HttpStatus> updateEmail(@Valid @RequestBody UpdateEmailRequest updateEmailRequest, @AuthenticationPrincipal String userIdByToken) {
         updateUserService.updateEmail(updateEmailRequest, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
     }

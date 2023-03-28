@@ -1,5 +1,6 @@
 package com.directors.domain.user;
 
+import com.directors.domain.field.Field;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
