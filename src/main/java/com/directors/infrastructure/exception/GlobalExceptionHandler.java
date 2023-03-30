@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
+import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
@@ -73,8 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity(HttpStatus.BAD_REQUEST);
 	}
 
-	@ResponseStatus(HttpStatus.CONFLICT)
-	@ExceptionHandler(ClosedScheduleException.class)
+	@ExceptionHandler(InvalidMeetingTimeException.class)
 	public ErrorMessage closedScheduleExceptionHandler(ClosedScheduleException ex) {
 		log.info(String.format("ClosedScheduleException occurred. time = %s, userId = %s", ex.getStartTime(),
 			ex.getUserId()));
@@ -88,6 +88,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			ex.getStartTime());
 		return new ErrorMessage(ex.getMessage());
 	}
+
+	@ExceptionHandler(InvalidMeetingRequest.class)
+	public ResponseEntity<?> invalidMeetingException(InvalidMeetingRequest ex) {
+		log.info("{} occurred, userId = {}, startTime = {}", ex.getMessage(), ex.getUserId(),
+			ex.getStartTime());
+		return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+	}
 }
 
 @Getter
@@ -98,4 +105,3 @@ class ErrorMessage {
 		this.message = message;
 	}
 }
-

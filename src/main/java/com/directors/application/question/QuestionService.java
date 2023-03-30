@@ -12,8 +12,8 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.user.UserRepository;
-import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
-import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
+import com.directors.infrastructure.exception.ExceptionCode;
+import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.presentation.qeustion.request.CreateQuestionRequest;
 import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
 import com.directors.presentation.qeustion.response.SentQuestionResponse;
@@ -61,11 +61,11 @@ public class QuestionService {
 	private void validateTime(LocalDateTime startTime, String userId) {
 		Schedule schedule = scheduleRepository.findByStartTimeAndUserId(startTime, userId)
 			.orElseThrow(() -> {
-				throw new InvalidMeetingTimeException(startTime, userId);
+				throw new InvalidMeetingRequest(ExceptionCode.InvalidMeetingTime, startTime, userId);
 			});
 
 		if (schedule.getStatus() != ScheduleStatus.OPENED) {
-			throw new ClosedScheduleException(startTime, userId);
+			throw new InvalidMeetingRequest(ExceptionCode.ClosedSchedule, startTime, userId);
 		}
 
 	}
