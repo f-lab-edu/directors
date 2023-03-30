@@ -26,6 +26,10 @@ public class InmemoryUserRepository implements UserRepository {
     @Override
     public User findUserByIdAndUserStatus(String id, UserStatus userStatus) {
         User user = userMap.get(id);
+        if (user == null) {
+            return null;
+        }
+        
         return user.getStatus() == userStatus ? user : null;
     }
 

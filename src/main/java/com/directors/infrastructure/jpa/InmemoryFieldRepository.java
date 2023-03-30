@@ -2,10 +2,12 @@ package com.directors.infrastructure.jpa;
 
 import com.directors.domain.field.Field;
 import com.directors.domain.field.FieldRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Repository
 public class InmemoryFieldRepository implements FieldRepository {
 
     private final Map<String, Field> fieldMap = new HashMap<>();
