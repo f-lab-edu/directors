@@ -1,6 +1,7 @@
 package com.directors.domain.user;
 
 import com.directors.domain.specialty.Specialty;
+import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,8 +41,9 @@ public class User {
         this.password = encryptedPassword;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void changeEmail(String oldEmail, String newEmail) {
+        validateEmail(oldEmail);
+        this.email = newEmail;
     }
 
     public void setFields(List<Specialty> specialtyList) {
@@ -51,5 +53,11 @@ public class User {
     public void withdrawal(Date withdrawalDate) {
         this.status = UserStatus.WITHDRAWN;
         this.withdrawalDate = withdrawalDate;
+    }
+
+    private void validateEmail(String email) {
+        if (this.email.equals(email)) {
+            throw new AuthenticationFailedException(this.userId);
+        }
     }
 }

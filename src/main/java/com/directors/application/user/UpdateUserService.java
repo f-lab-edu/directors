@@ -31,6 +31,8 @@ public class UpdateUserService {
 
         String encryptPassword = passwordManager.encryptPassword(newPassword);
         user.setPasswordByEncryption(encryptPassword);
+
+        userRepository.saveUser(user);
     }
 
 
@@ -41,9 +43,9 @@ public class UpdateUserService {
 
         User user = validateUser(userIdByToken);
 
-        validateEmail(oldEmail, user);
+        user.changeEmail(oldEmail, newEmail);
 
-        user.setEmail(newEmail);
+        userRepository.saveUser(user);
     }
 
     private User validateUser(String userIdByToken) {
@@ -51,11 +53,6 @@ public class UpdateUserService {
         return user.orElseThrow(() -> new AuthenticationFailedException(userIdByToken));
     }
 
-    private static void validateEmail(String email, User user) {
-        if (user.getEmail().equals(email)) {
-            throw new AuthenticationFailedException(user.getUserId());
-        }
-    }
 
     private void validatePassword(String password, User user) {
         if (!passwordManager.checkPassword(password, user.getPassword())) {
