@@ -9,6 +9,9 @@ import com.directors.presentation.user.request.UpdateEmailRequest;
 import com.directors.presentation.user.request.UpdatePasswordRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class UpdateUserService {
     private final UserRepository userRepository;
     private final PasswordManager passwordManager;
 
+    @Transactional
     public void updatePassword(UpdatePasswordRequest updatePasswordRequest, String userIdByToken) {
         String oldPassword = updatePasswordRequest.oldPassword();
         String newPassword = updatePasswordRequest.newPassword();
@@ -30,6 +34,7 @@ public class UpdateUserService {
     }
 
 
+    @Transactional
     public void updateEmail(UpdateEmailRequest updateEmailRequest, String userIdByToken) {
         String oldEmail = updateEmailRequest.oldEmail();
         String newEmail = updateEmailRequest.newEmail();
@@ -42,11 +47,8 @@ public class UpdateUserService {
     }
 
     private User validateUser(String userIdByToken) {
-        User user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
-        if (user == null) {
-            throw new AuthenticationFailedException(userIdByToken);
-        }
-        return user;
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        return user.orElseThrow(() -> new AuthenticationFailedException(userIdByToken));
     }
 
     private static void validateEmail(String email, User user) {

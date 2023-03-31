@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,21 +35,16 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        User user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        User loadedUser = user
+                .filter(u -> pm.checkPassword(password, u.getPassword()))
+                .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        if (user == null) {
-            throw new AuthenticationFailedException(userId);
-        }
-
-        if (!pm.checkPassword(password, user.getPassword())) {
-            throw new AuthenticationFailedException(user.getUserId());
-        }
-
-        String jwtToken = jm.generateAccessToken(userId);
-        String refreshToken = jm.generateRefreshToken(userId);
+        String jwtToken = jm.generateAccessToken(loadedUser.getUserId());
+        String refreshToken = jm.generateRefreshToken(loadedUser.getUserId());
         Date refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
 
-        tokenRepository.saveToken(new Token(refreshToken, userId, refreshTokenExpiration));
+        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getUserId(), refreshTokenExpiration));
 
         return new LogInResponse(jwtToken, refreshToken);
     }
@@ -86,9 +82,8 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        if (userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED) == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
-        }
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 
     private long validateRefreshToken(String refreshToken) {

@@ -6,13 +6,13 @@ import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
-import com.directors.infrastructure.exception.user.NoSuchUserException;
 import com.directors.presentation.user.request.WithdrawRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,21 +29,17 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        User user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
 
-        if (user == null) {
-            throw new NoSuchUserException(userId);
-        }
+        User loadedUser = user
+                .filter(u -> pm.checkPassword(password, u.getPassword()))
+                .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        if (!pm.checkPassword(password, user.getPassword())) {
-            throw new AuthenticationFailedException(user.getUserId());
-        }
+        loadedUser.withdrawal(new Date());
 
-        user.withdrawal(new Date());
+        userRepository.saveUser(loadedUser);
 
-        userRepository.saveUser(user);
-
-        tokenRepository.deleteAllTokenByUserId(user.getUserId());
+        tokenRepository.deleteAllTokenByUserId(loadedUser.getUserId());
     }
 
     private static void validateUserIds(String firstUserId, String secondUserId) {

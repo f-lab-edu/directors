@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SignUpService {
@@ -27,8 +29,9 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        if (userRepository.findUserByIdAndUserStatus(id, UserStatus.JOINED) != null) {
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(id, UserStatus.JOINED);
+        user.ifPresent(u -> {
             throw new DuplicateIdException(id);
-        }
+        });
     }
 }

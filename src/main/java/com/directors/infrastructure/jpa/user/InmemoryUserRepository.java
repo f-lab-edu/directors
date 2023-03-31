@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class InmemoryUserRepository implements UserRepository {
@@ -24,13 +25,9 @@ public class InmemoryUserRepository implements UserRepository {
     }};
 
     @Override
-    public User findUserByIdAndUserStatus(String id, UserStatus userStatus) {
+    public Optional<User> findUserByIdAndUserStatus(String id, UserStatus userStatus) {
         User user = userMap.get(id);
-        if (user == null) {
-            return null;
-        }
-        
-        return user.getStatus() == userStatus ? user : null;
+        return Optional.ofNullable(user).filter(u -> u.getStatus().equals(userStatus));
     }
 
     @Override
