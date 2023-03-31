@@ -1,6 +1,6 @@
-package com.directors.domain.field;
+package com.directors.domain.specialty;
 
-public enum FieldProperty {
+public enum SpecialtyProperty {
     // 직무 관련
     PROGRAMMING("프로그래밍"),
     DESIGN("디자인"),
@@ -30,7 +30,7 @@ public enum FieldProperty {
 
     private final String value;
 
-    FieldProperty(String value) {
+    SpecialtyProperty(String value) {
         this.value = value;
     }
 
@@ -38,8 +38,8 @@ public enum FieldProperty {
         return value;
     }
 
-    public static FieldProperty fromValue(String value) {
-        for (FieldProperty category : FieldProperty.values()) {
+    public static SpecialtyProperty fromValue(String value) {
+        for (SpecialtyProperty category : SpecialtyProperty.values()) {
             if (category.getValue().equals(value)) {
                 return category;
             }

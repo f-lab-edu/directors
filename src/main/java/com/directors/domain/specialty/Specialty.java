@@ -1,4 +1,4 @@
-package com.directors.domain.field;
+package com.directors.domain.specialty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Field {
+public class Specialty {
     private String id;
-    private FieldProperty property;
+    private SpecialtyProperty property;
     private String description;
     private String userId;
 
@@ -21,7 +21,7 @@ public class Field {
         this.userId = userId;
     }
 
-    public void updateFieldInfo(FieldProperty property, String description) {
+    public void updateSpecialtyInfo(SpecialtyProperty property, String description) {
         this.property = property;
         this.description = description;
     }

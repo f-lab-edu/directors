@@ -56,7 +56,7 @@ public class UpdateUserService {
     }
 
     private void validatePassword(String password, User user) {
-        if (passwordManager.checkPassword(password, user.getPassword())) {
+        if (!passwordManager.checkPassword(password, user.getPassword())) {
             throw new AuthenticationFailedException(user.getUserId());
         }
     }

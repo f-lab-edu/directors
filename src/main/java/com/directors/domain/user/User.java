@@ -1,6 +1,6 @@
 package com.directors.domain.user;
 
-import com.directors.domain.field.Field;
+import com.directors.domain.specialty.Specialty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class User {
 
     private Date withdrawalDate;
 
-    private List<Field> fields;
+    private List<Specialty> specialtyList;
 
     public void setPasswordByEncryption(String encryptedPassword) {
         this.password = encryptedPassword;
@@ -44,8 +44,8 @@ public class User {
         this.email = email;
     }
 
-    public void setFields(List<Field> fields) {
-        this.fields = fields;
+    public void setFields(List<Specialty> specialtyList) {
+        this.specialtyList = specialtyList;
     }
 
     public void withdrawal(Date withdrawalDate) {
