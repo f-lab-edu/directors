@@ -71,10 +71,10 @@ public class AuthenticationService {
     }
 
     private String compareUserIdWithTokens(String accessToken, String refreshToken) {
-        String userIdByAccessToken = jm.getUserIdByToken(accessToken);
-        String userIdByRefreshToken = jm.getUserIdByToken(refreshToken);
+        String userIdByAccessToken = jm.getUserIdByToken(accessToken).orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
+        String userIdByRefreshToken = jm.getUserIdByToken(refreshToken).orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
-        if (userIdByAccessToken == null || userIdByRefreshToken == null || !userIdByAccessToken.equals(userIdByRefreshToken)) {
+        if (!userIdByAccessToken.equals(userIdByRefreshToken)) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
 
@@ -87,10 +87,8 @@ public class AuthenticationService {
     }
 
     private long validateRefreshToken(String refreshToken) {
-        Token tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
-        if (tokenByTokenString == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
-        }
+        Optional<Token> tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
+        tokenByTokenString.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
         long refreshExpirationDay = jm.getExpirationDayByToken(refreshToken);
         if (refreshExpirationDay < 0) {

@@ -1,7 +1,9 @@
 package com.directors.domain.specialty;
 
+import java.util.Optional;
+
 public interface SpecialtyRepository {
-    Specialty findSpecialtyByFieldId(String specialtyId);
+    Optional<Specialty> findSpecialtyByFieldId(String specialtyId);
 
     void saveSpecialty(Specialty specialty);
 

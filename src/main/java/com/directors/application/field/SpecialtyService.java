@@ -5,6 +5,9 @@ import com.directors.domain.specialty.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SpecialtyService {
@@ -17,7 +20,8 @@ public class SpecialtyService {
     }
 
     public void updateSpecialty(Specialty requestSpecialty) {
-        Specialty specialty = specialtyRepository.findSpecialtyByFieldId(requestSpecialty.getId());
+        Optional<Specialty> specialtyByFieldId = specialtyRepository.findSpecialtyByFieldId(requestSpecialty.getId());
+        Specialty specialty = specialtyByFieldId.orElseThrow(() -> new NoSuchElementException());
 
         specialty.updateSpecialtyInfo(requestSpecialty.getProperty(), requestSpecialty.getDescription());
 

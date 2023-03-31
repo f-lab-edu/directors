@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class InmemorySpecialtyRepository implements SpecialtyRepository {
@@ -14,9 +15,8 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     private long nextId = 1; // 다음 id 값
 
     @Override
-    public Specialty findSpecialtyByFieldId(String specialtyId) {
-        Specialty field = specialtyMap.get(specialtyId);
-        return field != null ? field : null;
+    public Optional<Specialty> findSpecialtyByFieldId(String specialtyId) {
+        return Optional.ofNullable(specialtyMap.get(specialtyId));
     }
 
     @Override
