@@ -23,15 +23,15 @@ public class SpecialtyController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<HttpStatus> update(@RequestBody UpdateSpecialtyRequest updateSpecialtyRequest) {
         specialtyService.updateSpecialty(updateSpecialtyRequest.toEntity());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<HttpStatus> delete(@PathVariable String specialtyId) {
         specialtyService.deleteSpecialty(specialtyId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

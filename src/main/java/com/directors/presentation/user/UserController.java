@@ -55,11 +55,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public String test(@AuthenticationPrincipal String userId) {
-        return userId;
-    }
-
     @PostMapping("/refreshAuthentication")
     public ResponseEntity<RefreshAuthenticationResponse> refreshAuthentication(@Valid @RequestBody RefreshAuthenticationRequest request) {
         return new ResponseEntity<>(authenticationService.refreshAuthentication(request), HttpStatus.OK);
@@ -78,7 +73,7 @@ public class UserController {
     }
 
     // TODO: 03.28 추후 이메일 인증 로직 추가. 현재는 인증 없이 변경 가능.
-    @PostMapping("/updateEmail")
+    @PutMapping("/updateEmail")
     public ResponseEntity<HttpStatus> updateEmail(@Valid @RequestBody UpdateEmailRequest updateEmailRequest, @AuthenticationPrincipal String userIdByToken) {
         updateUserService.updateEmail(updateEmailRequest, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
