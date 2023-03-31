@@ -2,16 +2,14 @@ package com.directors.infrastructure.jpa.user;
 
 import com.directors.domain.auth.Token;
 import com.directors.domain.auth.TokenRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Repository
 public class InmemoryTokenRepository implements TokenRepository {
-
     private final Map<String, Token> tokenMap = new HashMap();
 
     @Override
@@ -31,14 +29,7 @@ public class InmemoryTokenRepository implements TokenRepository {
 
     @Override
     public void deleteAllTokenByUserId(String userId) {
-        Iterator<Map.Entry<String, Token>> iterator = tokenMap.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry<String, Token> entry = iterator.next();
-            Token token = entry.getValue();
-            if (token.getUserId().equals(userId)) {
-                iterator.remove();
-            }
-        }
+        tokenMap.entrySet()
+                .removeIf(tokenEntry -> tokenEntry.getValue().getUserId().equals(userId));
     }
 }
