@@ -2,19 +2,19 @@ package com.directors.infrastructure.jpa.user;
 
 import com.directors.domain.auth.Token;
 import com.directors.domain.auth.TokenRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-@Component
+@Repository
 public class InmemoryTokenRepository implements TokenRepository {
-
     private final Map<String, Token> tokenMap = new HashMap();
 
     @Override
-    public Token findTokenByTokenString(String tokenString) {
-        return tokenMap.get(tokenString);
+    public Optional<Token> findTokenByTokenString(String tokenString) {
+        return Optional.ofNullable(tokenMap.get(tokenString));
     }
 
     @Override
@@ -25,5 +25,11 @@ public class InmemoryTokenRepository implements TokenRepository {
     @Override
     public void deleteToken(String tokenString) {
         tokenMap.remove(tokenString);
+    }
+
+    @Override
+    public void deleteAllTokenByUserId(String userId) {
+        tokenMap.entrySet()
+                .removeIf(tokenEntry -> tokenEntry.getValue().getUserId().equals(userId));
     }
 }

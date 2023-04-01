@@ -5,6 +5,7 @@ import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.presentation.user.request.LogInRequest;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,21 +35,16 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        User user = userRepository.findUserById(userId);
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        User loadedUser = user
+                .filter(u -> pm.checkPassword(password, u.getPassword()))
+                .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        if (user == null) {
-            throw new AuthenticationFailedException(userId);
-        }
-
-        if (!pm.checkPassword(password, user.getPassword())) {
-            throw new AuthenticationFailedException(user.getUserId());
-        }
-
-        String jwtToken = jm.generateAccessToken(userId);
-        String refreshToken = jm.generateRefreshToken(userId);
+        String jwtToken = jm.generateAccessToken(loadedUser.getUserId());
+        String refreshToken = jm.generateRefreshToken(loadedUser.getUserId());
         Date refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
 
-        tokenRepository.saveToken(new Token(refreshToken, userId, refreshTokenExpiration));
+        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getUserId(), refreshTokenExpiration));
 
         return new LogInResponse(jwtToken, refreshToken);
     }
@@ -74,10 +71,10 @@ public class AuthenticationService {
     }
 
     private String compareUserIdWithTokens(String accessToken, String refreshToken) {
-        String userIdByAccessToken = jm.getUserIdByToken(accessToken);
-        String userIdByRefreshToken = jm.getUserIdByToken(refreshToken);
+        String userIdByAccessToken = jm.getUserIdByToken(accessToken).orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
+        String userIdByRefreshToken = jm.getUserIdByToken(refreshToken).orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
-        if (userIdByAccessToken == null || userIdByRefreshToken == null || !userIdByAccessToken.equals(userIdByRefreshToken)) {
+        if (!userIdByAccessToken.equals(userIdByRefreshToken)) {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
 
@@ -85,16 +82,13 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        if (userRepository.findUserById(userIdByToken) == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
-        }
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 
     private long validateRefreshToken(String refreshToken) {
-        Token tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
-        if (tokenByTokenString == null) {
-            throw new JwtException("유효하지 않은 토큰입니다.");
-        }
+        Optional<Token> tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
+        tokenByTokenString.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
         long refreshExpirationDay = jm.getExpirationDayByToken(refreshToken);
         if (refreshExpirationDay < 0) {
