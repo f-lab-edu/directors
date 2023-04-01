@@ -21,6 +21,23 @@ public class Question {
 	private String questionerId;
 	private String directorId;
 	private String category; // 카테고리 결정되면 enum으로 변경 예정
-	private String scheduledId;
+	private Long scheduledId;
 	private LocalDateTime startTime;
+
+	public static Question of(String title, String content, String directorId, String category, LocalDateTime startTime,
+		String questionerId, Long scheduledId) {
+		return Question.builder()
+			.title(title)
+			.content(content)
+			.status(QuestionStatus.WAITING)
+			.questionCheck(false)
+			.directorCheck(false)
+			.questionerId(questionerId)
+			.directorId(directorId)
+			.category(category)
+			.scheduledId(scheduledId)
+			.startTime(startTime)
+			.createTime(LocalDateTime.now())
+			.build();
+	}
 }
