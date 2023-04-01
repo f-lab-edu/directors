@@ -74,7 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity(HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(InvalidMeetingTimeException.class)
+	@ExceptionHandler(ClosedScheduleException.class)
 	public ErrorMessage closedScheduleExceptionHandler(ClosedScheduleException ex) {
 		log.info(String.format("ClosedScheduleException occurred. time = %s, userId = %s", ex.getStartTime(),
 			ex.getUserId()));
@@ -93,7 +93,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> invalidMeetingException(InvalidMeetingRequest ex) {
 		log.info("{} occurred, userId = {}, startTime = {}", ex.getMessage(), ex.getUserId(),
 			ex.getStartTime());
-		return new ResponseEntity<>(ex.getMessage(), ex.getStatusCode());
+		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
 	}
 }
 
