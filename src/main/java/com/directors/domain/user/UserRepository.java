@@ -1,7 +1,9 @@
 package com.directors.domain.user;
 
+import java.util.Optional;
+
 public interface UserRepository {
-    User findUserById(String id);
+    Optional<User> findUserByIdAndUserStatus(String id, UserStatus userStatus);
 
     void saveUser(User user);
 }

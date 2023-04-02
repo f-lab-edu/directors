@@ -3,11 +3,13 @@ package com.directors.application.user;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
-import com.directors.presentation.user.request.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +19,7 @@ public class SignUpService {
     private final PasswordManager pm;
 
     @Transactional
-    public void signUp(SignUpRequest signUpRequest) {
-        User newUser = UserConverter.toEntity(signUpRequest);
-
+    public void signUp(User newUser) {
         isDuplicatedUser(newUser.getUserId());
 
         newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
@@ -29,8 +29,9 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        if (userRepository.findUserById(id) != null) {
+        Optional<User> user = userRepository.findUserByIdAndUserStatus(id, UserStatus.JOINED);
+        user.ifPresent(u -> {
             throw new DuplicateIdException(id);
-        }
+        });
     }
 }

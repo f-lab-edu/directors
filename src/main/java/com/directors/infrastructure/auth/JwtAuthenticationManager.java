@@ -12,6 +12,7 @@ import java.security.Key;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -34,8 +35,8 @@ public class JwtAuthenticationManager {
         return userId != null ? new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList()) : null;
     }
 
-    public String getUserIdByToken(String token) {
-        return getBodyByToken(token).getSubject();
+    public Optional<String> getUserIdByToken(String token) {
+        return Optional.ofNullable(getBodyByToken(token).getSubject());
     }
 
     public long getExpirationDayByToken(String token) {
