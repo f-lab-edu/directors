@@ -1,4 +1,4 @@
-package com.directors.application.field;
+package com.directors.application.specialty;
 
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyRepository;
