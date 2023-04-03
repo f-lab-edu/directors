@@ -5,5 +5,7 @@ import java.util.Optional;
 public interface RegionRepository {
     Optional<Region> findByUserId(String userId);
 
-    void save(Region region);
+    Region save(Region region);
+
+    boolean existsByUserId(String userId);
 }
