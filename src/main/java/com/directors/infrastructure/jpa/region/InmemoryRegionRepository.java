@@ -2,6 +2,7 @@ package com.directors.infrastructure.jpa.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -42,5 +43,18 @@ public class InmemoryRegionRepository implements RegionRepository {
             }
             regionMap.put(region.getId(), region);
         }
+    }
+
+    public List<Region> findRegionWithin(Region region, double distance) {
+        List<Region> result = new ArrayList<>();
+        Point point = region.getPoint();
+
+        for (Region oneRegion : regionMap.values()) {
+            if (oneRegion.getPoint().distance(point) <= distance) {
+                result.add(oneRegion);
+            }
+        }
+
+        return result;
     }
 }

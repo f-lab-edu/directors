@@ -11,4 +11,6 @@ public interface RegionRepository {
     Region save(Region region);
 
     void saveAll(List<Region> regions);
+
+    List<Region> findRegionWithin(Region region, double distance);
 }

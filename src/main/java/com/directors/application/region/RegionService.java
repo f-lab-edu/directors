@@ -2,6 +2,8 @@ package com.directors.application.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
+import com.directors.domain.user.UserRegion;
+import com.directors.domain.user.UserRegionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,6 +25,25 @@ import java.util.stream.Collectors;
 public class RegionService {
 
     private final RegionRepository regionRepository;
+    private final UserRegionRepository userRegionRepository;
+
+    @Transactional
+    public List<String> getNearestAddress(String userId, int distance) {
+        UserRegion userRegion = userRegionRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
+        Region region = regionRepository.findByRegionId(userRegion.getRegionId());
+
+        return getNearestRegion(region, distance)
+                .stream()
+                .map(reg -> reg.getAddress().getUnitAddress())
+                .collect(Collectors.toList());
+    }
+
+    private List<Region> getNearestRegion(Region region, int distance) {
+        List<Region> regionWithin = regionRepository.findRegionWithin(region, distance * 1000);
+        return regionWithin;
+    }
 
     @PostConstruct
     private void loadRegionData() {
