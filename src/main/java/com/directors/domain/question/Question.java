@@ -40,4 +40,13 @@ public class Question {
 			.createTime(LocalDateTime.now())
 			.build();
 	}
+
+	public void changeTitleAndContent(String title, String content) {
+		this.title = title;
+		this.content = content;
+	}
+
+	public void changeStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
+	}
 }

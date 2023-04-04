@@ -4,7 +4,9 @@ import org.springframework.http.HttpStatus;
 
 public enum ExceptionCode {
 	ClosedSchedule("동일한 시각에 예약한 사람이 있습니다", HttpStatus.CONFLICT),
-	InvalidMeetingTime("디렉터가 허용한 만남시간이 아닙니다.", HttpStatus.FORBIDDEN);
+	InvalidMeetingTime("디렉터가 허용한 만남시간이 아닙니다.", HttpStatus.FORBIDDEN),
+	QuestionNotFound("존재하지 않는 질문입니다.", HttpStatus.NOT_FOUND),
+	InvalidQuestionStatus("대기 상태의 질문만 수정 가능합니다.", HttpStatus.FORBIDDEN);
 
 	private final String message;
 	private final HttpStatus status;

@@ -13,11 +13,11 @@ import com.directors.domain.schedule.ScheduleStatus;
 
 @Repository
 public class InmemoryScheduleRepository implements ScheduleRepository {
-	private Long id = 1234L;
 	private final Map<Long, Schedule> map = new HashMap<>() {
 		{
 			put(1230L, new Schedule(1230L, LocalDateTime.of(2023, 4, 13, 14, 0), ScheduleStatus.OPENED, "dohyun123"));
 			put(1231L, new Schedule(1231L, LocalDateTime.of(2023, 4, 11, 20, 0), ScheduleStatus.CLOSED, "dohyun123"));
+			put(1232L, new Schedule(1232L, LocalDateTime.of(2023, 4, 12, 14, 0), ScheduleStatus.OPENED, "dohyun123"));
 		}
 	};
 

@@ -23,4 +23,8 @@ public class Schedule {
 			.userId(userId)
 			.build();
 	}
+
+	public void changeStatus(ScheduleStatus status) {
+		this.status = status;
+	}
 }

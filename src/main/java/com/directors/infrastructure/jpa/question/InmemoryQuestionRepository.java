@@ -5,6 +5,7 @@ import java.time.Month;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
@@ -58,5 +59,10 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 	public Question save(Question question) {
 		questionMap.put(++questionId, question);
 		return question;
+	}
+
+	@Override
+	public Optional<Question> findByQuestionId(Long questionId) {
+		return Optional.ofNullable(questionMap.get(questionId));
 	}
 }

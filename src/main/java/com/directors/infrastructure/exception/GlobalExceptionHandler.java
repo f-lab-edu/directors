@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
+import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
@@ -93,6 +95,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> invalidMeetingException(InvalidMeetingRequest ex) {
 		log.info("{} occurred, userId = {}, startTime = {}", ex.getMessage(), ex.getUserId(),
 			ex.getStartTime());
+		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
+	}
+
+	@ExceptionHandler(QuestionNotFoundException.class)
+	public ResponseEntity<?> questionNotFoundException(QuestionNotFoundException ex) {
+		log.info("QuestionNotFoundException. questionId = {}", ex.getQuestionId());
+		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
+	}
+
+	@ExceptionHandler(InvalidQuestionStatusException.class)
+	public ResponseEntity<?> invalidQuestionStatusException(InvalidQuestionStatusException ex) {
+		log.info("InvalidQuestionStatusException occurred. questionId = {}, questionStatus = {}", ex.getQuestionId(),
+			ex.getQuestionStatus());
 		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
 	}
 }
