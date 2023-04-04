@@ -49,16 +49,13 @@ public class QuestionService {
 	@Transactional
 	public void create(CreateQuestionRequest request, String questionerId) {
 		//시간이 올바른지 확인, userId로부터 schedule 가져오기.
-		validateTime(request.getStartTime(), request.getDirectorId());
-
-		//schedule 추가
-		Long scheduleId = 1234L;
-		scheduleRepository.save(
-			Schedule.of(scheduleId, request.getStartTime(), ScheduleStatus.CLOSED, request.getDirectorId()));
+		Schedule schedule = validateTime(request.getStartTime(), request.getDirectorId());
+		schedule.changeStatus(ScheduleStatus.CLOSED);
+		scheduleRepository.save(schedule);
 
 		//적절한 question class 만들어서 생성
 		questionRepository.save(Question.of(request.getTitle(), request.getContent(), request.getDirectorId(),
-			request.getCategory(), request.getStartTime(), questionerId, scheduleId));
+			request.getCategory(), request.getStartTime(), questionerId, schedule.getScheduleId()));
 	}
 
 	@Transactional
