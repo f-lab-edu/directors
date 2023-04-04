@@ -4,14 +4,11 @@ import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class InmemoryRegionRepository implements RegionRepository {
-    Map<String, Region> regionMap = new HashMap<>();
+    Map<Long, Region> regionMap = new HashMap<>();
 
     private long nextId = 1;
 
@@ -24,9 +21,14 @@ public class InmemoryRegionRepository implements RegionRepository {
     }
 
     @Override
+    public Region findByRegionId(Long regionId) {
+        return regionMap.get(regionId);
+    }
+
+    @Override
     public Region save(Region region) {
         if (region.getId() == null) {
-            region.setId(String.valueOf(nextId++));
+            region.setId(nextId++);
         }
         regionMap.put(region.getId(), region);
 
@@ -36,7 +38,7 @@ public class InmemoryRegionRepository implements RegionRepository {
     public void saveAll(List<Region> regions) {
         for (Region region : regions) {
             if (region.getId() == null) {
-                region.setId(String.valueOf(nextId++));
+                region.setId(nextId++);
             }
             regionMap.put(region.getId(), region);
         }

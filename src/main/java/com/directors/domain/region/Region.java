@@ -9,13 +9,13 @@ import org.locationtech.jts.geom.Point;
 @Getter
 @Builder
 public class Region {
-    private String id;
+    private Long id;
 
     private Address address;
 
     private Point point;
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

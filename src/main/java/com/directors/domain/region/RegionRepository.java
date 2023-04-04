@@ -6,6 +6,8 @@ import java.util.Optional;
 public interface RegionRepository {
     Optional<Region> findByFullAddress(String fullAddress);
 
+    Region findByRegionId(Long regionId);
+
     Region save(Region region);
 
     void saveAll(List<Region> regions);

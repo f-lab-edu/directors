@@ -12,7 +12,7 @@ public class UserRegion {
     private String id;
     private Address address;
     private String userId;
-    private String regionId;
+    private Long regionId;
 
     public void setId(String id) {
         this.id = id;
@@ -22,7 +22,7 @@ public class UserRegion {
         this.address = address;
     }
 
-    public static UserRegion of(Address address, String userId, String regionId) {
+    public static UserRegion of(Address address, String userId, Long regionId) {
         return UserRegion.builder()
                 .address(address)
                 .userId(userId)

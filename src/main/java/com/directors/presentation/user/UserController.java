@@ -27,7 +27,6 @@ public class UserController {
     private final UpdateUserService updateUserService;
     private final AuthenticateRegionService authenticateRegionService;
 
-
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         signUpService.signUp(signUpRequest.toEntity());
@@ -78,7 +77,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // TODO: 03.28 추후 당근과 같은 지역 인증 로직이 필요함. 요청 데이터로는 현재 유저의 좌표값이 올 것.
     @PostMapping("/authenticateRegion")
     public ResponseEntity<AuthenticateRegionResponse> authenticateRegion(@RequestBody AuthenticateRegionRequest request, @AuthenticationPrincipal String userIdByToken) {
         AuthenticateRegionResponse response = authenticateRegionService.authenticate(request, userIdByToken);

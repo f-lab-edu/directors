@@ -29,7 +29,13 @@ public class AuthenticateRegionService {
         Region regionByApi = regionRepository.findByFullAddress(address.getFullAddress())
                 .orElseThrow(() -> new NoSuchElementException());
 
-        UserRegion savedUserRegion = null;
+        Address savedAddress = saveAndGetUserRegionAddress(userId, regionByApi);
+
+        return new AuthenticateRegionResponse(savedAddress.getFullAddress(), savedAddress.getUnitAddress());
+    }
+
+    private Address saveAndGetUserRegionAddress(String userId, Region regionByApi) {
+        UserRegion savedUserRegion;
 
         if (userRegionRepository.existsByUserId(userId)) {
             UserRegion userRegion = userRegionRepository.findByUserId(userId).get();
@@ -42,6 +48,6 @@ public class AuthenticateRegionService {
             savedUserRegion = userRegionRepository.save(newUserRegion);
         }
 
-        return new AuthenticateRegionResponse(savedUserRegion.getAddress().getFullAddress(), savedUserRegion.getAddress().getUnitAddress());
+        return savedUserRegion.getAddress();
     }
 }
