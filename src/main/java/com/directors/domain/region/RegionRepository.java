@@ -1,11 +1,12 @@
 package com.directors.domain.region;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RegionRepository {
-    Optional<Region> findByUserId(String userId);
+    Optional<Region> findByFullAddress(String fullAddress);
 
     Region save(Region region);
 
-    boolean existsByUserId(String userId);
+    void saveAll(List<Region> regions);
 }

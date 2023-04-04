@@ -1,6 +1,6 @@
 package com.directors.infrastructure.api;
 
-import com.directors.domain.region.Region;
+import com.directors.domain.region.Address;
 import com.directors.domain.region.RegionApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ public class RegionApiClientManager implements RegionApiClient {
     String ADDRESS_REQUEST_URL;
 
     @Override
-    public Region findRegionNamesByLocation(double latitude, double longitude) {
+    public Address findRegionAddressByLocation(double latitude, double longitude) {
         //  TODO : 04.04 유효하지 않은 토큰에 대한 예외나, 기타 필요한 예외가 있는지 확인하고 핸들러에 추가할 수 있어야 함.
         UriComponents uri = UriComponentsBuilder
                 .fromHttpUrl(ADDRESS_REQUEST_URL)
@@ -38,10 +38,8 @@ public class RegionApiClientManager implements RegionApiClient {
         ArrayList<Object> result = (ArrayList<Object>) response.getBody().get("result");
         Map<String, String> resultMap = (Map<String, String>) result.get(0);
 
-        return Region
-                .builder()
-                .fullAddress(resultMap.get("full_addr"))
-                .unitAddress(resultMap.get("emdong_nm"))
-                .build();
+        String fullAddress = resultMap.get("sido_nm") + " " + resultMap.get("sgg_nm") + " " + resultMap.get("emdong_nm");
+
+        return new Address(fullAddress, resultMap.get("emdong_nm"));
     }
 }

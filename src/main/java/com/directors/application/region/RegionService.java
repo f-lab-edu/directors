@@ -1,39 +1,59 @@
 package com.directors.application.region;
 
 import com.directors.domain.region.Region;
-import com.directors.domain.region.RegionApiClient;
 import com.directors.domain.region.RegionRepository;
-import com.directors.presentation.region.request.AuthenticateRegionRequest;
-import com.directors.presentation.region.response.AuthenticateRegionResponse;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RegionService {
 
     private final RegionRepository regionRepository;
 
-    private final RegionApiClient regionApiClient;
+    @PostConstruct
+    private void loadRegionData() {
+        String pathPrefix = "/regionCSV/";
+        String pathSuffix = "_좌표.csv";
+        String[] regions = {
+                "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북"
+        };
 
-    @Transactional
-    public AuthenticateRegionResponse authenticate(AuthenticateRegionRequest request, String userId) {
-        Region regionByApi = regionApiClient.findRegionNamesByLocation(request.latitude(), request.longitude());
+        for (int i = 0; i < regions.length; i++) {
+            List<String> regionDataLines = null;
 
-        Region savedRegion = null;
+            InputStream inputStream = getClass().getResourceAsStream(pathPrefix + regions[i] + pathSuffix);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            regionDataLines = reader.lines().collect(Collectors.toList());
 
-        if (regionRepository.existsByUserId(userId)) {
-            Region regionByUserId = regionRepository.findByUserId(userId).get();
-            regionByUserId.updateAddressInfo(regionByApi.getFullAddress(), regionByApi.getUnitAddress());
+            List<Region> collect = regionDataLines.stream()
+                    .map(this::regionDataLineToRegion)
+                    .collect(Collectors.toList());
 
-            savedRegion = regionRepository.save(regionByUserId);
-        } else {
-            regionByApi.setUserId(userId);
-
-            savedRegion = regionRepository.save(regionByApi);
+            regionRepository.saveAll(collect);
         }
+    }
 
-        return new AuthenticateRegionResponse(savedRegion.getFullAddress(), savedRegion.getUnitAddress());
+    private Region regionDataLineToRegion(String regionLine) {
+        String[] lineSplit = regionLine.split(",");
+        return Region.of(lineSplit[0], lineSplit[1], coordinateToPoint(lineSplit[2], lineSplit[3]));
+    }
+
+    private Point coordinateToPoint(String longitude, String latitude) {
+        double lon = Double.parseDouble(longitude);
+        double lat = Double.parseDouble(latitude);
+        return new GeometryFactory().createPoint(new Coordinate(lon, lat));
     }
 }
