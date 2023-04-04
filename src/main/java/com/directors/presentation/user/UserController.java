@@ -1,10 +1,8 @@
 package com.directors.presentation.user;
 
-import com.directors.application.user.AuthenticationService;
-import com.directors.application.user.SignUpService;
-import com.directors.application.user.UpdateUserService;
-import com.directors.application.user.WithdrawService;
+import com.directors.application.user.*;
 import com.directors.presentation.user.request.*;
+import com.directors.presentation.user.response.AuthenticateRegionResponse;
 import com.directors.presentation.user.response.LogInResponse;
 import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import jakarta.validation.Valid;
@@ -27,6 +25,7 @@ public class UserController {
     private final AuthenticationService authenticationService;
     private final WithdrawService withdrawService;
     private final UpdateUserService updateUserService;
+    private final AuthenticateRegionService authenticateRegionService;
 
 
     @PostMapping("/signUp")
@@ -80,4 +79,9 @@ public class UserController {
     }
 
     // TODO: 03.28 추후 당근과 같은 지역 인증 로직이 필요함. 요청 데이터로는 현재 유저의 좌표값이 올 것.
+    @PostMapping("/authenticateRegion")
+    public ResponseEntity<AuthenticateRegionResponse> authenticateRegion(@RequestBody AuthenticateRegionRequest request, @AuthenticationPrincipal String userIdByToken) {
+        AuthenticateRegionResponse response = authenticateRegionService.authenticate(request, userIdByToken);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

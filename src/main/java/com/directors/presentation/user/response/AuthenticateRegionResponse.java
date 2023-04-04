@@ -1,4 +1,4 @@
-package com.directors.presentation.region.response;
+package com.directors.presentation.user.response;
 
 public record AuthenticateRegionResponse(
         String fullAddress,
