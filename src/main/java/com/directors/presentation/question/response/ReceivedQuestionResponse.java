@@ -1,4 +1,4 @@
-package com.directors.presentation.qeustion.response;
+package com.directors.presentation.question.response;
 
 import java.time.LocalDateTime;
 

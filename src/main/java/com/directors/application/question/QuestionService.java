@@ -14,9 +14,9 @@ import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.user.UserRepository;
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
-import com.directors.presentation.qeustion.request.CreateQuestionRequest;
-import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
-import com.directors.presentation.qeustion.response.SentQuestionResponse;
+import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.response.ReceivedQuestionResponse;
+import com.directors.presentation.question.response.SentQuestionResponse;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

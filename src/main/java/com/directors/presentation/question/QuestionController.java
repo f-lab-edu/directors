@@ -1,4 +1,4 @@
-package com.directors.presentation.qeustion;
+package com.directors.presentation.question;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.directors.application.question.QuestionService;
-import com.directors.presentation.qeustion.request.CreateQuestionRequest;
-import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
-import com.directors.presentation.qeustion.response.SentQuestionResponse;
+import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.response.ReceivedQuestionResponse;
+import com.directors.presentation.question.response.SentQuestionResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
