@@ -1,5 +1,7 @@
 package com.directors.infrastructure.api;
 
+import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class RegionApiTokenProvider {
     @Value("${CONSUMER_KEY}")
     String CONSUMER_KEY;
@@ -22,8 +25,7 @@ public class RegionApiTokenProvider {
 
     String apiAccessToken;
 
-    // TODO: 04.04 토큰의 유효 시간은 2시간이므로 2시간 마다 혹은 토큰에 의한 예외 발생 시 다시 토큰을 받아올 수 있는 로직이 필요.
-    private void fetchApiAccessTokenFromAPI() {
+    public void fetchApiAccessTokenFromAPI() {
         UriComponents uri = UriComponentsBuilder
                 .fromHttpUrl(TOKEN_REQUEST_URL)
                 .queryParam("consumer_key", CONSUMER_KEY)
@@ -32,8 +34,11 @@ public class RegionApiTokenProvider {
 
         ResponseEntity<Map> response = ApiSender.send(HttpMethod.GET, uri);
 
-        Map<String, String> resultMap = (Map<String, String>) response.getBody().get("result");
+        if (response.getBody().get("errMsg").equals("인증 정보가 존재하지 않습니다")) {
+            throw new ExteralApiAuthenticationException("Key verification is required for SGIS API");
+        }
 
+        Map<String, String> resultMap = (Map<String, String>) response.getBody().get("result");
         apiAccessToken = resultMap.get("accessToken");
     }
 
