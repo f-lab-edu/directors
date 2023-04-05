@@ -57,7 +57,12 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 
 	@Override
 	public Question save(Question question) {
-		questionMap.put(++questionId, question);
+		if (question.isNewQuestion()) {
+			question.setId(++questionId);
+		}
+
+		questionMap.put(question.getId(), question);
+
 		return question;
 	}
 

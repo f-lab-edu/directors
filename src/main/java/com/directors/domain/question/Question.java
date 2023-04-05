@@ -49,4 +49,12 @@ public class Question {
 	public void changeStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
 	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public boolean isNewQuestion() {
+		return this.id == null;
+	}
 }
