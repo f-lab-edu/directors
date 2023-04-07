@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -101,7 +102,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(HttpClientErrorException.class)
     public ErrorMessage httpClientErrorException(HttpClientErrorException ex) {
-        log.warn("HttpClientErrorException occurred. " + ex.getMessage());
+        String errorMessage = "HttpClientErrorException occurred. " + ex.getStatusCode();
+        if (ex.getStatusCode().equals("412 PRECONDITION_FAILED")) {
+            errorMessage += "need to check api request parameter.";
+        }
+
+        log.warn(errorMessage);
         return new ErrorMessage("잠시 후 다시 시도해주세요");
     }
 
@@ -109,6 +115,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExteralApiAuthenticationException.class)
     public ErrorMessage exteralApiAuthenticationException(ExteralApiAuthenticationException ex) {
         log.error("ExteralApiAuthenticationException occurred. " + ex.getMessage());
+        return new ErrorMessage("잠시 후 다시 시도해주세요");
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(HttpServerErrorException.class)
+    public ErrorMessage httpServerErrorException(HttpServerErrorException ex) {
+        log.error("HttpServerErrorException occurred. " + ex.getStatusCode());
         return new ErrorMessage("잠시 후 다시 시도해주세요");
     }
 
