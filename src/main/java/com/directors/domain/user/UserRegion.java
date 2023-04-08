@@ -17,6 +17,9 @@ public class UserRegion {
     public void setId(String id) {
         this.id = id;
     }
+    public void setRegionId(Long regionId) {
+        this.regionId = regionId;
+    }
 
     public void setAddress(Address address) {
         this.address = address;

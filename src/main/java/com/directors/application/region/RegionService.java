@@ -27,24 +27,6 @@ public class RegionService {
     private final RegionRepository regionRepository;
     private final UserRegionRepository userRegionRepository;
 
-    @Transactional
-    public List<String> getNearestAddress(String userId, int distance) {
-        UserRegion userRegion = userRegionRepository
-                .findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
-        Region region = regionRepository.findByRegionId(userRegion.getRegionId());
-
-        return getNearestRegion(region, distance)
-                .stream()
-                .map(reg -> reg.getAddress().getUnitAddress())
-                .collect(Collectors.toList());
-    }
-
-    private List<Region> getNearestRegion(Region region, int distance) {
-        List<Region> regionWithin = regionRepository.findRegionWithin(region, distance * 1000);
-        return regionWithin;
-    }
-
     @PostConstruct
     private void loadRegionData() {
         String pathPrefix = "/regionCSV/";
@@ -68,6 +50,19 @@ public class RegionService {
         }
     }
 
+    @Transactional
+    public List<String> getNearestAddress(String userId, int distance) {
+        var userRegion = userRegionRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
+        var region = regionRepository.findByRegionId(userRegion.getRegionId()).orElseThrow();
+
+        return getNearestRegion(region, distance)
+                .stream()
+                .map(reg -> reg.getAddress().unitAddress())
+                .collect(Collectors.toList());
+    }
+
     private Region regionDataLineToRegion(String regionLine) {
         String[] lineSplit = regionLine.split(",");
         return Region.of(lineSplit[0], lineSplit[1], coordinateToPoint(lineSplit[2], lineSplit[3]));
@@ -77,5 +72,10 @@ public class RegionService {
         double lon = Double.parseDouble(longitude);
         double lat = Double.parseDouble(latitude);
         return new GeometryFactory().createPoint(new Coordinate(lon, lat));
+    }
+
+    private List<Region> getNearestRegion(Region region, int distance) {
+        List<Region> regionWithin = regionRepository.findRegionWithin(region, distance * 1000);
+        return regionWithin;
     }
 }

@@ -17,13 +17,13 @@ public class InmemoryRegionRepository implements RegionRepository {
     public Optional<Region> findByFullAddress(String fullAddress) {
         return regionMap.values()
                 .stream()
-                .filter(r -> r.getAddress().getFullAddress().equals(fullAddress))
+                .filter(r -> r.getAddress().fullAddress().equals(fullAddress))
                 .findFirst();
     }
 
     @Override
-    public Region findByRegionId(Long regionId) {
-        return regionMap.get(regionId);
+    public Optional<Region> findByRegionId(Long regionId) {
+        return Optional.ofNullable(regionMap.get(regionId));
     }
 
     @Override
