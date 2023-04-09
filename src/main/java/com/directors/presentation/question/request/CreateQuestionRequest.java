@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.directors.domain.question.Question;
+import com.directors.domain.question.QuestionStatus;
+
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,4 +31,20 @@ public class CreateQuestionRequest {
 	private LocalDateTime startTime;
 	@NotBlank(message = "카테고리가 입력되지 않았습니다.")
 	private String category;
+
+	public Question toEntity(String questionerId, Long scheduleId) {
+		return Question.builder()
+			.title(title)
+			.content(content)
+			.status(QuestionStatus.WAITING)
+			.questionCheck(false)
+			.directorCheck(false)
+			.questionerId(questionerId)
+			.directorId(directorId)
+			.category(category)
+			.scheduledId(scheduleId)
+			.startTime(startTime)
+			.createTime(LocalDateTime.now())
+			.build();
+	}
 }

@@ -57,7 +57,8 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 
 	@Override
 	public Question save(Question question) {
-		if (question.isNewQuestion()) {
+		boolean isNewQuestion = question.isNewQuestion();
+		if (isNewQuestion) {
 			question.setId(++questionId);
 		}
 
@@ -69,5 +70,14 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 	@Override
 	public Optional<Question> findByQuestionId(Long questionId) {
 		return Optional.ofNullable(questionMap.get(questionId));
+	}
+
+	@Override
+	public Optional<Question> findByQuestionIdAndDirectorId(String questionerId, String directorId) {
+		return questionMap.values()
+			.stream()
+			.filter(question -> question.getQuestionerId().equals(questionerId) && question.getDirectorId()
+				.equals(directorId))
+			.findFirst();
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
+import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
@@ -108,6 +109,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> invalidQuestionStatusException(InvalidQuestionStatusException ex) {
 		log.info("InvalidQuestionStatusException occurred. questionId = {}, questionStatus = {}", ex.getQuestionId(),
 			ex.getQuestionStatus());
+		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
+	}
+
+	@ExceptionHandler(QuestionDuplicateException.class)
+	public ResponseEntity<?> questionDuplicateException(QuestionDuplicateException ex) {
+		log.info("questionDuplicateException occurred. questionId = {}", ex.getQuestionId());
 		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
 	}
 }

@@ -12,4 +12,6 @@ public interface QuestionRepository {
 	Question save(Question question);
 
 	Optional<Question> findByQuestionId(Long questionId);
+
+	Optional<Question> findByQuestionIdAndDirectorId(String questionerId, String directorId);
 }
