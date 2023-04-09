@@ -25,29 +25,37 @@ public class AuthenticateRegionService {
 
     @Transactional
     public AuthenticateRegionResponse authenticate(AuthenticateRegionRequest request, String userId) {
-        Address address = regionApiClient.findRegionAddressByLocation(request.latitude(), request.longitude());
-        Region regionByApi = regionRepository.findByFullAddress(address.getFullAddress())
+        var addressByApi = regionApiClient.findRegionAddressByLocation(request.latitude(), request.longitude());
+        var region = regionRepository.findByFullAddress(addressByApi.fullAddress())
                 .orElseThrow(() -> new NoSuchElementException());
 
-        Address savedAddress = saveAndGetUserRegionAddress(userId, regionByApi);
+        var userAddress = updateUserRegionAddress(userId, region);
 
-        return new AuthenticateRegionResponse(savedAddress.getFullAddress(), savedAddress.getUnitAddress());
+        return new AuthenticateRegionResponse(userAddress.fullAddress(), userAddress.unitAddress());
     }
 
-    private Address saveAndGetUserRegionAddress(String userId, Region regionByApi) {
-        UserRegion savedUserRegion;
-
+    private Address updateUserRegionAddress(String userId, Region region) {
         if (userRegionRepository.existsByUserId(userId)) {
-            UserRegion userRegion = userRegionRepository.findByUserId(userId).get();
-            userRegion.setAddress(regionByApi.getAddress());
-
-            savedUserRegion = userRegionRepository.save(userRegion);
-        } else {
-            UserRegion newUserRegion = UserRegion.of(regionByApi.getAddress(), userId, regionByApi.getId());
-
-            savedUserRegion = userRegionRepository.save(newUserRegion);
+            return updateExistUserRegion(userId, region).getAddress();
         }
-
-        return savedUserRegion.getAddress();
+        return saveUserRegion(userId, region).getAddress();
     }
+
+    private UserRegion saveUserRegion(String userId, Region region) {
+        UserRegion savedUserRegion;
+        var newUserRegion = UserRegion.of(region.getAddress(), userId, region.getId());
+
+        savedUserRegion = userRegionRepository.save(newUserRegion);
+        return savedUserRegion;
+    }
+
+    private UserRegion updateExistUserRegion(String userId, Region region) {
+        var userRegion = userRegionRepository.findByUserId(userId).get();
+
+        userRegion.setAddress(region.getAddress());
+        userRegion.setRegionId(region.getId());
+
+        return userRegionRepository.save(userRegion);
+    }
+
 }

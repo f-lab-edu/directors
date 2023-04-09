@@ -38,11 +38,11 @@ public class RegionService {
         for (int i = 0; i < regions.length; i++) {
             List<String> regionDataLines = null;
 
-            InputStream inputStream = getClass().getResourceAsStream(pathPrefix + regions[i] + pathSuffix);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            var inputStream = getClass().getResourceAsStream(pathPrefix + regions[i] + pathSuffix);
+            var reader = new BufferedReader(new InputStreamReader(inputStream));
             regionDataLines = reader.lines().collect(Collectors.toList());
 
-            List<Region> collect = regionDataLines.stream()
+            var collect = regionDataLines.stream()
                     .map(this::regionDataLineToRegion)
                     .collect(Collectors.toList());
 
