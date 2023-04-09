@@ -1,7 +1,7 @@
 package com.directors.presentation.specialty;
 
 
-import com.directors.application.field.SpecialtyService;
+import com.directors.application.specialty.SpecialtyService;
 import com.directors.presentation.specialty.request.CreateSpecialtyRequest;
 import com.directors.presentation.specialty.request.UpdateSpecialtyRequest;
 import lombok.RequiredArgsConstructor;
