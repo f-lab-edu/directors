@@ -1,19 +1,22 @@
-package com.directors.presentation.qeustion;
+package com.directors.presentation.question;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.directors.application.question.QuestionService;
-import com.directors.presentation.qeustion.request.CreateQuestionRequest;
-import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
-import com.directors.presentation.qeustion.response.SentQuestionResponse;
+import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.request.EditQuestionRequest;
+import com.directors.presentation.question.response.ReceivedQuestionResponse;
+import com.directors.presentation.question.response.SentQuestionResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +47,13 @@ public class QuestionController {
 		@RequestBody @Valid CreateQuestionRequest createQuestionRequest) {
 
 		questionService.create(createQuestionRequest, loginId);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PutMapping("/{questionId}")
+	public ResponseEntity<?> editQuestion(@PathVariable Long questionId,
+		@RequestBody @Valid EditQuestionRequest editQuestionRequest) {
+		questionService.edit(questionId, editQuestionRequest);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
