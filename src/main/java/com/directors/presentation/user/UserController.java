@@ -2,10 +2,7 @@ package com.directors.presentation.user;
 
 import com.directors.application.user.*;
 import com.directors.presentation.user.request.*;
-import com.directors.presentation.user.response.AuthenticateRegionResponse;
-import com.directors.presentation.user.response.GetDirectorResponse;
-import com.directors.presentation.user.response.LogInResponse;
-import com.directors.presentation.user.response.RefreshAuthenticationResponse;
+import com.directors.presentation.user.response.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class UserController {
     private final WithdrawService withdrawService;
     private final UpdateUserService updateUserService;
     private final AuthenticateRegionService authenticateRegionService;
-    private final SearchService searchService;
+    private final SearchDiretorService searchDiretorService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -90,7 +89,13 @@ public class UserController {
             @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.")
             @Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.") String directorId
     ) {
-        GetDirectorResponse director = searchService.getDirector(directorId);
+        GetDirectorResponse director = searchDiretorService.getDirector(directorId);
         return new ResponseEntity<>(director, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchDirector")
+    public ResponseEntity<List<SearchDirectorResponse>> searchDirector(@Valid @RequestBody SearchDirectorRequest request, @AuthenticationPrincipal String userIdByToken) {
+        List<SearchDirectorResponse> responsesByPaging = searchDiretorService.searchDirector(request, userIdByToken);
+        return new ResponseEntity<>(responsesByPaging, HttpStatus.OK);
     }
 }

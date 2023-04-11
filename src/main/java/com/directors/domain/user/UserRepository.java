@@ -8,5 +8,4 @@ public interface UserRepository {
     Optional<User> find(String id);
 
     void save(User user);
-
 }
