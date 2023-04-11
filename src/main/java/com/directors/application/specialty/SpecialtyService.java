@@ -23,9 +23,9 @@ public class SpecialtyService {
     @Transactional
     public void updateSpecialty(Specialty requestSpecialty) {
         var specialtyByFieldId = specialtyRepository.findByFieldId(requestSpecialty.getId());
-        var specialty = specialtyByFieldId.orElseThrow(() -> new NoSuchElementException());
+        var specialty = specialtyByFieldId.orElseThrow(NoSuchElementException::new);
 
-        specialty.updateSpecialtyInfo(requestSpecialty.getProperty(), requestSpecialty.getDescription());
+        specialty.setSpecialtyInfo(requestSpecialty.getSpecialtyInfo().property(), requestSpecialty.getSpecialtyInfo().description());
 
         specialtyRepository.save(specialty);
     }

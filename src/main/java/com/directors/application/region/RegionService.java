@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class RegionService {
+    private static final int KILOMETER = 1000;
 
     private final RegionRepository regionRepository;
     private final UserRegionRepository userRegionRepository;
@@ -74,6 +75,6 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(Region region, int distance) {
-        return regionRepository.findRegionWithin(region, distance * 1000);
+        return regionRepository.findRegionWithin(region, distance * KILOMETER);
     }
 }
