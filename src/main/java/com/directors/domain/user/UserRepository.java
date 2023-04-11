@@ -3,7 +3,10 @@ package com.directors.domain.user;
 import java.util.Optional;
 
 public interface UserRepository {
-    Optional<User> findUserByIdAndUserStatus(String id, UserStatus userStatus);
+    Optional<User> findByIdAndUserStatus(String id, UserStatus userStatus);
 
-    void saveUser(User user);
+    Optional<User> find(String id);
+
+    void save(User user);
+
 }

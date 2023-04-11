@@ -35,7 +35,7 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        Optional<User> user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
@@ -82,7 +82,7 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        Optional<User> user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        Optional<User> user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
         user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 

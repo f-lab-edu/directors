@@ -29,7 +29,7 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        Optional<User> user = userRepository.findUserByIdAndUserStatus(userId, UserStatus.JOINED);
+        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
 
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
@@ -37,7 +37,7 @@ public class WithdrawService {
 
         loadedUser.withdrawal(new Date());
 
-        userRepository.saveUser(loadedUser);
+        userRepository.save(loadedUser);
 
         tokenRepository.deleteAllTokenByUserId(loadedUser.getUserId());
     }

@@ -23,13 +23,18 @@ public class InmemoryUserRepository implements UserRepository {
     }};
 
     @Override
-    public Optional<User> findUserByIdAndUserStatus(String id, UserStatus userStatus) {
+    public Optional<User> findByIdAndUserStatus(String id, UserStatus userStatus) {
         User user = userMap.get(id);
         return Optional.ofNullable(user).filter(u -> u.getStatus().equals(userStatus));
     }
 
     @Override
-    public void saveUser(User user) {
+    public Optional<User> find(String id) {
+        return Optional.ofNullable(userMap.get(id));
+    }
+
+    @Override
+    public void save(User user) {
         userMap.put(user.getUserId(), user);
     }
 }
