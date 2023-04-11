@@ -1,6 +1,7 @@
 package com.directors.presentation.region;
 
 import com.directors.application.region.RegionService;
+import com.directors.domain.region.Address;
 import com.directors.presentation.region.response.NearestAddressResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class RegionController {
 
     @GetMapping("/nearestAddress/{distance}")
     public ResponseEntity<NearestAddressResponse> getNearestAddress(@PathVariable int distance, @AuthenticationPrincipal String userIdByToken) {
-        List<String> nearestAddress = regionService.getNearestAddress(userIdByToken, distance);
+        List<Address> nearestAddress = regionService.getNearestAddress(userIdByToken, distance);
         return new ResponseEntity<>(new NearestAddressResponse(nearestAddress), HttpStatus.OK);
     }
 }

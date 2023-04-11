@@ -3,6 +3,7 @@ package com.directors.presentation.user;
 import com.directors.application.user.*;
 import com.directors.presentation.user.request.*;
 import com.directors.presentation.user.response.AuthenticateRegionResponse;
+import com.directors.presentation.user.response.GetDirectorResponse;
 import com.directors.presentation.user.response.LogInResponse;
 import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class UserController {
     private final WithdrawService withdrawService;
     private final UpdateUserService updateUserService;
     private final AuthenticateRegionService authenticateRegionService;
+    private final SearchService searchService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -81,5 +83,14 @@ public class UserController {
     public ResponseEntity<AuthenticateRegionResponse> authenticateRegion(@RequestBody AuthenticateRegionRequest request, @AuthenticationPrincipal String userIdByToken) {
         AuthenticateRegionResponse response = authenticateRegionService.authenticate(request, userIdByToken);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/getDirector/{directorId}")
+    public ResponseEntity<GetDirectorResponse> getDirector(
+            @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.")
+            @Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.") String directorId
+    ) {
+        GetDirectorResponse director = searchService.getDirector(directorId);
+        return new ResponseEntity<>(director, HttpStatus.OK);
     }
 }

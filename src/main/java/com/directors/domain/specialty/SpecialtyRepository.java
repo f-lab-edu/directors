@@ -1,12 +1,15 @@
 package com.directors.domain.specialty;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SpecialtyRepository {
-    Optional<Specialty> findSpecialtyByFieldId(String specialtyId);
+    Optional<Specialty> findByFieldId(String specialtyId);
 
-    void saveSpecialty(Specialty specialty);
+    List<Specialty> findByUserId(String userId);
 
-    void deleteSpecialty(String specialtyId);
+    void save(Specialty specialty);
+
+    void delete(String specialtyId);
 
 }

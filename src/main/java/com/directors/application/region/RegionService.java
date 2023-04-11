@@ -1,8 +1,8 @@
 package com.directors.application.region;
 
+import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
-import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +50,7 @@ public class RegionService {
     }
 
     @Transactional
-    public List<String> getNearestAddress(String userId, int distance) {
+    public List<Address> getNearestAddress(String userId, int distance) {
         var userRegion = userRegionRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
@@ -59,7 +58,7 @@ public class RegionService {
 
         return getNearestRegion(region, distance)
                 .stream()
-                .map(reg -> reg.getAddress().unitAddress())
+                .map(reg -> reg.getAddress())
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +74,6 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(Region region, int distance) {
-        List<Region> regionWithin = regionRepository.findRegionWithin(region, distance * 1000);
-        return regionWithin;
+        return regionRepository.findRegionWithin(region, distance * 1000);
     }
 }

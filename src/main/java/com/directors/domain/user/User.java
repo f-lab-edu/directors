@@ -25,9 +25,7 @@ public class User {
 
     private final String phoneNumber;
 
-    private String region;
-
-    private long reward;
+    private Long reward;
 
     private UserStatus status;
 
