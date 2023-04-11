@@ -25,10 +25,15 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+
+    implementation 'org.springframework.retry:spring-retry'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.locationtech.proj4j:proj4j:1.2.3'
 }
 
 tasks.named('test') {

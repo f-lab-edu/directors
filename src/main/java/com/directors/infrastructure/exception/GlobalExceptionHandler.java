@@ -9,9 +9,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
+import com.directors.infrastructure.exception.api.ExternalApiServerException;
+import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
@@ -97,6 +102,46 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		log.info("{} occurred, userId = {}, startTime = {}", ex.getMessage(), ex.getUserId(),
 			ex.getStartTime());
 		return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
+	}
+
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	@ExceptionHandler(HttpClientErrorException.class)
+	public ErrorMessage httpClientErrorException(HttpClientErrorException ex) {
+		String errorMessage = "HttpClientErrorException occurred. " + ex.getStatusCode();
+		if (ex.getStatusCode().equals("412 PRECONDITION_FAILED")) {
+			errorMessage += "need to check api request parameter.";
+		}
+
+		log.warn(errorMessage);
+		return new ErrorMessage("잠시 후 다시 시도해주세요");
+	}
+
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	@ExceptionHandler(ExteralApiAuthenticationException.class)
+	public ErrorMessage exteralApiAuthenticationException(ExteralApiAuthenticationException ex) {
+		log.error("ExteralApiAuthenticationException occurred. " + ex.getMessage());
+		return new ErrorMessage("잠시 후 다시 시도해주세요");
+	}
+
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	@ExceptionHandler(HttpServerErrorException.class)
+	public ErrorMessage httpServerErrorException(HttpServerErrorException ex) {
+		log.error("HttpServerErrorException occurred. " + ex.getStatusCode());
+		return new ErrorMessage("잠시 후 다시 시도해주세요");
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NotFoundException.class)
+	public ErrorMessage notFoundException(NotFoundException ex) {
+		log.info("NotFoundException occurred.");
+		return new ErrorMessage(ex.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+	@ExceptionHandler(ExternalApiServerException.class)
+	public ErrorMessage externalApiServerException(NotFoundException ex) {
+		log.warn("ExternalApiServerException occurred. An exception occurred in the sgis server.");
+		return new ErrorMessage("잠시 후 다시 시도해주세요");
 	}
 
 	@ExceptionHandler(QuestionNotFoundException.class)
