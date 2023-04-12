@@ -2,6 +2,7 @@ package com.directors.application.question;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -10,13 +11,15 @@ import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.question.QuestionStatus;
 import com.directors.domain.schedule.Schedule;
 import com.directors.domain.schedule.ScheduleRepository;
-import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.user.UserRepository;
 import com.directors.infrastructure.exception.ExceptionCode;
+import com.directors.infrastructure.exception.question.QuestionDuplicateException;
+import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
-import com.directors.presentation.qeustion.request.CreateQuestionRequest;
-import com.directors.presentation.qeustion.response.ReceivedQuestionResponse;
-import com.directors.presentation.qeustion.response.SentQuestionResponse;
+import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.request.EditQuestionRequest;
+import com.directors.presentation.question.response.ReceivedQuestionResponse;
+import com.directors.presentation.question.response.SentQuestionResponse;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,27 +49,46 @@ public class QuestionService {
 	@Transactional
 	public void create(CreateQuestionRequest request, String questionerId) {
 		//시간이 올바른지 확인, userId로부터 schedule 가져오기.
-		validateTime(request.getStartTime(), request.getDirectorId());
+		Schedule schedule = validateTime(request.getStartTime(), request.getDirectorId());
+		Optional<Question> optionalQuestion = questionRepository.findByQuestionIdAndDirectorId(questionerId,
+			request.getDirectorId());
+		// 동일한 디렉터에게 질문 불가능.
+		optionalQuestion.ifPresent(question -> {
+			throw new QuestionDuplicateException(ExceptionCode.QuestionDuplicated, question.getId());
+		});
 
-		//schedule 추가
-		Long scheduleId = 1234L;
-		scheduleRepository.save(
-			Schedule.of(scheduleId, request.getStartTime(), ScheduleStatus.CLOSED, request.getDirectorId()));
-
-		//적절한 question class 만들어서 생성
-		questionRepository.save(Question.of(request.getTitle(), request.getContent(), request.getDirectorId(),
-			request.getCategory(), request.getStartTime(), questionerId, scheduleId));
+		Question question = request.toEntity(questionerId, schedule.getScheduleId());
+		questionRepository.save(question);
 	}
 
-	private void validateTime(LocalDateTime startTime, String userId) {
+	@Transactional
+	public void edit(Long questionId, EditQuestionRequest editQuestionRequest) {
+		Question question = questionRepository.findByQuestionId(questionId)
+			.orElseThrow(() -> {
+				throw new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId);
+			});
+
+		question.checkUneditableStatus();
+
+		// 예약시간이 변경되었을 경우에 처리.
+		boolean isChangedTime = question.isChangedTime(editQuestionRequest.getStartTime());
+		if (isChangedTime) {
+			// 변경하는 시간대 validation
+			validateTime(editQuestionRequest.getStartTime(), editQuestionRequest.getDirectorId());
+		}
+
+		question.editQuestion(editQuestionRequest.getTitle(), editQuestionRequest.getContent(),
+			editQuestionRequest.getStartTime());
+		questionRepository.save(question);
+	}
+
+	private Schedule validateTime(LocalDateTime startTime, String userId) {
 		Schedule schedule = scheduleRepository.findByStartTimeAndUserId(startTime, userId)
 			.orElseThrow(() -> {
 				throw new InvalidMeetingRequest(ExceptionCode.InvalidMeetingTime, startTime, userId);
 			});
 
-		if (schedule.getStatus() != ScheduleStatus.OPENED) {
-			throw new InvalidMeetingRequest(ExceptionCode.ClosedSchedule, startTime, userId);
-		}
-
+		schedule.checkChangeableScheduleTime();
+		return schedule;
 	}
 }

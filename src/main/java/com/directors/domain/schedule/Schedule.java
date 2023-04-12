@@ -2,6 +2,9 @@ package com.directors.domain.schedule;
 
 import java.time.LocalDateTime;
 
+import com.directors.infrastructure.exception.ExceptionCode;
+import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,5 +25,11 @@ public class Schedule {
 			.status(status)
 			.userId(userId)
 			.build();
+	}
+
+	public void checkChangeableScheduleTime() {
+		if (this.status == ScheduleStatus.CLOSED) {
+			throw new InvalidMeetingRequest(ExceptionCode.ClosedSchedule, startTime, userId);
+		}
 	}
 }

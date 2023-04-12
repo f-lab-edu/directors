@@ -14,13 +14,15 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InmemoryScheduleRepository implements ScheduleRepository {
-    private Long id = 1234L;
     private final Map<Long, Schedule> map = new HashMap<>() {
-        {
-            put(1230L, new Schedule(1230L, LocalDateTime.of(2023, 4, 13, 14, 0), ScheduleStatus.OPENED, "dohyun123"));
-            put(1231L, new Schedule(1231L, LocalDateTime.of(2023, 4, 11, 20, 0), ScheduleStatus.CLOSED, "dohyun123"));
-        }
+      {
+        put(1230L, new Schedule(1230L, LocalDateTime.of(2023, 4, 13, 14, 0), ScheduleStatus.OPENED, "dohyun123"));
+        put(1231L, new Schedule(1231L, LocalDateTime.of(2023, 4, 11, 20, 0), ScheduleStatus.CLOSED, "dohyun123"));
+        put(1232L, new Schedule(1232L, LocalDateTime.of(2023, 4, 12, 14, 0), ScheduleStatus.OPENED, "dohyun123"));
+      }
     };
+
+    private Long id = 1234L;
 
     @Override
     public Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId) {
@@ -38,7 +40,7 @@ public class InmemoryScheduleRepository implements ScheduleRepository {
                 .filter(schedule -> schedule.getUserId().equals(userId) && schedule.getStatus().equals(scheduleStatus))
                 .collect(Collectors.toList());
     }
-
+    
     @Override
     public boolean existsByUserIdAndScheduleStatus(String userId, ScheduleStatus scheduleStatus) {
         return map.values()

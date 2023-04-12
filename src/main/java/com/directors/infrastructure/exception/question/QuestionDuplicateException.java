@@ -7,19 +7,19 @@ import com.directors.infrastructure.exception.ExceptionCode;
 import lombok.Getter;
 
 @Getter
-public class QuestionNotFoundException extends RuntimeException {
-	private Long questionId;
+public class QuestionDuplicateException extends RuntimeException {
 	private String message;
 	private HttpStatus statusCode;
+	private Long questionId;
 
-	public QuestionNotFoundException() {
+	public QuestionDuplicateException() {
 		super();
 	}
 
-	public QuestionNotFoundException(ExceptionCode exceptionCode, Long questionId) {
+	public QuestionDuplicateException(ExceptionCode exceptionCode, Long questionId) {
 		super(exceptionCode.getMessage());
-		this.questionId = questionId;
 		this.message = exceptionCode.getMessage();
 		this.statusCode = exceptionCode.getStatus();
+		this.questionId = questionId;
 	}
 }
