@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,7 +87,8 @@ public class SearchDiretorService {
         List<UserRegion> userRegion = new ArrayList<>();
 
         for (Address address : nearestAddress) {
-            userRegion.addAll(userRegionRepository.findByFullAddress(address.fullAddress()));
+            userRegion.addAll(
+                    userRegionRepository.findByFullAddress(address.fullAddress()));
         }
 
         if (userRegion.size() == 0) {
@@ -105,66 +104,44 @@ public class SearchDiretorService {
         if (searchText == null) {
             return userIds;
         }
-
-        Set<String> filteredIds = new HashSet<>();
-
-        for (String id : userIds) {
-            addMatchingUserIds(searchText, filteredIds, id);
-            addMatchingSpecialtyUserIds(searchText, filteredIds, id);
-        }
-
-        return new ArrayList<>(filteredIds);
+        return userIds.stream()
+                .filter(id -> isMatchingUserExistsWithText(searchText, id) || isMatchingSpecialtyWithText(searchText, id))
+                .collect(Collectors.toList());
     }
 
-    private void addMatchingUserIds(String searchText, Set<String> filteredIds, String id) {
-        User user = userRepository.findByIdAndUserStatus(id, UserStatus.JOINED).orElseThrow();
-
-        if (user.getUserId().contains(searchText) || user.getNickname().contains(searchText)) {
-            filteredIds.add(id);
-        }
+    private boolean isMatchingUserExistsWithText(String searchText, String id) {
+        return userRepository
+                .findByIdAndUserStatus(id, UserStatus.JOINED)
+                .filter(user -> user.getUserId().contains(searchText) || user.getNickname().contains(searchText))
+                .isPresent();
     }
 
-    private void addMatchingSpecialtyUserIds(String searchText, Set<String> filteredIds, String id) {
-        specialtyRepository
+    private boolean isMatchingSpecialtyWithText(String searchText, String id) {
+        return specialtyRepository
                 .findByUserId(id)
                 .stream()
-                .filter(sp -> sp.getSpecialtyInfo().description().contains(searchText))
-                .findFirst().ifPresent(sp -> filteredIds.add(id));
+                .anyMatch(sp -> sp.getSpecialtyInfo().description().contains(searchText));
     }
 
     private List<String> filterUserIdBySpecialtyProperty(List<String> userIds, SpecialtyProperty specialtyProperty) {
-        List<String> filteredIds = new ArrayList<>();
+        return userIds.stream()
+                .filter(id -> hasSpecialtyProperty(id, specialtyProperty))
+                .collect(Collectors.toList());
+    }
 
-        for (String id : userIds) {
-            boolean hasSpecialtyPropertyId = specialtyRepository
-                    .findByUserId(id)
-                    .stream()
-                    .anyMatch(specialty -> specialty.getSpecialtyInfo().property().equals(specialtyProperty));
-
-            if (hasSpecialtyPropertyId) {
-                filteredIds.add(id);
-            }
-        }
-
-        return filteredIds;
+    private boolean hasSpecialtyProperty(String id, SpecialtyProperty specialtyProperty) {
+        return specialtyRepository.findByUserId(id).stream()
+                .anyMatch(specialty ->
+                        specialty.getSpecialtyInfo().property().equals(specialtyProperty));
     }
 
     private List<String> filterUserIdBySchedule(List<String> userIds, boolean hasSchedule) {
         if (!hasSchedule) {
             return userIds;
         }
-
-        List<String> filteredIds = new ArrayList<>();
-
-        for (String id : userIds) {
-            boolean hasScheduleId = scheduleRepository
-                    .existsByUserIdAndScheduleStatus(id, ScheduleStatus.OPENED);
-            if (hasScheduleId) {
-                filteredIds.add(id);
-            }
-        }
-
-        return filteredIds;
+        return userIds.stream()
+                .filter(id -> scheduleRepository.existsByUserIdAndScheduleStatus(id, ScheduleStatus.OPENED))
+                .collect(Collectors.toList());
     }
 
     private static List<SearchDirectorResponse> paging(int size, int page, List<SearchDirectorResponse> responses) {
