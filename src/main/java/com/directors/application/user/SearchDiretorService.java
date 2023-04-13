@@ -32,18 +32,18 @@ public class SearchDiretorService {
     private final SpecialtyRepository specialtyRepository;
 
     public GetDirectorResponse getDirector(String directorId) {
-        User director = getDirectByDirectorId(directorId);
-        Address address = getAddressByDirectorId(director.getUserId());
+        var director = getDirectByDirectorId(directorId);
+        var address = getAddressByDirectorId(director.getUserId());
 
-        List<SpecialtyInfo> specialtyInfoList = getSpecialtyInfoListByDirectorId(director.getUserId());
-        List<LocalDateTime> startTimeList = getScheduleStartTimesByDirectorId(director.getUserId());
+        var specialtyInfoList = getSpecialtyInfoListByDirectorId(director.getUserId());
+        var startTimeList = getScheduleStartTimesByDirectorId(director.getUserId());
 
         return new GetDirectorResponse(director.getName(), director.getNickname(), address, specialtyInfoList, startTimeList);
     }
 
     public List<SearchDirectorResponse> searchDirector(SearchDirectorRequest request, String userId) {
         // TODO: 04.10 Option -> 자기 소개 엔티티 or VO 추가 여부 , Sorting -> 검색에 평점(높은 순, 최소), 요청된 질문 수 반영 여부
-        List<String> userIds = getNearestDirectorIds(userId, request.distance());
+        var userIds = getNearestDirectorIds(userId, request.distance());
 
         userIds = filterUserIdByText(userIds, request.searchText());
         userIds = filterUserIdBySpecialtyProperty(userIds, request.specialtyProperty());
@@ -82,20 +82,20 @@ public class SearchDiretorService {
     }
 
     private List<String> getNearestDirectorIds(String userId, int distance) {
-        List<Address> nearestAddress = regionService.getNearestAddress(userId, distance);
+        var nearestAddress = regionService.getNearestAddress(userId, distance);
 
-        List<UserRegion> userRegion = new ArrayList<>();
+        List<UserRegion> userRegionList = new ArrayList<>();
 
         for (Address address : nearestAddress) {
-            userRegion.addAll(
-                    userRegionRepository.findByFullAddress(address.fullAddress()));
+            var userRegion = userRegionRepository.findByFullAddress(address.fullAddress());
+            userRegionList.addAll(userRegion);
         }
 
-        if (userRegion.size() == 0) {
+        if (userRegionList.size() == 0) {
             throw new NotFoundException();
         }
 
-        return userRegion.stream()
+        return userRegionList.stream()
                 .map(UserRegion::getUserId)
                 .collect(Collectors.toList());
     }
