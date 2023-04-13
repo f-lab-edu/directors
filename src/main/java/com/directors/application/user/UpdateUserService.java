@@ -41,7 +41,7 @@ public class UpdateUserService {
         String oldEmail = updateEmailRequest.oldEmail();
         String newEmail = updateEmailRequest.newEmail();
 
-        User user = validateUser(userIdByToken);
+        var user = validateUser(userIdByToken);
 
         user.changeEmail(oldEmail, newEmail);
 

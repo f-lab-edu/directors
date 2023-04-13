@@ -5,8 +5,10 @@ import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class InmemoryUserRepository implements UserRepository {
@@ -24,7 +26,7 @@ public class InmemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByIdAndUserStatus(String id, UserStatus userStatus) {
-        User user = userMap.get(id);
+        var user = userMap.get(id);
         return Optional.ofNullable(user).filter(u -> u.getStatus().equals(userStatus));
     }
 

@@ -19,9 +19,9 @@ import java.util.Map;
 public class ApiSender {
     @Retryable(retryFor = {HttpClientErrorException.class, HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public ResponseEntity<Map<String, Object>> send(HttpMethod method, UriComponents uri) throws HttpClientErrorException, HttpServerErrorException {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders header = new HttpHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(header);
+        var restTemplate = new RestTemplate();
+        var header = new HttpHeaders();
+        var entity = new HttpEntity<>(header);
 
         return restTemplate.exchange(uri.toString(), method, entity, new ParameterizedTypeReference<>() {
         });

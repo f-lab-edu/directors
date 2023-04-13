@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
@@ -82,12 +81,12 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        Optional<User> user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
         user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 
     private long validateRefreshToken(String refreshToken) {
-        Optional<Token> tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
+        var tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
         tokenByTokenString.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
         long refreshExpirationDay = jm.getExpirationDayByToken(refreshToken);

@@ -28,7 +28,6 @@ public class UserController {
     private final AuthenticateRegionService authenticateRegionService;
     private final SearchDiretorService searchDiretorService;
 
-
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         signUpService.signUp(signUpRequest.toEntity());
@@ -81,7 +80,7 @@ public class UserController {
 
     @PostMapping("/authenticateRegion")
     public ResponseEntity<AuthenticateRegionResponse> authenticateRegion(@RequestBody AuthenticateRegionRequest request, @AuthenticationPrincipal String userIdByToken) {
-        AuthenticateRegionResponse response = authenticateRegionService.authenticate(request, userIdByToken);
+        var response = authenticateRegionService.authenticate(request, userIdByToken);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -90,13 +89,13 @@ public class UserController {
             @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.")
             @Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.") String directorId
     ) {
-        GetDirectorResponse director = searchDiretorService.getDirector(directorId);
+        var director = searchDiretorService.getDirector(directorId);
         return new ResponseEntity<>(director, HttpStatus.OK);
     }
 
     @PostMapping("/director/list")
     public ResponseEntity<List<SearchDirectorResponse>> searchDirector(@Valid @RequestBody SearchDirectorRequest request, @AuthenticationPrincipal String userIdByToken) {
-        List<SearchDirectorResponse> responsesByPaging = searchDiretorService.searchDirector(request, userIdByToken);
+        var responsesByPaging = searchDiretorService.searchDirector(request, userIdByToken);
         return new ResponseEntity<>(responsesByPaging, HttpStatus.OK);
     }
 }

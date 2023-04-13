@@ -28,7 +28,7 @@ public class RegionApiClientManager implements RegionApiClient {
 
     @Override
     public Address findRegionAddressByLocation(double latitude, double longitude) {
-        UriComponents uri = UriComponentsBuilder
+        var uri = UriComponentsBuilder
                 .fromHttpUrl(ADDRESS_REQUEST_URL)
                 .queryParam("x_coor", latitude)
                 .queryParam("y_coor", longitude)
@@ -36,12 +36,12 @@ public class RegionApiClientManager implements RegionApiClient {
                 .queryParam("accessToken", regionApiTokenProvider.getApiAccessToken())
                 .build();
 
-        ResponseEntity<Map<String, Object>> response = apiSender.send(HttpMethod.GET, uri);
+        var response = apiSender.send(HttpMethod.GET, uri);
 
         recoverIfTokenUnvalidate(uri, response);
         checkNotFound(response);
 
-        Map<String, String> result = getResultFromResponse(response);
+        var result = getResultFromResponse(response);
 
         String fullAddress = result.get("sido_nm") + " " + result.get("sgg_nm") + " " + result.get("emdong_nm");
         String unitAddress = result.get("emdong_nm");
@@ -60,15 +60,15 @@ public class RegionApiClientManager implements RegionApiClient {
         }
     }
 
-    private static void checkNotFound(ResponseEntity<Map<String, Object>> response) {
+    private void checkNotFound(ResponseEntity<Map<String, Object>> response) {
         if ((Integer) response.getBody().get("errCd") == -100) {
             throw new NotFoundException();
         }
     }
 
-    private static Map<String, String> getResultFromResponse(ResponseEntity<Map<String, Object>> response) {
-        ArrayList<Object> result = (ArrayList<Object>) response.getBody().get("result");
-        Map<String, String> resultMap = (Map<String, String>) result.get(0);
+    private Map<String, String> getResultFromResponse(ResponseEntity<Map<String, Object>> response) {
+        var result = (ArrayList<Object>) response.getBody().get("result");
+        var resultMap = (Map<String, String>) result.get(0);
         return resultMap;
     }
 }

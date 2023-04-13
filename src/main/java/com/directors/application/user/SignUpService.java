@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class SignUpService {
@@ -28,7 +26,7 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        Optional<User> user = userRepository.find(id);
+        var user = userRepository.find(id);
         user.ifPresent(u -> {
             throw new DuplicateIdException(id);
         });

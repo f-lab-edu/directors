@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
 
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
