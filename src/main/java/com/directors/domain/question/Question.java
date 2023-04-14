@@ -2,6 +2,7 @@ package com.directors.domain.question;
 
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
+import com.directors.infrastructure.exception.room.CannotCreateRoomException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,4 +69,19 @@ public class Question {
         return this.startTime.equals(startTime);
     }
 
+
+    public void canCreateChatRoom(String directorId) {
+        if (this.directorId.equals(directorId)) {
+            throw new CannotCreateRoomException(this.id, CannotCreateRoomException.AUTH);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (status.equals(QuestionStatus.WAITING) || (this.startTime.getSecond() - now.getSecond() < 0)) {
+            throw new CannotCreateRoomException(this.id, CannotCreateRoomException.STATUS);
+        }
+    }
+
+    public void changeQuestionStatusToChat() {
+        this.status = QuestionStatus.CHATTING;
+    }
 }
