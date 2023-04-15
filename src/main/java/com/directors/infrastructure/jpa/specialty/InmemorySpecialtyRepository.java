@@ -5,8 +5,10 @@ import com.directors.domain.specialty.SpecialtyRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class InmemorySpecialtyRepository implements SpecialtyRepository {
@@ -15,12 +17,21 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     private long nextId = 1; // 다음 id 값
 
     @Override
-    public Optional<Specialty> findSpecialtyByFieldId(String specialtyId) {
+    public Optional<Specialty> findByFieldId(String specialtyId) {
         return Optional.ofNullable(specialtyMap.get(specialtyId));
     }
 
     @Override
-    public void saveSpecialty(Specialty specialty) {
+    public List<Specialty> findByUserId(String userId) {
+        return specialtyMap.values()
+                .stream()
+                .filter(sp -> sp.getUserId().equals(userId))
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public void save(Specialty specialty) {
         if (specialty.getId() == null) {
             specialty.setId(String.valueOf(nextId++));
         }
@@ -28,7 +39,7 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     }
 
     @Override
-    public void deleteSpecialty(String specialtyId) {
+    public void delete(String specialtyId) {
         specialtyMap.remove(specialtyId);
     }
 }

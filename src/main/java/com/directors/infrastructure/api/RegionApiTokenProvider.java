@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
@@ -29,13 +28,13 @@ public class RegionApiTokenProvider {
     private final ApiSender apiSender;
 
     public void fetchApiAccessTokenFromAPI() {
-        UriComponents uri = UriComponentsBuilder
+        var uri = UriComponentsBuilder
                 .fromHttpUrl(TOKEN_REQUEST_URL)
                 .queryParam("consumer_key", CONSUMER_KEY)
                 .queryParam("consumer_secret", CONSUMER_SECRET)
                 .build();
 
-        ResponseEntity<Map<String, Object>> response = apiSender.send(HttpMethod.GET, uri);
+        var response = apiSender.send(HttpMethod.GET, uri);
 
         validateResponse(response);
 

@@ -25,9 +25,7 @@ public class User {
 
     private final String phoneNumber;
 
-    private String region;
-
-    private long reward;
+    private Long reward;
 
     private UserStatus status;
 
@@ -46,7 +44,7 @@ public class User {
         this.email = newEmail;
     }
 
-    public void setFields(List<Specialty> specialtyList) {
+    public void setSpecialtyList(List<Specialty> specialtyList) {
         this.specialtyList = specialtyList;
     }
 
