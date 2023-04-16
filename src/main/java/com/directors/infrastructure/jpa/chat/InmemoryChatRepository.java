@@ -15,7 +15,7 @@ public class InmemoryChatRepository implements ChatRepository {
     Map<Long, Chat> chatmap = new HashMap<>();
 
     @Override
-    public List<Chat> findChatListByRoomId(Long roomId, int offset, int size) {
+    public List<Chat> findChatListByRoomId(Long roomId, Long offset, Long size) {
         List<Chat> chatList = new ArrayList<>();
 
         List<Chat> chatByRoomId = chatmap.values()

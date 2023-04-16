@@ -6,6 +6,7 @@ import com.directors.domain.chat.LiveChatManager;
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
 import com.directors.presentation.chat.request.SendChatRequest;
+import com.directors.presentation.chat.response.ChatListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -52,9 +55,22 @@ public class ChatController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void roomValidate(Long roomId, String userByToken) {
+    @GetMapping("/chatList/{roomId}/{offset}/{size}")
+    public ResponseEntity<List<ChatListResponse>> chatList(
+            @PathVariable Long roomId, @PathVariable Long offset, @PathVariable Long size,
+            @AuthenticationPrincipal String userByToken
+    ) {
+        roomValidate(roomId, userByToken);
+
+        List<Chat> chatList = chatRepository.findChatListByRoomId(roomId, offset, size);
+        List<ChatListResponse> responseList = chatList.stream().map(chat -> ChatListResponse.from(chat)).collect(Collectors.toList());
+
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
+    private void roomValidate(Long roomId, String userId) {
         Room room = roomRepository.findByRoomId(roomId).orElseThrow();
-        room.validateRoomUser(userByToken);
+        room.validateRoomUser(userId);
     }
 
     private void saveChat(Long roomId, String chatContent, String sendUserId) {

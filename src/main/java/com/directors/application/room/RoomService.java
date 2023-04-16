@@ -85,7 +85,7 @@ public class RoomService {
     }
 
     private Chat getRecentChatByRoom(Room room) {
-        List<Chat> chatListByRoomId = chatRepository.findChatListByRoomId(room.getId(), 0, 1);
+        List<Chat> chatListByRoomId = chatRepository.findChatListByRoomId(room.getId(), 0L, 1L);
 
         if (chatListByRoomId.size() == 0) {
             return Chat.of(room.getId(), "최근 채팅 내역이 존재하지 않습니다.", null, room.getCreateTime());
