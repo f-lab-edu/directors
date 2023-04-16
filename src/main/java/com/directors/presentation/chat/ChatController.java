@@ -57,7 +57,7 @@ public class ChatController {
 
     @GetMapping("/chatList/{roomId}/{offset}/{size}")
     public ResponseEntity<List<ChatListResponse>> chatList(
-            @PathVariable Long roomId, @PathVariable Long offset, @PathVariable Long size,
+            @PathVariable Long roomId, @PathVariable Integer offset, @PathVariable Integer size,
             @AuthenticationPrincipal String userByToken
     ) {
         roomValidate(roomId, userByToken);
