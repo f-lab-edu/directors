@@ -43,5 +43,4 @@ public class RoomController {
         var responseList = roomService.getRoomInfosByQuestionerId(questionerId);
         return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
-
 }

@@ -15,8 +15,15 @@ public class InmemeoryRoomRepository implements RoomRepository {
     Map<Long, Room> roomMap = new HashMap<>();
     private Long nextId = 1L;
 
+    @Override
+    public Optional<Room> findByRoomId(Long roomId) {
+        return Optional.ofNullable(roomMap.get(roomId));
+    }
+
     public Optional<Room> findByQuestionId(Long questionId) {
-        return Optional.ofNullable(roomMap.get(questionId));
+        return roomMap.values().stream()
+                .filter(room -> questionId.equals(room.getQuestionId()))
+                .findFirst();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.directors.domain.room;
 
+import com.directors.infrastructure.exception.room.RoomNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +29,11 @@ public class Room {
                 .questionerId(questionerId)
                 .createTime(LocalDateTime.now())
                 .build();
+    }
+
+    public void validateRoomUser(String sendUserId) {
+        if (!(sendUserId.equals(directorId) || sendUserId.equals(questionerId))) {
+            throw new RoomNotFoundException(this.id, sendUserId);
+        }
     }
 }
