@@ -5,8 +5,10 @@ import com.directors.domain.user.UserRegionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class InmemeryUserRegionRepository implements UserRegionRepository {
@@ -20,6 +22,14 @@ public class InmemeryUserRegionRepository implements UserRegionRepository {
                 .stream()
                 .filter(ur -> ur.getUserId().equals(userId))
                 .findFirst();
+    }
+
+    @Override
+    public List<UserRegion> findByFullAddress(String fullAddress) {
+        return userRegionMap.values()
+                .stream()
+                .filter(ur -> ur.getAddress().fullAddress().equals(fullAddress))
+                .collect(Collectors.toList());
     }
 
     @Override

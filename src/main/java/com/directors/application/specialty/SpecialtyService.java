@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,21 +17,21 @@ public class SpecialtyService {
     @Transactional
     public void createSpecialty(Specialty specialty, String userIdByToken) {
         specialty.setUserId(userIdByToken);
-        specialtyRepository.saveSpecialty(specialty);
+        specialtyRepository.save(specialty);
     }
 
     @Transactional
     public void updateSpecialty(Specialty requestSpecialty) {
-        var specialtyByFieldId = specialtyRepository.findSpecialtyByFieldId(requestSpecialty.getId());
-        var specialty = specialtyByFieldId.orElseThrow(() -> new NoSuchElementException());
+        var specialtyByFieldId = specialtyRepository.findByFieldId(requestSpecialty.getId());
+        var specialty = specialtyByFieldId.orElseThrow(NoSuchElementException::new);
 
-        specialty.updateSpecialtyInfo(requestSpecialty.getProperty(), requestSpecialty.getDescription());
+        specialty.setSpecialtyInfo(requestSpecialty.getSpecialtyInfo().property(), requestSpecialty.getSpecialtyInfo().description());
 
-        specialtyRepository.saveSpecialty(specialty);
+        specialtyRepository.save(specialty);
     }
 
     @Transactional
     public void deleteSpecialty(String specialty) {
-        specialtyRepository.deleteSpecialty(specialty);
+        specialtyRepository.delete(specialty);
     }
 }

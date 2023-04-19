@@ -1,10 +1,15 @@
 package com.directors.domain.schedule;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleRepository {
-	Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId);
+    Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId);
 
-	void save(Schedule schedule);
+    List<Schedule> findByUserIdAndScheduleStatus(String userId, ScheduleStatus scheduleStatus);
+
+    boolean existsByUserIdAndScheduleStatus(String userId, ScheduleStatus scheduleStatus);
+
+    void save(Schedule schedule);
 }

@@ -32,7 +32,7 @@ public class UpdateUserService {
         String encryptPassword = passwordManager.encryptPassword(newPassword);
         user.setPasswordByEncryption(encryptPassword);
 
-        userRepository.saveUser(user);
+        userRepository.save(user);
     }
 
 
@@ -41,15 +41,15 @@ public class UpdateUserService {
         String oldEmail = updateEmailRequest.oldEmail();
         String newEmail = updateEmailRequest.newEmail();
 
-        User user = validateUser(userIdByToken);
+        var user = validateUser(userIdByToken);
 
         user.changeEmail(oldEmail, newEmail);
 
-        userRepository.saveUser(user);
+        userRepository.save(user);
     }
 
     private User validateUser(String userIdByToken) {
-        Optional<User> user = userRepository.findUserByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        Optional<User> user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
         return user.orElseThrow(() -> new AuthenticationFailedException(userIdByToken));
     }
 

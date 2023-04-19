@@ -3,13 +3,10 @@ package com.directors.application.user;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
-import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +21,12 @@ public class SignUpService {
 
         newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
 
-        userRepository.saveUser(newUser);
+        userRepository.save(newUser);
     }
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        Optional<User> user = userRepository.findUserByIdAndUserStatus(id, UserStatus.JOINED);
+        var user = userRepository.find(id);
         user.ifPresent(u -> {
             throw new DuplicateIdException(id);
         });

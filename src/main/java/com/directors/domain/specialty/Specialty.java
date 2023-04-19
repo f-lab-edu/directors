@@ -9,8 +9,7 @@ import lombok.Getter;
 @Getter
 public class Specialty {
     private String id;
-    private SpecialtyProperty property;
-    private String description;
+    private SpecialtyInfo specialtyInfo;
     private String userId;
 
     public void setId(String id) {
@@ -21,8 +20,7 @@ public class Specialty {
         this.userId = userId;
     }
 
-    public void updateSpecialtyInfo(SpecialtyProperty property, String description) {
-        this.property = property;
-        this.description = description;
+    public void setSpecialtyInfo(SpecialtyProperty property, String description) {
+        this.specialtyInfo = new SpecialtyInfo(property, description);
     }
 }
