@@ -3,9 +3,9 @@ package com.directors.application.user;
 import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.WithdrawRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class WithdrawService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final PasswordManager pm;
     private final TokenRepository tokenRepository;
 
@@ -28,7 +28,7 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
 
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))

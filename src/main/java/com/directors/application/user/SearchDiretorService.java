@@ -9,8 +9,12 @@ import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.specialty.SpecialtyRepository;
-import com.directors.domain.user.*;
+import com.directors.domain.user.User;
+import com.directors.domain.user.UserRegion;
+import com.directors.domain.user.UserRegionRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.api.NotFoundException;
+import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.SearchDirectorRequest;
 import com.directors.presentation.user.response.GetDirectorResponse;
 import com.directors.presentation.user.response.SearchDirectorResponse;
@@ -26,7 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchDiretorService {
     private final RegionService regionService;
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final UserRegionRepository userRegionRepository;
     private final ScheduleRepository scheduleRepository;
     private final SpecialtyRepository specialtyRepository;
@@ -54,7 +58,7 @@ public class SearchDiretorService {
 
     private User getDirectByDirectorId(String directorId) {
         return userRepository
-                .findByIdAndUserStatus(directorId, UserStatus.JOINED)
+                .findByUserIdAndUserStatus(directorId, UserStatus.JOINED)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -111,7 +115,7 @@ public class SearchDiretorService {
 
     private boolean isMatchingUserExistsWithText(String searchText, String id) {
         return userRepository
-                .findByIdAndUserStatus(id, UserStatus.JOINED)
+                .findByUserIdAndUserStatus(id, UserStatus.JOINED)
                 .filter(user -> user.getUserId().contains(searchText) || user.getNickname().contains(searchText))
                 .isPresent();
     }
@@ -155,7 +159,7 @@ public class SearchDiretorService {
         List<SearchDirectorResponse> responses = new ArrayList<>();
 
         for (String id : userIds) {
-            User user = userRepository.findByIdAndUserStatus(id, UserStatus.JOINED).orElseThrow();
+            User user = userRepository.findByUserIdAndUserStatus(id, UserStatus.JOINED).orElseThrow();
             List<SpecialtyInfo> specialtyProperties = specialtyRepository
                     .findByUserId(id)
                     .stream()

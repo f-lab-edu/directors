@@ -4,10 +4,10 @@ import com.directors.domain.auth.Token;
 import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
@@ -24,7 +24,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordManager pm;
     private final JwtAuthenticationManager jm;
@@ -34,7 +34,7 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
@@ -81,7 +81,7 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        var user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        var user = userRepository.findByUserIdAndUserStatus(userIdByToken, UserStatus.JOINED);
         user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 

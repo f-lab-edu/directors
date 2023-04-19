@@ -1,39 +1,40 @@
 package com.directors.domain.user;
 
-import com.directors.domain.specialty.Specialty;
+import com.directors.domain.common.BaseEntity;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
-import java.util.List;
 
+@Entity
+@Table(name = "users")
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
-public class User {
-    private final String userId;
+public class User extends BaseEntity {
+    @Id
+    private String userId;
 
     private String password;
 
-    private final String name;
+    private String name;
 
-    private final String nickname;
+    private String nickname;
 
     private String email;
 
-    private final String phoneNumber;
+    private String phoneNumber;
 
     private Long reward;
 
-    private UserStatus status;
-
-    private Date joinedDate;
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     private Date withdrawalDate;
 
-    private List<Specialty> specialtyList;
+//    private List<Specialty> specialtyList;
 
     public void setPasswordByEncryption(String encryptedPassword) {
         this.password = encryptedPassword;
@@ -44,17 +45,17 @@ public class User {
         this.email = newEmail;
     }
 
-    public void setSpecialtyList(List<Specialty> specialtyList) {
-        this.specialtyList = specialtyList;
-    }
+//    public void setSpecialtyList(List<Specialty> specialtyList) {
+//        this.specialtyList = specialtyList;
+//    }
 
     public void withdrawal(Date withdrawalDate) {
-        this.status = UserStatus.WITHDRAWN;
+        this.userStatus = UserStatus.WITHDRAWN;
         this.withdrawalDate = withdrawalDate;
     }
 
     private void validateEmail(String email) {
-        if (this.email.equals(email)) {
+        if (!this.email.equals(email)) {
             throw new AuthenticationFailedException(this.userId);
         }
     }

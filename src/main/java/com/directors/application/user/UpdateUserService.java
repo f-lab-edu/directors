@@ -2,9 +2,9 @@ package com.directors.application.user;
 
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.UpdateEmailRequest;
 import com.directors.presentation.user.request.UpdatePasswordRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UpdateUserService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final PasswordManager passwordManager;
 
     @Transactional
@@ -48,9 +48,9 @@ public class UpdateUserService {
         userRepository.save(user);
     }
 
-    private User validateUser(String userIdByToken) {
-        Optional<User> user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
-        return user.orElseThrow(() -> new AuthenticationFailedException(userIdByToken));
+    private User validateUser(String userId) {
+        Optional<User> user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
+        return user.orElseThrow(() -> new AuthenticationFailedException(userId));
     }
 
 

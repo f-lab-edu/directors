@@ -2,8 +2,8 @@ package com.directors.application.user;
 
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
+import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SignUpService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final PasswordManager pm;
 
     @Transactional
@@ -26,7 +26,7 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        var user = userRepository.find(id);
+        var user = userRepository.findById(id);
         user.ifPresent(u -> {
             throw new DuplicateIdException(id);
         });

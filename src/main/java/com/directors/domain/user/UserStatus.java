@@ -1,8 +1,8 @@
 package com.directors.domain.user;
 
 public enum UserStatus {
-    JOINED("가입 상태"),
-    WITHDRAWN("탈퇴 상태");
+    JOINED("가입"),
+    WITHDRAWN("탈퇴");
 
     private final String value;
 

@@ -1,6 +1,7 @@
 package com.directors.presentation.specialty.request;
 
 import com.directors.domain.specialty.Specialty;
+import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
 
 public record UpdateSpecialtyRequest(
@@ -12,8 +13,7 @@ public record UpdateSpecialtyRequest(
     public Specialty toEntity() {
         return Specialty.builder()
                 .id(id)
-                .property(SpecialtyProperty.fromValue(property))
-                .description(description)
+                .specialtyInfo(new SpecialtyInfo(SpecialtyProperty.fromValue(property), description))
                 .userId(userId)
                 .build();
     }
