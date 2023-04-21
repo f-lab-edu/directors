@@ -7,7 +7,6 @@ import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
-import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
@@ -52,7 +51,7 @@ public class SearchDirectorService {
         var userIds = getNearestDirectorIds(userId, request.distance());
 
         userIds = filterUserIdByText(userIds, request.searchText());
-        userIds = filterUserIdBySpecialtyProperty(userIds, request.specialtyProperty());
+        userIds = filterUserIdBySpecialtyProperty(userIds, request.property());
         userIds = filterUserIdBySchedule(userIds, request.hasSchedule());
 
         return paging(request.size(), request.page(), generateDirector(userIds));
@@ -128,16 +127,19 @@ public class SearchDirectorService {
                 .anyMatch(sp -> sp.getSpecialtyInfo().getDescription().contains(searchText));
     }
 
-    private List<String> filterUserIdBySpecialtyProperty(List<String> userIds, SpecialtyProperty specialtyProperty) {
+    private List<String> filterUserIdBySpecialtyProperty(List<String> userIds, String specialtyProperty) {
+        if (specialtyProperty == null) {
+            return userIds;
+        }
         return userIds.stream()
                 .filter(id -> hasSpecialtyProperty(id, specialtyProperty))
                 .collect(Collectors.toList());
     }
 
-    private boolean hasSpecialtyProperty(String id, SpecialtyProperty specialtyProperty) {
+    private boolean hasSpecialtyProperty(String id, String specialtyProperty) {
         return specialtyRepository.findByUserId(id).stream()
                 .anyMatch(specialty ->
-                        specialty.getSpecialtyInfo().getProperty().equals(specialtyProperty));
+                        specialty.getSpecialtyInfo().getProperty().getValue().equals(specialtyProperty));
     }
 
     private List<String> filterUserIdBySchedule(List<String> userIds, boolean hasSchedule) {
