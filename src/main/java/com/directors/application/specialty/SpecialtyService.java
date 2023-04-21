@@ -2,12 +2,12 @@ package com.directors.application.specialty;
 
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyProperty;
+import com.directors.domain.specialty.SpecialtyRepository;
 import com.directors.domain.user.User;
+import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.specialty.NoSuchSpecialtyException;
 import com.directors.infrastructure.exception.user.NoSuchUserException;
-import com.directors.infrastructure.jpa.specialty.JpaSpecialtyRepository;
-import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.specialty.request.UpdateSpecialtyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SpecialtyService {
 
-    private final JpaSpecialtyRepository specialtyRepository;
-    private final JpaUserRepository userRepository;
+    private final SpecialtyRepository specialtyRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void createSpecialty(Specialty specialty, String userIdByToken) {
@@ -45,6 +45,6 @@ public class SpecialtyService {
                 .findById(specialtyId)
                 .orElseThrow(NoSuchSpecialtyException::new);
 
-        specialtyRepository.delete(specialty);
+        specialtyRepository.delete(specialty.getId());
     }
 }

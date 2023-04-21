@@ -2,14 +2,13 @@ package com.directors.infrastructure.jpa.specialty;
 
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Repository
 public class InmemorySpecialtyRepository implements SpecialtyRepository {
 
     private final Map<Long, Specialty> specialtyMap = new HashMap<>();
@@ -22,11 +21,10 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
 
     @Override
     public List<Specialty> findByUserId(String userId) {
-        return null;
-//        return specialtyMap.values()
-//                .stream()
-//                .filter(sp -> sp.getUserId().equals(userId))
-//                .collect(Collectors.toList());
+        return specialtyMap.values()
+                .stream()
+                .filter(sp -> sp.getUser().getId().equals(userId))
+                .collect(Collectors.toList());
     }
 
 
@@ -39,7 +37,7 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     }
 
     @Override
-    public void delete(String specialtyId) {
+    public void delete(Long specialtyId) {
         specialtyMap.remove(specialtyId);
     }
 }

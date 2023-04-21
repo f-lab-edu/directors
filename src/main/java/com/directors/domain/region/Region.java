@@ -22,6 +22,10 @@ public class Region extends BaseEntity {
     @Column(name = "point", columnDefinition = "GEOMETRY")
     private Point point;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public static Region of(String fullAddress, String unitAddress, Point point) {
         return Region.builder()
                 .address(new Address(fullAddress, unitAddress))

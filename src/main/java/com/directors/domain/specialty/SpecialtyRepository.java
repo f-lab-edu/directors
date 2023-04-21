@@ -10,6 +10,5 @@ public interface SpecialtyRepository {
 
     void save(Specialty specialty);
 
-    void delete(String specialtyId);
-
+    void delete(Long specialtyId);
 }

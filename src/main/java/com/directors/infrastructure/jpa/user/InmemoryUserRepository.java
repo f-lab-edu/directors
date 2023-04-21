@@ -20,12 +20,13 @@ public class InmemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> find(String id) {
+    public Optional<User> findById(String id) {
         return Optional.ofNullable(userMap.get(id));
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         userMap.put(user.getId(), user);
+        return user;
     }
 }

@@ -7,13 +7,9 @@ import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
-import com.directors.domain.user.User;
-import com.directors.domain.user.UserRegion;
-import com.directors.domain.user.UserStatus;
+import com.directors.domain.specialty.SpecialtyRepository;
+import com.directors.domain.user.*;
 import com.directors.infrastructure.exception.api.NotFoundException;
-import com.directors.infrastructure.jpa.specialty.JpaSpecialtyRepository;
-import com.directors.infrastructure.jpa.user.JpaUserRegionRepository;
-import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.SearchDirectorRequest;
 import com.directors.presentation.user.response.GetDirectorResponse;
 import com.directors.presentation.user.response.SearchDirectorResponse;
@@ -30,10 +26,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchDirectorService {
     private final RegionService regionService;
-    private final JpaUserRepository userRepository;
-    private final JpaUserRegionRepository userRegionRepository;
+    private final UserRepository userRepository;
+    private final UserRegionRepository userRegionRepository;
     private final ScheduleRepository scheduleRepository;
-    private final JpaSpecialtyRepository specialtyRepository;
+    private final SpecialtyRepository specialtyRepository;
 
     public GetDirectorResponse getDirector(String directorId) {
         var director = getDirectByDirectorId(directorId);
@@ -92,7 +88,7 @@ public class SearchDirectorService {
 
         for (Address address : nearestAddress) {
             var userRegion = userRegionRepository
-                    .findByAddressFullAddress(address.getFullAddress());
+                    .findByFullAddress(address.getFullAddress());
             userRegionList.addAll(userRegion);
         }
 

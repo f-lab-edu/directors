@@ -2,7 +2,6 @@ package com.directors.infrastructure.jpa.user;
 
 import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Repository
 public class InmemeryUserRegionRepository implements UserRegionRepository {
     Map<String, UserRegion> userRegionMap = new HashMap<>();
 
