@@ -49,14 +49,14 @@ public class UpdateUserService {
     }
 
     private User validateUser(String userId) {
-        Optional<User> user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
+        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
         return user.orElseThrow(() -> new AuthenticationFailedException(userId));
     }
 
 
     private void validatePassword(String password, User user) {
         if (!passwordManager.checkPassword(password, user.getPassword())) {
-            throw new AuthenticationFailedException(user.getUserId());
+            throw new AuthenticationFailedException(user.getId());
         }
     }
 }

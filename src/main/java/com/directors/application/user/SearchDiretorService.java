@@ -8,12 +8,12 @@ import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
-import com.directors.domain.specialty.SpecialtyRepository;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.api.NotFoundException;
+import com.directors.infrastructure.jpa.specialty.JpaSpecialtyRepository;
 import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.SearchDirectorRequest;
 import com.directors.presentation.user.response.GetDirectorResponse;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,14 +34,15 @@ public class SearchDiretorService {
     private final JpaUserRepository userRepository;
     private final UserRegionRepository userRegionRepository;
     private final ScheduleRepository scheduleRepository;
-    private final SpecialtyRepository specialtyRepository;
+    private final JpaSpecialtyRepository specialtyRepository;
 
     public GetDirectorResponse getDirector(String directorId) {
         var director = getDirectByDirectorId(directorId);
-        var address = getAddressByDirectorId(director.getUserId());
 
-        var specialtyInfoList = getSpecialtyInfoListByDirectorId(director.getUserId());
-        var startTimeList = getScheduleStartTimesByDirectorId(director.getUserId());
+        var address = getAddressByDirectorId(director.getId()).orElse(null);
+
+        var specialtyInfoList = getSpecialtyInfoListByDirectorId(director.getId());
+        var startTimeList = getScheduleStartTimesByDirectorId(director.getId());
 
         return new GetDirectorResponse(director.getName(), director.getNickname(), address, specialtyInfoList, startTimeList);
     }
@@ -58,15 +60,14 @@ public class SearchDiretorService {
 
     private User getDirectByDirectorId(String directorId) {
         return userRepository
-                .findByUserIdAndUserStatus(directorId, UserStatus.JOINED)
+                .findByIdAndUserStatus(directorId, UserStatus.JOINED)
                 .orElseThrow(NotFoundException::new);
     }
 
-    private Address getAddressByDirectorId(String directorId) {
+    private Optional<Address> getAddressByDirectorId(String directorId) {
         return userRegionRepository
                 .findByUserId(directorId)
-                .orElseThrow(NotFoundException::new)
-                .getAddress();
+                .map(UserRegion::getAddress);
     }
 
     private List<SpecialtyInfo> getSpecialtyInfoListByDirectorId(String directorId) {
@@ -115,8 +116,8 @@ public class SearchDiretorService {
 
     private boolean isMatchingUserExistsWithText(String searchText, String id) {
         return userRepository
-                .findByUserIdAndUserStatus(id, UserStatus.JOINED)
-                .filter(user -> user.getUserId().contains(searchText) || user.getNickname().contains(searchText))
+                .findByIdAndUserStatus(id, UserStatus.JOINED)
+                .filter(user -> user.getId().contains(searchText) || user.getNickname().contains(searchText))
                 .isPresent();
     }
 
@@ -124,7 +125,7 @@ public class SearchDiretorService {
         return specialtyRepository
                 .findByUserId(id)
                 .stream()
-                .anyMatch(sp -> sp.getSpecialtyInfo().description().contains(searchText));
+                .anyMatch(sp -> sp.getSpecialtyInfo().getDescription().contains(searchText));
     }
 
     private List<String> filterUserIdBySpecialtyProperty(List<String> userIds, SpecialtyProperty specialtyProperty) {
@@ -136,7 +137,7 @@ public class SearchDiretorService {
     private boolean hasSpecialtyProperty(String id, SpecialtyProperty specialtyProperty) {
         return specialtyRepository.findByUserId(id).stream()
                 .anyMatch(specialty ->
-                        specialty.getSpecialtyInfo().property().equals(specialtyProperty));
+                        specialty.getSpecialtyInfo().getProperty().equals(specialtyProperty));
     }
 
     private List<String> filterUserIdBySchedule(List<String> userIds, boolean hasSchedule) {
@@ -159,14 +160,14 @@ public class SearchDiretorService {
         List<SearchDirectorResponse> responses = new ArrayList<>();
 
         for (String id : userIds) {
-            User user = userRepository.findByUserIdAndUserStatus(id, UserStatus.JOINED).orElseThrow();
+            User user = userRepository.findByIdAndUserStatus(id, UserStatus.JOINED).orElseThrow();
             List<SpecialtyInfo> specialtyProperties = specialtyRepository
                     .findByUserId(id)
                     .stream()
                     .map(Specialty::getSpecialtyInfo)
                     .collect(Collectors.toList());
 
-            responses.add(new SearchDirectorResponse(user.getUserId(), user.getName(), specialtyProperties));
+            responses.add(new SearchDirectorResponse(user.getId(), user.getName(), specialtyProperties));
         }
 
         return responses;

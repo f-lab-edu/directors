@@ -17,7 +17,7 @@ public class SignUpService {
 
     @Transactional
     public void signUp(User newUser) {
-        isDuplicatedUser(newUser.getUserId());
+        isDuplicatedUser(newUser.getId());
 
         newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
 

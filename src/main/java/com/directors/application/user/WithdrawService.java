@@ -28,7 +28,7 @@ public class WithdrawService {
 
         validateUserIds(userId, userIdByToken);
 
-        var user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
 
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
@@ -38,7 +38,7 @@ public class WithdrawService {
 
         userRepository.save(loadedUser);
 
-        tokenRepository.deleteAllTokenByUserId(loadedUser.getUserId());
+        tokenRepository.deleteAllTokenByUserId(loadedUser.getId());
     }
 
     private static void validateUserIds(String firstUserId, String secondUserId) {

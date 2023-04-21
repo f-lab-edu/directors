@@ -34,16 +34,16 @@ public class AuthenticationService {
         String userId = loginRequest.userId();
         String password = loginRequest.password();
 
-        var user = userRepository.findByUserIdAndUserStatus(userId, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
         User loadedUser = user
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        String jwtToken = jm.generateAccessToken(loadedUser.getUserId());
-        String refreshToken = jm.generateRefreshToken(loadedUser.getUserId());
+        String jwtToken = jm.generateAccessToken(loadedUser.getId());
+        String refreshToken = jm.generateRefreshToken(loadedUser.getId());
         Date refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
 
-        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getUserId(), refreshTokenExpiration));
+        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getId(), refreshTokenExpiration));
 
         return new LogInResponse(jwtToken, refreshToken);
     }
@@ -81,7 +81,7 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        var user = userRepository.findByUserIdAndUserStatus(userIdByToken, UserStatus.JOINED);
+        var user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
         user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 

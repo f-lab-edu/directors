@@ -1,11 +1,14 @@
 package com.directors.domain.user;
 
 import com.directors.domain.common.BaseEntity;
+import com.directors.domain.specialty.Specialty;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -15,7 +18,7 @@ import java.util.Date;
 @Getter
 public class User extends BaseEntity {
     @Id
-    private String userId;
+    private String id;
 
     private String password;
 
@@ -34,7 +37,8 @@ public class User extends BaseEntity {
 
     private Date withdrawalDate;
 
-//    private List<Specialty> specialtyList;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Specialty> specialtyList = new ArrayList<>();
 
     public void setPasswordByEncryption(String encryptedPassword) {
         this.password = encryptedPassword;
@@ -45,10 +49,6 @@ public class User extends BaseEntity {
         this.email = newEmail;
     }
 
-//    public void setSpecialtyList(List<Specialty> specialtyList) {
-//        this.specialtyList = specialtyList;
-//    }
-
     public void withdrawal(Date withdrawalDate) {
         this.userStatus = UserStatus.WITHDRAWN;
         this.withdrawalDate = withdrawalDate;
@@ -56,7 +56,7 @@ public class User extends BaseEntity {
 
     private void validateEmail(String email) {
         if (!this.email.equals(email)) {
-            throw new AuthenticationFailedException(this.userId);
+            throw new AuthenticationFailedException(this.id);
         }
     }
 }

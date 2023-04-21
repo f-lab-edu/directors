@@ -30,7 +30,7 @@ public record SignUpRequest(
     public User toEntity() {
         // region은 회원 가입 후, 추가로 설정할 수 있는 로직을 만들 예정입니다.
         return User.builder()
-                .userId(userId)
+                .id(userId)
                 .password(password)
                 .name(name)
                 .nickname(nickname)
