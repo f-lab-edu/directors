@@ -3,9 +3,9 @@ package com.directors.application.user;
 import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionApiClient;
-import com.directors.domain.region.RegionRepository;
 import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
+import com.directors.infrastructure.jpa.region.JpaRegionRepository;
 import com.directors.presentation.user.request.AuthenticateRegionRequest;
 import com.directors.presentation.user.response.AuthenticateRegionResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,18 +20,19 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class AuthenticateRegionService {
     private final RegionApiClient regionApiClient;
-    private final RegionRepository regionRepository;
+    private final JpaRegionRepository jpaRegionRepository;
     private final UserRegionRepository userRegionRepository;
 
     @Transactional
     public AuthenticateRegionResponse authenticate(AuthenticateRegionRequest request, String userId) {
         var addressByApi = regionApiClient.findRegionAddressByLocation(request.latitude(), request.longitude());
-        var region = regionRepository.findByFullAddress(addressByApi.fullAddress())
-                .orElseThrow(() -> new NoSuchElementException());
+
+        var region = jpaRegionRepository.findByAddressFullAddress(addressByApi.getFullAddress())
+                .orElseThrow(NoSuchElementException::new);
 
         var userAddress = updateUserRegionAddress(userId, region);
 
-        return new AuthenticateRegionResponse(userAddress.fullAddress(), userAddress.unitAddress());
+        return new AuthenticateRegionResponse(userAddress.getFullAddress(), userAddress.getUnitAddress());
     }
 
     private Address updateUserRegionAddress(String userId, Region region) {

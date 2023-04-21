@@ -28,7 +28,7 @@ public class InmemeryUserRegionRepository implements UserRegionRepository {
     public List<UserRegion> findByFullAddress(String fullAddress) {
         return userRegionMap.values()
                 .stream()
-                .filter(ur -> ur.getAddress().fullAddress().equals(fullAddress))
+                .filter(ur -> ur.getAddress().getFullAddress().equals(fullAddress))
                 .collect(Collectors.toList());
     }
 

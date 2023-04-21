@@ -92,7 +92,7 @@ public class SearchDirectorService {
         List<UserRegion> userRegionList = new ArrayList<>();
 
         for (Address address : nearestAddress) {
-            var userRegion = userRegionRepository.findByFullAddress(address.fullAddress());
+            var userRegion = userRegionRepository.findByFullAddress(address.getFullAddress());
             userRegionList.addAll(userRegion);
         }
 

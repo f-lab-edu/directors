@@ -2,8 +2,8 @@ package com.directors.application.region;
 
 import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
-import com.directors.domain.region.RegionRepository;
 import com.directors.domain.user.UserRegionRepository;
+import com.directors.infrastructure.jpa.region.JpaRegionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +24,12 @@ import java.util.stream.Collectors;
 public class RegionService {
     private static final int KILOMETER = 1000;
 
-    private final RegionRepository regionRepository;
+    private final JpaRegionRepository regionRepository;
     private final UserRegionRepository userRegionRepository;
 
     @PostConstruct
-    private void loadRegionData() {
+    @Transactional
+    void loadRegionData() {
         String pathPrefix = "/regionCSV/";
         String pathSuffix = "_좌표.csv";
         String[] regions = {
@@ -42,9 +43,8 @@ public class RegionService {
             var reader = new BufferedReader(new InputStreamReader(inputStream));
             regionDataLines = reader.lines().collect(Collectors.toList());
 
-            var collect = regionDataLines.stream()
-                    .map(this::regionDataLineToRegion)
-                    .collect(Collectors.toList());
+            List<Region> collect = regionDataLines.stream()
+                    .map(this::regionDataLineToRegion).toList();
 
             regionRepository.saveAll(collect);
         }
@@ -55,7 +55,7 @@ public class RegionService {
         var userRegion = userRegionRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
-        var region = regionRepository.findByRegionId(userRegion.getRegionId()).orElseThrow();
+        var region = regionRepository.findById(userRegion.getRegionId()).orElseThrow();
 
         return getNearestRegion(region, distance)
                 .stream()
@@ -75,6 +75,6 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(Region region, int distance) {
-        return regionRepository.findRegionWithin(region, distance * KILOMETER);
+        return regionRepository.findRegionByPointDistanceLessThan(region.getPoint(), distance * KILOMETER);
     }
 }

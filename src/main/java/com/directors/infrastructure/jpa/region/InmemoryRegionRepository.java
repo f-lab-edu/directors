@@ -17,7 +17,7 @@ public class InmemoryRegionRepository implements RegionRepository {
     public Optional<Region> findByFullAddress(String fullAddress) {
         return regionMap.values()
                 .stream()
-                .filter(r -> r.getAddress().fullAddress().equals(fullAddress))
+                .filter(r -> r.getAddress().getFullAddress().equals(fullAddress))
                 .findFirst();
     }
 
@@ -26,24 +26,24 @@ public class InmemoryRegionRepository implements RegionRepository {
         return Optional.ofNullable(regionMap.get(regionId));
     }
 
-    @Override
-    public Region save(Region region) {
-        if (region.getId() == null) {
-            region.setId(nextId++);
-        }
-        regionMap.put(region.getId(), region);
-
-        return region;
-    }
-
-    public void saveAll(List<Region> regions) {
-        for (Region region : regions) {
-            if (region.getId() == null) {
-                region.setId(nextId++);
-            }
-            regionMap.put(region.getId(), region);
-        }
-    }
+//    @Override
+//    public Region save(Region region) {
+//        if (region.getId() == null) {
+//            region.setId(nextId++);
+//        }
+//        regionMap.put(region.getId(), region);
+//
+//        return region;
+//    }
+//
+//    public void saveAll(List<Region> regions) {
+//        for (Region region : regions) {
+//            if (region.getId() == null) {
+//                region.setId(nextId++);
+//            }
+//            regionMap.put(region.getId(), region);
+//        }
+//    }
 
     public List<Region> findRegionWithin(Region region, double distance) {
         List<Region> result = new ArrayList<>();
