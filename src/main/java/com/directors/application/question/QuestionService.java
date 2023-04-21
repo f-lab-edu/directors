@@ -60,9 +60,7 @@ public class QuestionService {
     @Transactional
     public void edit(Long questionId, EditQuestionRequest editQuestionRequest) {
         Question question = questionRepository.findByQuestionId(questionId)
-                .orElseThrow(() -> {
-                    throw new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId);
-                });
+                .orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
 
         question.checkUneditableStatus();
 
@@ -80,9 +78,7 @@ public class QuestionService {
 
     private Schedule validateTime(LocalDateTime startTime, String userId) {
         Schedule schedule = scheduleRepository.findByStartTimeAndUserId(startTime, userId)
-                .orElseThrow(() -> {
-                    throw new InvalidMeetingRequest(ExceptionCode.InvalidMeetingTime, startTime, userId);
-                });
+                .orElseThrow(() -> new InvalidMeetingRequest(ExceptionCode.InvalidMeetingTime, startTime, userId));
 
         schedule.checkChangeableScheduleTime();
         return schedule;

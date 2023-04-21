@@ -2,8 +2,9 @@ package com.directors.application.region;
 
 import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
-import com.directors.domain.user.UserRegionRepository;
+import com.directors.infrastructure.exception.user.UserRegionNotFoundException;
 import com.directors.infrastructure.jpa.region.JpaRegionRepository;
+import com.directors.infrastructure.jpa.user.JpaUserRegionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class RegionService {
     private static final int KILOMETER = 1000;
 
     private final JpaRegionRepository regionRepository;
-    private final UserRegionRepository userRegionRepository;
+    private final JpaUserRegionRepository userRegionRepository;
 
     @PostConstruct
     @Transactional
@@ -54,8 +55,8 @@ public class RegionService {
     public List<Address> getNearestAddress(String userId, int distance) {
         var userRegion = userRegionRepository
                 .findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
-        var region = regionRepository.findById(userRegion.getRegionId()).orElseThrow();
+                .orElseThrow(() -> new UserRegionNotFoundException(userId));
+        var region = regionRepository.findById(userRegion.getRegion().getId()).orElseThrow();
 
         return getNearestRegion(region, distance)
                 .stream()

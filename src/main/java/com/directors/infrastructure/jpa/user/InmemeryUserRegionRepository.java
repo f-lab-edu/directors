@@ -20,7 +20,7 @@ public class InmemeryUserRegionRepository implements UserRegionRepository {
     public Optional<UserRegion> findByUserId(String userId) {
         return userRegionMap.values()
                 .stream()
-                .filter(ur -> ur.getUserId().equals(userId))
+                .filter(ur -> ur.getUser().getId().equals(userId))
                 .findFirst();
     }
 
@@ -36,15 +36,15 @@ public class InmemeryUserRegionRepository implements UserRegionRepository {
     public boolean existsByUserId(String userId) {
         return userRegionMap.values()
                 .stream()
-                .anyMatch(ur -> ur.getUserId().equals(userId));
+                .anyMatch(ur -> ur.getUser().getId().equals(userId));
     }
 
     @Override
     public UserRegion save(UserRegion userRegion) {
-        if (userRegion.getId() == null) {
-            userRegion.setId(String.valueOf(nextId++));
-        }
-        userRegionMap.put(userRegion.getId(), userRegion);
+//        if (userRegion.getId() == null) {
+//            userRegion.setId(nextId++);
+//        }
+//        userRegionMap.put(userRegion.getId(), userRegion);
 
         return userRegion;
     }

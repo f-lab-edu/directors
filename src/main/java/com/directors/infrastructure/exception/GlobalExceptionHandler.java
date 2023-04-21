@@ -13,6 +13,7 @@ import com.directors.infrastructure.exception.specialty.NoSuchSpecialtyException
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.infrastructure.exception.user.DuplicateIdException;
 import com.directors.infrastructure.exception.user.NoSuchUserException;
+import com.directors.infrastructure.exception.user.UserRegionNotFoundException;
 import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -162,9 +163,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchSpecialtyException.class)
     public ErrorMessage noSuchSpecialtyException(NoSuchSpecialtyException ex) {
         log.warn("NoSuchSpecialtyException occurred.");
+        return new ErrorMessage(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserRegionNotFoundException.class)
+    public ErrorMessage userRegionNotFoundException(UserRegionNotFoundException ex) {
+        log.warn("UserRegionNotFoundException occurred. requestedUserId: " + ex.requestedUserId);
         return new ErrorMessage(ex.getMessage());
     }
 }

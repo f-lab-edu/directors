@@ -9,10 +9,10 @@ import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRegion;
-import com.directors.domain.user.UserRegionRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.jpa.specialty.JpaSpecialtyRepository;
+import com.directors.infrastructure.jpa.user.JpaUserRegionRepository;
 import com.directors.infrastructure.jpa.user.JpaUserRepository;
 import com.directors.presentation.user.request.SearchDirectorRequest;
 import com.directors.presentation.user.response.GetDirectorResponse;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class SearchDirectorService {
     private final RegionService regionService;
     private final JpaUserRepository userRepository;
-    private final UserRegionRepository userRegionRepository;
+    private final JpaUserRegionRepository userRegionRepository;
     private final ScheduleRepository scheduleRepository;
     private final JpaSpecialtyRepository specialtyRepository;
 
@@ -91,7 +91,8 @@ public class SearchDirectorService {
         List<UserRegion> userRegionList = new ArrayList<>();
 
         for (Address address : nearestAddress) {
-            var userRegion = userRegionRepository.findByFullAddress(address.getFullAddress());
+            var userRegion = userRegionRepository
+                    .findByAddressFullAddress(address.getFullAddress());
             userRegionList.addAll(userRegion);
         }
 
@@ -100,7 +101,7 @@ public class SearchDirectorService {
         }
 
         return userRegionList.stream()
-                .map(UserRegion::getUserId)
+                .map(userRegion -> userRegion.getUser().getId())
                 .collect(Collectors.toList());
     }
 

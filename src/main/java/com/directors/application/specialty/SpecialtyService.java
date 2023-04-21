@@ -23,9 +23,7 @@ public class SpecialtyService {
     @Transactional
     public void createSpecialty(Specialty specialty, String userIdByToken) {
         User user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED)
-                .orElseThrow(() -> {
-                    throw new NoSuchUserException(userIdByToken);
-                });
+                .orElseThrow(() -> new NoSuchUserException(userIdByToken));
         specialty.setUser(user);
 
         specialtyRepository.save(specialty);
