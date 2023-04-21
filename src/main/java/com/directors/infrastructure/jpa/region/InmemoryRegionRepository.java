@@ -56,4 +56,9 @@ public class InmemoryRegionRepository implements RegionRepository {
 
         return result;
     }
+
+    @Override
+    public Long count() {
+        return Long.parseLong(String.valueOf(regionMap.size()));
+    }
 }

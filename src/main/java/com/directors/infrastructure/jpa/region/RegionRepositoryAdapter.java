@@ -35,6 +35,11 @@ public class RegionRepositoryAdapter implements RegionRepository {
     }
 
     @Override
+    public Long count() {
+        return regionRepository.count();
+    }
+
+    @Override
     public List<Region> findRegionWithin(Point point, double distance) {
         return regionRepository.findRegionByPointDistanceLessThan(point, distance);
     }

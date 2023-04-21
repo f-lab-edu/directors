@@ -15,4 +15,6 @@ public interface RegionRepository {
     void saveAll(List<Region> regions);
 
     List<Region> findRegionWithin(Point point, double distance);
+
+    Long count();
 }

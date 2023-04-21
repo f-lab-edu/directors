@@ -31,6 +31,11 @@ public class RegionService {
     @PostConstruct
     @Transactional
     void loadRegionData() {
+        // TODO: 04.22 추후 분산 서버 환경을 고려한 로직 변경이 필요.
+        if (regionRepository.count() != 0) {
+            return;
+        }
+
         String pathPrefix = "/regionCSV/";
         String pathSuffix = "_좌표.csv";
         String[] regions = {
