@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SearchDiretorService {
+public class SearchDirectorService {
     private final RegionService regionService;
     private final JpaUserRepository userRepository;
     private final UserRegionRepository userRegionRepository;
