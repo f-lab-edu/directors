@@ -4,12 +4,12 @@ import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyProperty;
 
 public record CreateSpecialtyRequest(
-        String property,
+        SpecialtyProperty property,
         String description
 ) {
     public Specialty toEntity() {
         return Specialty.builder()
-                .property(SpecialtyProperty.fromValue(property))
+                .property(property)
                 .description(description)
                 .build();
     }
