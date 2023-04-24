@@ -6,6 +6,8 @@ import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
+import com.directors.infrastructure.exception.room.CannotCreateRoomException;
+import com.directors.infrastructure.exception.room.RoomNotFoundException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
@@ -175,6 +177,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorMessage userRegionNotFoundException(UserRegionNotFoundException ex) {
         log.warn("UserRegionNotFoundException occurred. requestedUserId: " + ex.requestedUserId);
         return new ErrorMessage(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CannotCreateRoomException.class)
+    public ErrorMessage cannotCreateRoomException(CannotCreateRoomException e) {
+        log.info("cannotCreateRoomException occurred. questionId = " + e.questionId);
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ErrorMessage roomNotFoundException(RoomNotFoundException e) {
+        log.info("RoomNotFoundException occurred. " + "roomId = " + e.getRoomId() +
+                ", requestUserId = " + e.getRequestUserId());
+        return new ErrorMessage(e.getMessage());
     }
 }
 
