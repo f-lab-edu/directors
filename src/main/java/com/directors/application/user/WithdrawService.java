@@ -38,7 +38,7 @@ public class WithdrawService {
 
         userRepository.save(loadedUser);
 
-        tokenRepository.deleteAllTokenByUserId(loadedUser.getUserId());
+        tokenRepository.deleteAllTokenByUserId(loadedUser.getId());
     }
 
     private static void validateUserIds(String firstUserId, String secondUserId) {

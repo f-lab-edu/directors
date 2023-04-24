@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
-
 public record SignUpRequest(
         @NotBlank(message = "아이디가 입력되지 않았습니다.")
         @Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.")
@@ -32,14 +30,13 @@ public record SignUpRequest(
     public User toEntity() {
         // region은 회원 가입 후, 추가로 설정할 수 있는 로직을 만들 예정입니다.
         return User.builder()
-                .userId(userId)
+                .id(userId)
                 .password(password)
                 .name(name)
                 .nickname(nickname)
                 .email(email)
                 .phoneNumber(phoneNumber)
-                .joinedDate(new Date())
-                .status(UserStatus.JOINED)
+                .userStatus(UserStatus.JOINED)
                 .build();
     }
 }

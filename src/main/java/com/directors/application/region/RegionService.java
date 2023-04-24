@@ -4,6 +4,7 @@ import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
 import com.directors.domain.user.UserRegionRepository;
+import com.directors.infrastructure.exception.user.UserRegionNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,13 @@ public class RegionService {
     private final UserRegionRepository userRegionRepository;
 
     @PostConstruct
-    private void loadRegionData() {
+    @Transactional
+    void loadRegionData() {
+        // TODO: 04.22 추후 분산 서버 환경을 고려한 로직 변경이 필요.
+        if (regionRepository.count() != 0) {
+            return;
+        }
+
         String pathPrefix = "/regionCSV/";
         String pathSuffix = "_좌표.csv";
         String[] regions = {
@@ -42,9 +49,8 @@ public class RegionService {
             var reader = new BufferedReader(new InputStreamReader(inputStream));
             regionDataLines = reader.lines().collect(Collectors.toList());
 
-            var collect = regionDataLines.stream()
-                    .map(this::regionDataLineToRegion)
-                    .collect(Collectors.toList());
+            List<Region> collect = regionDataLines.stream()
+                    .map(this::regionDataLineToRegion).toList();
 
             regionRepository.saveAll(collect);
         }
@@ -54,8 +60,8 @@ public class RegionService {
     public List<Address> getNearestAddress(String userId, int distance) {
         var userRegion = userRegionRepository
                 .findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException()); // TODO: 04.05 먼저 지역 인증이 필요하다는 예외가 필요.
-        var region = regionRepository.findByRegionId(userRegion.getRegionId()).orElseThrow();
+                .orElseThrow(() -> new UserRegionNotFoundException(userId));
+        var region = regionRepository.findById(userRegion.getRegion().getId()).orElseThrow();
 
         return getNearestRegion(region, distance)
                 .stream()
@@ -75,6 +81,6 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(Region region, int distance) {
-        return regionRepository.findRegionWithin(region, distance * KILOMETER);
+        return regionRepository.findRegionWithin(region.getPoint(), distance * KILOMETER);
     }
 }

@@ -1,10 +1,16 @@
 package com.directors.domain.region;
 
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public record Address (
-        String fullAddress,
-        String unitAddress
-){
+@Embeddable
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class Address {
+    private String fullAddress;
+    private String unitAddress;
 }

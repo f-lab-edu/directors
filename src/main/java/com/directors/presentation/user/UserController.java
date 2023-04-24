@@ -26,7 +26,7 @@ public class UserController {
     private final WithdrawService withdrawService;
     private final UpdateUserService updateUserService;
     private final AuthenticateRegionService authenticateRegionService;
-    private final SearchDiretorService searchDiretorService;
+    private final SearchDirectorService searchDiretorService;
 
     @PostMapping("/signUp")
     public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {

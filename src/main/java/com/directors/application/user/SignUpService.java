@@ -17,7 +17,7 @@ public class SignUpService {
 
     @Transactional
     public void signUp(User newUser) {
-        isDuplicatedUser(newUser.getUserId());
+        isDuplicatedUser(newUser.getId());
 
         newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
 
@@ -26,7 +26,7 @@ public class SignUpService {
 
     @Transactional
     public void isDuplicatedUser(String id) {
-        var user = userRepository.find(id);
+        var user = userRepository.findById(id);
         user.ifPresent(u -> {
             throw new DuplicateIdException(id);
         });

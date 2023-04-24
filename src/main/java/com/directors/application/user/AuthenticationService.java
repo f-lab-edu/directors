@@ -39,11 +39,11 @@ public class AuthenticationService {
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        String jwtToken = jm.generateAccessToken(loadedUser.getUserId());
-        String refreshToken = jm.generateRefreshToken(loadedUser.getUserId());
+        String jwtToken = jm.generateAccessToken(loadedUser.getId());
+        String refreshToken = jm.generateRefreshToken(loadedUser.getId());
         Date refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
 
-        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getUserId(), refreshTokenExpiration));
+        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getId(), refreshTokenExpiration));
 
         return new LogInResponse(jwtToken, refreshToken);
     }

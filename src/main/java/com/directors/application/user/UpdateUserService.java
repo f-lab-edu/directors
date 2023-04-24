@@ -48,15 +48,15 @@ public class UpdateUserService {
         userRepository.save(user);
     }
 
-    private User validateUser(String userIdByToken) {
-        Optional<User> user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
-        return user.orElseThrow(() -> new AuthenticationFailedException(userIdByToken));
+    private User validateUser(String userId) {
+        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
+        return user.orElseThrow(() -> new AuthenticationFailedException(userId));
     }
 
 
     private void validatePassword(String password, User user) {
         if (!passwordManager.checkPassword(password, user.getPassword())) {
-            throw new AuthenticationFailedException(user.getUserId());
+            throw new AuthenticationFailedException(user.getId());
         }
     }
 }

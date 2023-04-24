@@ -3,11 +3,9 @@ package com.directors.infrastructure.jpa.region;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
 import org.locationtech.jts.geom.Point;
-import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Repository
 public class InmemoryRegionRepository implements RegionRepository {
     Map<Long, Region> regionMap = new HashMap<>();
 
@@ -17,12 +15,12 @@ public class InmemoryRegionRepository implements RegionRepository {
     public Optional<Region> findByFullAddress(String fullAddress) {
         return regionMap.values()
                 .stream()
-                .filter(r -> r.getAddress().fullAddress().equals(fullAddress))
+                .filter(r -> r.getAddress().getFullAddress().equals(fullAddress))
                 .findFirst();
     }
 
     @Override
-    public Optional<Region> findByRegionId(Long regionId) {
+    public Optional<Region> findById(Long regionId) {
         return Optional.ofNullable(regionMap.get(regionId));
     }
 
@@ -36,6 +34,7 @@ public class InmemoryRegionRepository implements RegionRepository {
         return region;
     }
 
+    @Override
     public void saveAll(List<Region> regions) {
         for (Region region : regions) {
             if (region.getId() == null) {
@@ -45,9 +44,9 @@ public class InmemoryRegionRepository implements RegionRepository {
         }
     }
 
-    public List<Region> findRegionWithin(Region region, double distance) {
+    @Override
+    public List<Region> findRegionWithin(Point point, double distance) {
         List<Region> result = new ArrayList<>();
-        Point point = region.getPoint();
 
         for (Region oneRegion : regionMap.values()) {
             if (oneRegion.getPoint().distance(point) <= distance) {
@@ -56,5 +55,10 @@ public class InmemoryRegionRepository implements RegionRepository {
         }
 
         return result;
+    }
+
+    @Override
+    public Long count() {
+        return Long.parseLong(String.valueOf(regionMap.size()));
     }
 }

@@ -1,35 +1,45 @@
 package com.directors.domain.user;
 
 import com.directors.domain.region.Address;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.directors.domain.region.Region;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
+@Table(name = "userregion")
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
 public class UserRegion {
-    private String id;
-    private Address address;
-    private String userId;
-    private Long regionId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-    public void setRegionId(Long regionId) {
-        this.regionId = regionId;
+    @Embedded
+    private Address address;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", referencedColumnName = "id")
+    private Region region;
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 
     public void setAddress(Address address) {
         this.address = address;
     }
 
-    public static UserRegion of(Address address, String userId, Long regionId) {
+    public static UserRegion of(Address address, User user, Region region) {
         return UserRegion.builder()
                 .address(address)
-                .userId(userId)
-                .regionId(regionId)
+                .user(user)
+                .region(region)
                 .build();
     }
 }
