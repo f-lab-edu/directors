@@ -61,11 +61,10 @@ public class RegionService {
         var userRegion = userRegionRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new UserRegionNotFoundException(userId));
-        var region = regionRepository.findById(userRegion.getRegion().getId()).orElseThrow();
 
-        return getNearestRegion(region, distance)
+        return getNearestRegion(userRegion.getRegion(), distance)
                 .stream()
-                .map(reg -> reg.getAddress())
+                .map(Region::getAddress)
                 .collect(Collectors.toList());
     }
 

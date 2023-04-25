@@ -6,6 +6,7 @@ import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
+import com.directors.infrastructure.exception.region.RegionNotFoundException;
 import com.directors.infrastructure.exception.room.CannotCreateRoomException;
 import com.directors.infrastructure.exception.room.RoomNotFoundException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
@@ -191,6 +192,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorMessage roomNotFoundException(RoomNotFoundException e) {
         log.info("RoomNotFoundException occurred. " + "roomId = " + e.getRoomId() +
                 ", requestUserId = " + e.getRequestUserId());
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(RegionNotFoundException.class)
+    public ErrorMessage regionNotFoundException(RegionNotFoundException e) {
+        log.info("RegionNotFoundException occurred. " + "fullAddress = " + e.getFullAddress());
         return new ErrorMessage(e.getMessage());
     }
 }

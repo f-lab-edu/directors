@@ -27,12 +27,9 @@ public class UserRegion {
     @JoinColumn(name = "region_id", referencedColumnName = "id")
     private Region region;
 
-    public void setRegion(Region region) {
-        this.region = region;
-    }
-
-    public void setAddress(Address address) {
+    public void updateRegionInfo(Address address, Region region) {
         this.address = address;
+        this.region = region;
     }
 
     public static UserRegion of(Address address, User user, Region region) {

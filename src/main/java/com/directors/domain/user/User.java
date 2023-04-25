@@ -1,7 +1,9 @@
 package com.directors.domain.user;
 
 import com.directors.domain.common.BaseEntity;
+import com.directors.domain.region.Address;
 import com.directors.domain.specialty.Specialty;
+import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +11,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -40,6 +43,33 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Specialty> specialtyList = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private UserRegion userRegion;
+
+    public Address getUserAddress() {
+        if (userRegion == null) {
+            return null;
+        }
+        return userRegion.getAddress();
+    }
+
+    public List<SpecialtyInfo> getSpecialtyInfoList() {
+        return specialtyList
+                .stream()
+                .map(Specialty::getSpecialtyInfo)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public boolean hasText(String text) {
+        return isMatchingNameOrNickWithText(text) || isMatchingSpecialtyWithText(text);
+    }
+
+    public boolean hasProperty(String property) {
+        return this.specialtyList.stream().
+                anyMatch(specialty ->
+                        specialty.getSpecialtyInfo().getProperty().getValue().equals(property));
+    }
+
     public void setPasswordByEncryption(String encryptedPassword) {
         this.password = encryptedPassword;
     }
@@ -58,5 +88,14 @@ public class User extends BaseEntity {
         if (!this.email.equals(email)) {
             throw new AuthenticationFailedException(this.id);
         }
+    }
+
+    private boolean isMatchingNameOrNickWithText(String text) {
+        return this.id.contains(text) || this.nickname.contains(text);
+    }
+
+    private boolean isMatchingSpecialtyWithText(String text) {
+        return specialtyList.stream()
+                .anyMatch(specialty -> specialty.getSpecialtyInfo().getDescription().contains(text));
     }
 }

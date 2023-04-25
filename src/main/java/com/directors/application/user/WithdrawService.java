@@ -2,7 +2,6 @@ package com.directors.application.user;
 
 import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
-import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.user.AuthenticationFailedException;
@@ -23,28 +22,24 @@ public class WithdrawService {
 
     @Transactional
     public void withdraw(WithdrawRequest withdrawRequest, String userIdByToken) {
-        String userId = withdrawRequest.userId();
-        String password = withdrawRequest.password();
+        var userId = withdrawRequest.userId();
+        var password = withdrawRequest.password();
 
         validateUserIds(userId, userIdByToken);
 
-        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
-
-        User loadedUser = user
+        var user = userRepository
+                .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        loadedUser.withdrawal(new Date());
+        user.withdrawal(new Date());
 
-        userRepository.save(loadedUser);
-
-        tokenRepository.deleteAllTokenByUserId(loadedUser.getId());
+        tokenRepository.deleteAllTokenByUserId(user.getId());
     }
 
-    private static void validateUserIds(String firstUserId, String secondUserId) {
+    private void validateUserIds(String firstUserId, String secondUserId) {
         if (!firstUserId.equals(secondUserId)) {
             throw new AuthenticationFailedException(firstUserId);
         }
     }
-
 }
