@@ -1,15 +1,16 @@
 name: CD with Gradle
 
 on:
+  push:
+    branches: [ "master" ]
   pull_request:
-    types: [ closed ]
+    branches: [ "master" ]
 
 permissions:
   contents: read
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
