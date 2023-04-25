@@ -4,7 +4,7 @@ import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
 import com.directors.domain.user.UserRegionRepository;
-import com.directors.infrastructure.exception.user.UserRegionNotFoundException;
+import com.directors.domain.user.exception.UserRegionNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

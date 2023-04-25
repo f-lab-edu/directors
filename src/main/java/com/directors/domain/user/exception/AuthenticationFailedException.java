@@ -1,4 +1,4 @@
-package com.directors.infrastructure.exception.user;
+package com.directors.domain.user.exception;
 
 public class AuthenticationFailedException extends RuntimeException {
     private final static String message = "유저 인증이 실패했습니다.";

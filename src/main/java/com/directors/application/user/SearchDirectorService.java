@@ -6,8 +6,8 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.user.*;
-import com.directors.infrastructure.exception.api.NotFoundException;
-import com.directors.infrastructure.exception.user.NoSuchUserException;
+import com.directors.domain.user.exception.NoSuchUserException;
+import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.presentation.user.request.SearchDirectorRequest;
 import com.directors.presentation.user.response.GetDirectorResponse;
 import com.directors.presentation.user.response.SearchDirectorResponse;
@@ -73,9 +73,8 @@ public class SearchDirectorService {
         }
 
         if (userRegionList.size() == 0) {
-            throw new NotFoundException();
+            throw new UserRegionNotFoundException(null);
         }
-
         return userRegionList.stream()
                 .map(userRegion -> userRegion.getUser())
                 .collect(Collectors.toList());

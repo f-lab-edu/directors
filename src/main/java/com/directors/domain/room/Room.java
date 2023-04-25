@@ -1,6 +1,6 @@
 package com.directors.domain.room;
 
-import com.directors.infrastructure.exception.room.RoomNotFoundException;
+import com.directors.domain.room.exception.RoomNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -4,7 +4,7 @@ import com.directors.domain.common.BaseEntity;
 import com.directors.domain.region.Address;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.domain.user.exception.AuthenticationFailedException;
 import jakarta.persistence.*;
 import lombok.*;
 

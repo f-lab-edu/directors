@@ -4,7 +4,7 @@ import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.presentation.user.request.WithdrawRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

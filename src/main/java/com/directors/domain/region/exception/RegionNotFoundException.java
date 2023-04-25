@@ -1,4 +1,4 @@
-package com.directors.infrastructure.exception.region;
+package com.directors.domain.region.exception;
 
 import lombok.Getter;
 

@@ -4,9 +4,9 @@ import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionApiClient;
 import com.directors.domain.region.RegionRepository;
+import com.directors.domain.region.exception.RegionNotFoundException;
 import com.directors.domain.user.*;
-import com.directors.infrastructure.exception.region.RegionNotFoundException;
-import com.directors.infrastructure.exception.user.NoSuchUserException;
+import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.presentation.user.request.AuthenticateRegionRequest;
 import com.directors.presentation.user.response.AuthenticateRegionResponse;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,6 @@ public class AuthenticateRegionService {
                 .orElseThrow(() -> new NoSuchUserException(userId));
         var newUserRegion = UserRegion.of(region.getAddress(), user, region);
 
-        UserRegion savedUserRegion = userRegionRepository.save(newUserRegion);
-        return savedUserRegion;
+        return userRegionRepository.save(newUserRegion);
     }
 }

@@ -1,8 +1,8 @@
 package com.directors.domain.question;
 
+import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
-import com.directors.infrastructure.exception.room.CannotCreateRoomException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -4,7 +4,7 @@ import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.presentation.user.request.UpdateEmailRequest;
 import com.directors.presentation.user.request.UpdatePasswordRequest;
 import lombok.RequiredArgsConstructor;
