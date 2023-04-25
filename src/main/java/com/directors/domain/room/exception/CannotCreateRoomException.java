@@ -1,4 +1,4 @@
-package com.directors.infrastructure.exception.room;
+package com.directors.domain.room.exception;
 
 public class CannotCreateRoomException extends RuntimeException {
     public final static String STATUS = "채팅 방을 만들 수 없는 상태입니다.";

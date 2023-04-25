@@ -2,9 +2,9 @@ name: CD with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "tilsong:feature/**" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "tilsong:feature/**" ]
 
 permissions:
   contents: read

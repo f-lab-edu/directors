@@ -3,7 +3,7 @@ package com.directors.application.user;
 import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
-import com.directors.infrastructure.exception.user.DuplicateIdException;
+import com.directors.domain.user.exception.DuplicateIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

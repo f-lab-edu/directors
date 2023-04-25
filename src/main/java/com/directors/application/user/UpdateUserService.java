@@ -4,14 +4,12 @@ import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
+import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.presentation.user.request.UpdateEmailRequest;
 import com.directors.presentation.user.request.UpdatePasswordRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,17 +20,15 @@ public class UpdateUserService {
 
     @Transactional
     public void updatePassword(UpdatePasswordRequest updatePasswordRequest, String userIdByToken) {
-        String oldPassword = updatePasswordRequest.oldPassword();
-        String newPassword = updatePasswordRequest.newPassword();
+        var oldPassword = updatePasswordRequest.oldPassword();
+        var newPassword = updatePasswordRequest.newPassword();
 
-        User user = validateUser(userIdByToken);
-
+        var user = validateUser(userIdByToken);
         validatePassword(oldPassword, user);
 
         String encryptPassword = passwordManager.encryptPassword(newPassword);
-        user.setPasswordByEncryption(encryptPassword);
 
-        userRepository.save(user);
+        user.setPasswordByEncryption(encryptPassword);
     }
 
 
@@ -44,13 +40,12 @@ public class UpdateUserService {
         var user = validateUser(userIdByToken);
 
         user.changeEmail(oldEmail, newEmail);
-
-        userRepository.save(user);
     }
 
     private User validateUser(String userId) {
-        Optional<User> user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
-        return user.orElseThrow(() -> new AuthenticationFailedException(userId));
+        return userRepository
+                .findByIdAndUserStatus(userId, UserStatus.JOINED)
+                .orElseThrow(() -> new AuthenticationFailedException(userId));
     }
 
 

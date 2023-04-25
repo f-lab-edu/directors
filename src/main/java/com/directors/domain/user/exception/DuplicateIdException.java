@@ -1,4 +1,4 @@
-package com.directors.infrastructure.exception.user;
+package com.directors.domain.user.exception;
 
 public class DuplicateIdException extends RuntimeException {
     private final static String message = "이미 존재하는 Id입니다.";

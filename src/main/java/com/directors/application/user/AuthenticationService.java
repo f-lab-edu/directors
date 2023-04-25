@@ -3,11 +3,10 @@ package com.directors.application.user;
 import com.directors.domain.auth.Token;
 import com.directors.domain.auth.TokenRepository;
 import com.directors.domain.user.PasswordManager;
-import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
+import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.infrastructure.auth.JwtAuthenticationManager;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
@@ -31,19 +30,19 @@ public class AuthenticationService {
 
     @Transactional
     public LogInResponse logIn(LogInRequest loginRequest) {
-        String userId = loginRequest.userId();
-        String password = loginRequest.password();
+        var userId = loginRequest.userId();
+        var password = loginRequest.password();
 
-        var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED);
-        User loadedUser = user
+        var user = userRepository
+                .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        String jwtToken = jm.generateAccessToken(loadedUser.getId());
-        String refreshToken = jm.generateRefreshToken(loadedUser.getId());
-        Date refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
+        var jwtToken = jm.generateAccessToken(user.getId());
+        var refreshToken = jm.generateRefreshToken(user.getId());
+        var refreshTokenExpiration = jm.getExpirationByToken(refreshToken);
 
-        tokenRepository.saveToken(new Token(refreshToken, loadedUser.getId(), refreshTokenExpiration));
+        tokenRepository.saveToken(new Token(refreshToken, user.getId(), refreshTokenExpiration));
 
         return new LogInResponse(jwtToken, refreshToken);
     }
@@ -55,10 +54,11 @@ public class AuthenticationService {
 
     @Transactional
     public RefreshAuthenticationResponse refreshAuthentication(RefreshAuthenticationRequest request) {
-        String accessToken = request.accessToken();
-        String refreshToken = request.refreshToken();
+        var accessToken = request.accessToken();
+        var refreshToken = request.refreshToken();
 
-        String userId = compareUserIdWithTokens(accessToken, refreshToken);
+        var userId = compareUserIdWithTokens(accessToken, refreshToken);
+
         validateUserIdByToken(userId);
 
         accessToken = jm.generateAccessToken(userId);
@@ -81,13 +81,15 @@ public class AuthenticationService {
     }
 
     private void validateUserIdByToken(String userIdByToken) {
-        var user = userRepository.findByIdAndUserStatus(userIdByToken, UserStatus.JOINED);
-        user.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
+        userRepository
+                .findByIdAndUserStatus(userIdByToken, UserStatus.JOINED)
+                .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
     }
 
     private long validateRefreshToken(String refreshToken) {
-        var tokenByTokenString = tokenRepository.findTokenByTokenString(refreshToken);
-        tokenByTokenString.orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
+        tokenRepository
+                .findTokenByTokenString(refreshToken)
+                .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
 
         long refreshExpirationDay = jm.getExpirationDayByToken(refreshToken);
         if (refreshExpirationDay < 0) {

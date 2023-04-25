@@ -1,4 +1,4 @@
-package com.directors.infrastructure.exception.room;
+package com.directors.domain.room.exception;
 
 import lombok.Getter;
 

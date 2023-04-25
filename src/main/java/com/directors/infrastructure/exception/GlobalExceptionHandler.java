@@ -1,21 +1,22 @@
 package com.directors.infrastructure.exception;
 
+import com.directors.domain.region.exception.RegionNotFoundException;
+import com.directors.domain.room.exception.CannotCreateRoomException;
+import com.directors.domain.room.exception.RoomNotFoundException;
+import com.directors.domain.specialty.exception.NoSuchSpecialtyException;
+import com.directors.domain.user.exception.AuthenticationFailedException;
+import com.directors.domain.user.exception.DuplicateIdException;
+import com.directors.domain.user.exception.NoSuchUserException;
+import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
 import com.directors.infrastructure.exception.api.ExternalApiServerException;
 import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
-import com.directors.infrastructure.exception.room.CannotCreateRoomException;
-import com.directors.infrastructure.exception.room.RoomNotFoundException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
-import com.directors.infrastructure.exception.specialty.NoSuchSpecialtyException;
-import com.directors.infrastructure.exception.user.AuthenticationFailedException;
-import com.directors.infrastructure.exception.user.DuplicateIdException;
-import com.directors.infrastructure.exception.user.NoSuchUserException;
-import com.directors.infrastructure.exception.user.UserRegionNotFoundException;
 import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -191,6 +192,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorMessage roomNotFoundException(RoomNotFoundException e) {
         log.info("RoomNotFoundException occurred. " + "roomId = " + e.getRoomId() +
                 ", requestUserId = " + e.getRequestUserId());
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(RegionNotFoundException.class)
+    public ErrorMessage regionNotFoundException(RegionNotFoundException e) {
+        log.info("RegionNotFoundException occurred. " + "fullAddress = " + e.getFullAddress());
         return new ErrorMessage(e.getMessage());
     }
 }
