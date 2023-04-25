@@ -44,6 +44,7 @@ public class SearchDirectorService {
         users = users.stream()
                 .filter(user -> user.hasText(request.searchText()) || user.hasProperty(request.property()))
                 .collect(Collectors.toList());
+        // TODO: 04.25 이 메소드의 내용을 조인 쿼리 + 페이징을 통해서 구현해보기
         return paging(request.size(), request.page(), generateDirectors(users));
     }
 
@@ -61,7 +62,7 @@ public class SearchDirectorService {
                 .collect(Collectors.toList());
     }
 
-    private List<String> getNearestDirectorIds(String userId, int distance) {
+    private List<User> getNearestDirectors(String userId, int distance) {
         var nearestAddress = regionService.getNearestAddress(userId, distance);
 
         List<UserRegion> userRegionList = new ArrayList<>();
