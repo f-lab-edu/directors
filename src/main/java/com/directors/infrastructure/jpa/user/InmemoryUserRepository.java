@@ -5,6 +5,7 @@ import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +13,11 @@ public class InmemoryUserRepository implements UserRepository {
     // 더미 데이터 사용
     private final Map<String, User> userMap = new HashMap<>() {{
     }};
+
+    @Override
+    public List<User> findWithSearchConditions(List<Long> nearestRegionIds, String searchText, String property, int offset, int limit) {
+        return null;
+    }
 
     @Override
     public Optional<User> findByIdAndUserStatus(String id, UserStatus userStatus) {

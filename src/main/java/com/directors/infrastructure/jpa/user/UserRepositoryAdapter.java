@@ -6,6 +6,7 @@ import com.directors.domain.user.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,5 +28,10 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findWithSearchConditions(List<Long> regionIds, String searchText, String property, int offset, int limit) {
+        return userRepository.findWithSearchConditions(regionIds, searchText, property, offset, limit);
     }
 }
