@@ -84,7 +84,6 @@ public class RegionService {
         return userRegion;
     }
 
-
     private Region regionDataLineToRegion(String regionLine) {
         String[] lineSplit = regionLine.split(",");
         return Region.of(lineSplit[0], lineSplit[1], coordinateToPoint(lineSplit[2], lineSplit[3]));

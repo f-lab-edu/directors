@@ -13,6 +13,7 @@ import com.directors.presentation.user.response.GetDirectorResponse;
 import com.directors.presentation.user.response.SearchDirectorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +26,9 @@ public class SearchDirectorService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
 
+    @Transactional
     public GetDirectorResponse getDirector(String directorId) {
-        var director = getDirectorByDirectorId(directorId);
+        var director = getJoinedUserByUserId(directorId);
 
         // TODO: 04.25 Schedule 도메인 Jpa 적용 후 변경 필요. -> User 클래스 내에 다 있도록.
         var startTimeList = getScheduleStartTimesByDirectorId(director.getId());
@@ -34,23 +36,25 @@ public class SearchDirectorService {
         return new GetDirectorResponse(director.getName(), director.getNickname(), director.getUserAddress(), director.getSpecialtyInfoList(), startTimeList);
     }
 
+    @Transactional
     public List<SearchDirectorResponse> searchDirector(SearchDirectorRequest request, String userId) {
         // TODO: 04.10 Option -> 자기 소개 엔티티 or VO 추가 여부 , Sorting -> 검색에 평점(높은 순, 최소), 요청된 질문 수 반영 여부
+        User joinedUser = getJoinedUserByUserId(userId);
 
-        List<Long> nearestRegionIds = regionService.getNearestRegionId(userId, request.distance());
+        List<Long> nearestRegionIds = regionService.getNearestRegionId(joinedUser.getId(), request.distance());
 
         int offset = calcOffset(request.page(), request.size());
 
-        // TODO: 04.26 Schedule 도메인 Jpa 적용 후 변경 필요.
+        // TODO: 04.26 Schedule 도메인 Jpa 적용 후 변경 필요. 현재는 schedule 정보를 사용하지 않음.
         List<User> users = userRepository.findWithSearchConditions(nearestRegionIds, request.searchText(), request.property(), offset, request.size());
 
         return generateDirectors(users);
     }
 
-    private User getDirectorByDirectorId(String directorId) {
+    private User getJoinedUserByUserId(String userId) {
         return userRepository
-                .findByIdAndUserStatus(directorId, UserStatus.JOINED)
-                .orElseThrow(() -> new NoSuchUserException(directorId));
+                .findByIdAndUserStatus(userId, UserStatus.JOINED)
+                .orElseThrow(() -> new NoSuchUserException(userId));
     }
 
     private List<LocalDateTime> getScheduleStartTimesByDirectorId(String directorId) {

@@ -4,10 +4,8 @@ import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class InmemeryUserRegionRepository implements UserRegionRepository {
     Map<String, UserRegion> userRegionMap = new HashMap<>();
@@ -20,14 +18,6 @@ public class InmemeryUserRegionRepository implements UserRegionRepository {
                 .stream()
                 .filter(ur -> ur.getUser().getId().equals(userId))
                 .findFirst();
-    }
-
-    @Override
-    public List<UserRegion> findByFullAddress(String fullAddress) {
-        return userRegionMap.values()
-                .stream()
-                .filter(ur -> ur.getAddress().getFullAddress().equals(fullAddress))
-                .collect(Collectors.toList());
     }
 
     @Override

@@ -17,6 +17,7 @@ public interface JpaUserRepository extends JpaRepository<User, String> {
                     "INNER JOIN user_region ur ON u.id = ur.user_id " +
                     "LEFT JOIN specialty s ON u.id = s.user_id " +
                     "WHERE ur.user_id IN (:regionIds) " +
+                    "AND u.user_status = 'JOINED' " +
                     "AND (u.name LIKE CONCAT('%', :searchText, '%') OR u.nickname LIKE CONCAT('%', :searchText, '%')) " +
                     "AND s.description LIKE CONCAT('%', :property, '%') " +
                     "LIMIT :limit OFFSET :offset",
