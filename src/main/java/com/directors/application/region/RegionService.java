@@ -3,6 +3,7 @@ package com.directors.application.region;
 import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
+import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
 import com.directors.domain.user.exception.UserRegionNotFoundException;
 import jakarta.annotation.PostConstruct;
@@ -58,14 +59,29 @@ public class RegionService {
 
     @Transactional
     public List<Address> getNearestAddress(String userId, int distance) {
-        var userRegion = userRegionRepository
-                .findByUserId(userId)
-                .orElseThrow(() -> new UserRegionNotFoundException(userId));
+        UserRegion userRegion = getUserRegion(userId);
 
         return getNearestRegion(userRegion.getRegion(), distance)
                 .stream()
                 .map(Region::getAddress)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<Long> getNearestRegionId(String userId, int distance) {
+        UserRegion userRegion = getUserRegion(userId);
+
+        return getNearestRegion(userRegion.getRegion(), distance)
+                .stream()
+                .map(Region::getId)
+                .collect(Collectors.toList());
+    }
+
+    private UserRegion getUserRegion(String userId) {
+        var userRegion = userRegionRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new UserRegionNotFoundException(userId));
+        return userRegion;
     }
 
     private Region regionDataLineToRegion(String regionLine) {

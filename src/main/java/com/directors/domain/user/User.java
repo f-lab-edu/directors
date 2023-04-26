@@ -60,16 +60,6 @@ public class User extends BaseEntity {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public boolean hasText(String text) {
-        return isMatchingNameOrNickWithText(text) || isMatchingSpecialtyWithText(text);
-    }
-
-    public boolean hasProperty(String property) {
-        return this.specialtyList.stream().
-                anyMatch(specialty ->
-                        specialty.getSpecialtyInfo().getProperty().getValue().equals(property));
-    }
-
     public void setPasswordByEncryption(String encryptedPassword) {
         this.password = encryptedPassword;
     }
@@ -88,14 +78,5 @@ public class User extends BaseEntity {
         if (!this.email.equals(email)) {
             throw new AuthenticationFailedException(this.id);
         }
-    }
-
-    private boolean isMatchingNameOrNickWithText(String text) {
-        return this.id.contains(text) || this.nickname.contains(text);
-    }
-
-    private boolean isMatchingSpecialtyWithText(String text) {
-        return specialtyList.stream()
-                .anyMatch(specialty -> specialty.getSpecialtyInfo().getDescription().contains(text));
     }
 }
