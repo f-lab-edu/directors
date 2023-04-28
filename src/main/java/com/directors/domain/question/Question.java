@@ -1,5 +1,6 @@
 package com.directors.domain.question;
 
+import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
@@ -83,5 +84,14 @@ public class Question {
 
     public void changeQuestionStatusToChat() {
         this.status = QuestionStatus.CHATTING;
+    }
+
+    public void canCreateFeedback(String questionerId) {
+        if (this.questionerId.equals(questionerId)) {
+            throw new CannotCreateFeedbackException(this.id, CannotCreateFeedbackException.AUTH);
+        }
+        if (this.status.equals(QuestionStatus.COMPLETE)) {
+            throw new CannotCreateFeedbackException(this.id, CannotCreateFeedbackException.STATUS);
+        }
     }
 }

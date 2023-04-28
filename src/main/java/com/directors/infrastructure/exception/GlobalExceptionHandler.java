@@ -1,5 +1,6 @@
 package com.directors.infrastructure.exception;
 
+import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
 import com.directors.domain.region.exception.RegionNotFoundException;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.room.exception.RoomNotFoundException;
@@ -180,10 +181,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ErrorMessage(ex.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(CannotCreateRoomException.class)
     public ErrorMessage cannotCreateRoomException(CannotCreateRoomException e) {
-        log.info("cannotCreateRoomException occurred. questionId = " + e.questionId);
+        log.info("CannotCreateRoomException occurred. questionId = " + e.questionId);
         return new ErrorMessage(e.getMessage());
     }
 
@@ -199,6 +200,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RegionNotFoundException.class)
     public ErrorMessage regionNotFoundException(RegionNotFoundException e) {
         log.info("RegionNotFoundException occurred. " + "fullAddress = " + e.getFullAddress());
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(CannotCreateFeedbackException.class)
+    public ErrorMessage cannotCreateFeedbackException(CannotCreateFeedbackException e) {
+        log.info("CannotCreateFeedbackException occurred. questionId = " + e.questionId);
         return new ErrorMessage(e.getMessage());
     }
 }
