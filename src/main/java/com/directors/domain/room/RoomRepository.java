@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface RoomRepository {
 
-    Optional<Room> findByRoomId(Long roomId);
+    Optional<Room> findById(Long roomId);
 
     Optional<Room> findByQuestionId(Long questionId);
 
@@ -13,5 +13,5 @@ public interface RoomRepository {
 
     List<Room> findByQuestionerId(String questionerId);
 
-    void save(Room room);
+    Room save(Room room);
 }
