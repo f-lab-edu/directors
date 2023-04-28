@@ -214,8 +214,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(FeedbackNotFoundException.class)
     public ErrorMessage feedbackNotFoundException(FeedbackNotFoundException e) {
-        log.info("FeedbackNotFoundException occurred. " + "feedbackId = " + e.getFeedbackId() +
-                ", requestUserId = " + e.getRequestUserId());
+        log.info("FeedbackNotFoundException occurred. " + "feedbackId = " + e.getFeedbackId());
         return new ErrorMessage(e.getMessage());
     }
 }

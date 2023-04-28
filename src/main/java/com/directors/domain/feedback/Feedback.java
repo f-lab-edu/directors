@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "feedback")
@@ -34,12 +35,6 @@ public class Feedback extends BaseEntity {
     //    private Question question;
     private String questionId;
 
-    public void updateFeedback(FeedbackRating rating, List<FeedbackCheck> checkedList, String description) {
-        this.feedbackRating = rating;
-        this.feedbackCheckList = checkedList;
-        this.description = description;
-    }
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "director_id", referencedColumnName = "id")
     private User director;
@@ -47,4 +42,16 @@ public class Feedback extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "questioner_id", referencedColumnName = "id")
     private User questioner;
+
+    public void updateFeedback(FeedbackRating rating, List<FeedbackCheck> checkedList, String description) {
+        this.feedbackRating = rating;
+        this.feedbackCheckList = checkedList;
+        this.description = description;
+    }
+
+    public List<String> getFeedbackCheckValues() {
+        return feedbackCheckList.stream()
+                .map(FeedbackCheck::getValue)
+                .collect(Collectors.toList());
+    }
 }

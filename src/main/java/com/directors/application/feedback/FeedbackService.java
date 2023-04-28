@@ -13,6 +13,7 @@ import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.presentation.feedback.request.CreateFeedbackRequest;
 import com.directors.presentation.feedback.request.UpdateFeedbackRequest;
+import com.directors.presentation.feedback.response.GetByFeedbackIdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +27,15 @@ public class FeedbackService {
 
     @Transactional
     public void create(CreateFeedbackRequest request, String questionerId) {
-        Question question = getQuestionById(request.questionId());
+        var question = getQuestionById(request.questionId());
 
         question.canCreateFeedback(questionerId);
 
         // TODO: 04.28 Question JPA 적용 시 Fetch Join 통해 변경
-        User questioner = getUserByUserId(questionerId);
-        User director = getUserByUserId(question.getDirectorId());
+        var questioner = getUserByUserId(questionerId);
+        var director = getUserByUserId(question.getDirectorId());
 
-        Feedback feedback = Feedback.builder()
+        var feedback = Feedback.builder()
                 .feedbackRating(FeedbackRating.fromValue(request.rating()))
                 .description(request.description())
                 .questioner(questioner)
@@ -46,12 +47,24 @@ public class FeedbackService {
     }
 
     @Transactional
-    public void update(UpdateFeedbackRequest request, String questionerId) {
-        Feedback feedback = feedbackRepository
-                .findById(request.feedbackId())
-                .orElseThrow(() -> new FeedbackNotFoundException(request.feedbackId(), questionerId));
+    public void update(UpdateFeedbackRequest request) {
+        var feedback = getFeedbackById(request.feedbackId());
 
         feedback.updateFeedback(FeedbackRating.fromValue(request.rating()), request.toFeedbackCheckList(), request.description());
+    }
+
+    @Transactional
+    public GetByFeedbackIdResponse getFeedbackByFeedbackId(Long feedbackId) {
+        var feedback = getFeedbackById(feedbackId);
+
+        var response = new GetByFeedbackIdResponse(
+                feedback.getId(),
+                feedback.getFeedbackRating().getValue(),
+                feedback.getFeedbackCheckValues(),
+                feedback.getDescription()
+        );
+
+        return response;
     }
 
     private Question getQuestionById(Long questionId) {
@@ -64,5 +77,11 @@ public class FeedbackService {
         return userRepository
                 .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .orElseThrow(() -> new NoSuchUserException(userId));
+    }
+
+    private Feedback getFeedbackById(Long feedbackId) {
+        return feedbackRepository
+                .findById(feedbackId)
+                .orElseThrow(() -> new FeedbackNotFoundException(feedbackId));
     }
 }
