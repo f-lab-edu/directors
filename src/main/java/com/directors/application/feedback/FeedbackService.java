@@ -3,6 +3,7 @@ package com.directors.application.feedback;
 import com.directors.domain.feedback.Feedback;
 import com.directors.domain.feedback.FeedbackRating;
 import com.directors.domain.feedback.FeedbackRepository;
+import com.directors.domain.feedback.exception.FeedbackNotFoundException;
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.user.User;
@@ -11,8 +12,10 @@ import com.directors.domain.user.UserStatus;
 import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.presentation.feedback.request.CreateFeedbackRequest;
+import com.directors.presentation.feedback.request.UpdateFeedbackRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,8 @@ public class FeedbackService {
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
 
-    public Object create(CreateFeedbackRequest request, String questionerId) {
+    @Transactional
+    public void create(CreateFeedbackRequest request, String questionerId) {
         Question question = getQuestionById(request.questionId());
 
         question.canCreateFeedback(questionerId);
@@ -38,18 +42,27 @@ public class FeedbackService {
                 .feedbackCheckList(request.toFeedbackCheckList())
                 .build();
 
-        return feedbackRepository.save(feedback);
+        feedbackRepository.save(feedback);
     }
 
-    private User getUserByUserId(String userId) {
-        return userRepository
-                .findByIdAndUserStatus(userId, UserStatus.JOINED)
-                .orElseThrow(() -> new NoSuchUserException(userId));
+    @Transactional
+    public void update(UpdateFeedbackRequest request, String questionerId) {
+        Feedback feedback = feedbackRepository
+                .findById(request.feedbackId())
+                .orElseThrow(() -> new FeedbackNotFoundException(request.feedbackId(), questionerId));
+
+        feedback.updateFeedback(FeedbackRating.fromValue(request.rating()), request.toFeedbackCheckList(), request.description());
     }
 
     private Question getQuestionById(Long questionId) {
         return questionRepository
                 .findByQuestionId(questionId)
                 .orElseThrow(QuestionNotFoundException::new);
+    }
+
+    private User getUserByUserId(String userId) {
+        return userRepository
+                .findByIdAndUserStatus(userId, UserStatus.JOINED)
+                .orElseThrow(() -> new NoSuchUserException(userId));
     }
 }

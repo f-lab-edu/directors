@@ -1,6 +1,7 @@
 package com.directors.infrastructure.exception;
 
 import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
+import com.directors.domain.feedback.exception.FeedbackNotFoundException;
 import com.directors.domain.region.exception.RegionNotFoundException;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.room.exception.RoomNotFoundException;
@@ -207,6 +208,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CannotCreateFeedbackException.class)
     public ErrorMessage cannotCreateFeedbackException(CannotCreateFeedbackException e) {
         log.info("CannotCreateFeedbackException occurred. questionId = " + e.questionId);
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(FeedbackNotFoundException.class)
+    public ErrorMessage feedbackNotFoundException(FeedbackNotFoundException e) {
+        log.info("FeedbackNotFoundException occurred. " + "feedbackId = " + e.getFeedbackId() +
+                ", requestUserId = " + e.getRequestUserId());
         return new ErrorMessage(e.getMessage());
     }
 }

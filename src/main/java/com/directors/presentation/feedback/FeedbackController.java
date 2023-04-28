@@ -2,11 +2,13 @@ package com.directors.presentation.feedback;
 
 import com.directors.application.feedback.FeedbackService;
 import com.directors.presentation.feedback.request.CreateFeedbackRequest;
+import com.directors.presentation.feedback.request.UpdateFeedbackRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +21,12 @@ public class FeedbackController {
     @PostMapping("/create")
     public ResponseEntity<HttpStatus> create(CreateFeedbackRequest request, @AuthenticationPrincipal String userIdByToken) {
         feedbackService.create(request, userIdByToken);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<HttpStatus> update(UpdateFeedbackRequest request, @AuthenticationPrincipal String userIdByToken) {
+        feedbackService.update(request, userIdByToken);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

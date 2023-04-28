@@ -34,15 +34,10 @@ public class Feedback extends BaseEntity {
     //    private Question question;
     private String questionId;
 
-    public List<FeedbackCheck> getFeedbackCheckList() {
-        if (feedbackCheckList == null) {
-            feedbackCheckList = new ArrayList<>();
-        }
-        return feedbackCheckList;
-    }
-
-    public void setFeedbackCheckList(List<FeedbackCheck> feedbackCheckList) {
-        this.feedbackCheckList = feedbackCheckList;
+    public void updateFeedback(FeedbackRating rating, List<FeedbackCheck> checkedList, String description) {
+        this.feedbackRating = rating;
+        this.feedbackCheckList = checkedList;
+        this.description = description;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
