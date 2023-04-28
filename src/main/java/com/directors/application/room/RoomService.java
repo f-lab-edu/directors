@@ -6,6 +6,10 @@ import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
+import com.directors.domain.user.User;
+import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
+import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.presentation.room.response.GetRoomInfosByDirectorIdResponse;
 import com.directors.presentation.room.response.GetRoomInfosByQuestionerIdResponse;
@@ -25,21 +29,24 @@ public class RoomService {
     private final QuestionRepository questionRepository;
     private final ChatRepository chatRepository;
 
+    private final UserRepository userRepository;
+
     @Transactional
     public Long create(Long questionId, String directorId) {
-        var question = getQuestion(questionId);
+        var question = getQuestionById(questionId);
         question.canCreateChatRoom(directorId);
 
-        var room = Room.of(questionId, question.getDirectorId(), question.getQuestionerId());
-        roomRepository.save(room);
+        // TODO: 04.28 Question JPA 적용 시 -> Eager FetchJoin 해와서 사용하기
+        User director = getUserById(question.getDirectorId());
+        User questioner = getUserById(question.getQuestionerId());
+
+        var room = Room.of(questionId, director, questioner);
+        Room savedRoom = roomRepository.save(room);
 
         question.changeQuestionStatusToChat();
-        questionRepository.save(question);
+        questionRepository.save(question); // TODO: 04.28 Question JPA 적용 시 제거
 
-        var createdRoom = roomRepository
-                .findByQuestionId(questionId).orElseThrow();
-
-        return createdRoom.getId();
+        return savedRoom.getId();
     }
 
     @Transactional
@@ -52,7 +59,7 @@ public class RoomService {
             Chat recentChat = getRecentChatByRoom(room);
 
             var response = new GetRoomInfosByDirectorIdResponse(
-                    room.getId(), room.getQuestionId(), room.getQuestionerId(), recentChat.getContent(), recentChat.getCreateTime());
+                    room.getId(), room.getQuestionId(), room.getDirector().getId(), recentChat.getContent(), recentChat.getCreatedTime());
 
             responseList.add(response);
         }
@@ -70,7 +77,7 @@ public class RoomService {
             Chat recentChat = getRecentChatByRoom(room);
 
             var response = new GetRoomInfosByQuestionerIdResponse(
-                    room.getId(), room.getQuestionId(), room.getQuestionerId(), recentChat.getContent(), recentChat.getCreateTime());
+                    room.getId(), room.getQuestionId(), room.getQuestioner().getId(), recentChat.getContent(), recentChat.getCreatedTime());
 
             responseList.add(response);
         }
@@ -78,17 +85,23 @@ public class RoomService {
         return responseList;
     }
 
-    private Question getQuestion(Long questionId) {
+    private Question getQuestionById(Long questionId) {
         return questionRepository
                 .findByQuestionId(questionId)
                 .orElseThrow(QuestionNotFoundException::new);
+    }
+
+    private User getUserById(String id) {
+        return userRepository
+                .findByIdAndUserStatus(id, UserStatus.JOINED)
+                .orElseThrow(() -> new NoSuchUserException(id));
     }
 
     private Chat getRecentChatByRoom(Room room) {
         List<Chat> chatListByRoomId = chatRepository.findChatListByRoomId(room.getId(), 0, 1);
 
         if (chatListByRoomId.size() == 0) {
-            return Chat.of(room.getId(), "최근 채팅 내역이 존재하지 않습니다.", null, room.getCreateTime());
+            return Chat.of(room, "최근 채팅 내역이 존재하지 않습니다.", null);
         }
 
         return chatListByRoomId.get(0);

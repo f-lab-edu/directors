@@ -11,6 +11,6 @@ public record ChatListResponse(
         LocalDateTime createTime
 ) {
     public static ChatListResponse from(Chat chat) {
-        return new ChatListResponse(chat.getRoomId(), chat.getContent(), chat.getSendUserId(), chat.getCreateTime());
+        return new ChatListResponse(chat.getRoom().getId(), chat.getContent(), chat.getSendUser().getId(), chat.getCreatedTime());
     }
 }

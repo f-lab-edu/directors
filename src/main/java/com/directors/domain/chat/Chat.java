@@ -1,31 +1,41 @@
 package com.directors.domain.chat;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.directors.domain.common.BaseEntity;
+import com.directors.domain.room.Room;
+import com.directors.domain.user.User;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.time.LocalDateTime;
-
+@Entity
+@Table(name = "chat")
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-public class Chat {
+public class Chat extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long roomId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     private String content;
-    private String sendUserId;
-    private LocalDateTime createTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "send_user_id")
+    private User sendUser;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public static Chat of(Long roomId, String content, String sendUserId, LocalDateTime chatTime) {
+    public static Chat of(Room room, String content, User sendUser) {
         return Chat.builder()
-                .roomId(roomId)
+                .room(room)
                 .content(content)
-                .sendUserId(sendUserId)
-                .createTime(chatTime)
+                .sendUser(sendUser)
                 .build();
     }
 }
