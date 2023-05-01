@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionStatus;
+import com.directors.domain.schedule.Schedule;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -32,7 +33,7 @@ public class CreateQuestionRequest {
 	@NotBlank(message = "카테고리가 입력되지 않았습니다.")
 	private String category;
 
-	public Question toEntity(String questionerId, Long scheduleId) {
+	public Question toEntity(String questionerId, Schedule schedule) {
 		return Question.builder()
 			.title(title)
 			.content(content)
@@ -42,9 +43,7 @@ public class CreateQuestionRequest {
 			.questionerId(questionerId)
 			.directorId(directorId)
 			.category(category)
-			.scheduledId(scheduleId)
-			.startTime(startTime)
-			.createTime(LocalDateTime.now())
+			.schedule(schedule)
 			.build();
 	}
 }

@@ -11,7 +11,7 @@ public interface QuestionRepository {
 
 	Question save(Question question);
 
-	Optional<Question> findByQuestionId(Long questionId);
+	Optional<Question> findById(Long id);
 
-	Optional<Question> findByQuestionIdAndDirectorId(String questionerId, String directorId);
+	boolean existsByQuestionerIdAndDirectorId(String questionerId, String directorId);
 }
