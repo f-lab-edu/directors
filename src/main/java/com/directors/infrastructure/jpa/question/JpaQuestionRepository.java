@@ -12,4 +12,5 @@ public interface JpaQuestionRepository extends JpaRepository<Question, Long> {
 	List<Question> findByQuestionerId(String questionerID);
 
 	boolean existsByQuestionerIdAndDirectorId(String questionerId, String directorId);
+
 }

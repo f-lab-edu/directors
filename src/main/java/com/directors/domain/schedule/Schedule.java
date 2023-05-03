@@ -47,9 +47,8 @@ public class Schedule extends BaseEntity {
 	@OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Question> questionList = new ArrayList<>();
 
-	public static Schedule of(Long id, LocalDateTime startTime, ScheduleStatus status, User user) {
+	public static Schedule of(LocalDateTime startTime, ScheduleStatus status, User user) {
 		return Schedule.builder()
-			.Id(id)
 			.startTime(startTime)
 			.status(status)
 			.user(user)
@@ -64,6 +63,12 @@ public class Schedule extends BaseEntity {
 
 	public boolean equalsStartTime(LocalDateTime startTime) {
 		return this.startTime.equals(startTime);
+	}
+
+	public void openSchedule() {
+		if (this.status == ScheduleStatus.CLOSED) {
+			this.status.changStatus();
+		}
 	}
 
 }

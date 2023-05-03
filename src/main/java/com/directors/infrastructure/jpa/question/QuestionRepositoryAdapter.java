@@ -1,5 +1,6 @@
 package com.directors.infrastructure.jpa.question;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
+import com.directors.domain.question.QuestionStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,4 +41,12 @@ public class QuestionRepositoryAdapter implements QuestionRepository {
 	public boolean existsByQuestionerIdAndDirectorId(String questionerId, String directorId) {
 		return jpaQuestionRepository.existsByQuestionerIdAndDirectorId(questionerId, directorId);
 	}
+
+	//구현예정
+	@Override
+	public boolean existsByDirectorIdAndStartTimeAndStatus(String directorId, LocalDateTime startTime,
+		QuestionStatus status) {
+		return false;
+	}
+
 }

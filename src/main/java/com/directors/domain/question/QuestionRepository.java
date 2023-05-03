@@ -1,5 +1,6 @@
 package com.directors.domain.question;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,8 @@ public interface QuestionRepository {
 	Optional<Question> findById(Long id);
 
 	boolean existsByQuestionerIdAndDirectorId(String questionerId, String directorId);
+
+	//구현예정
+	boolean existsByDirectorIdAndStartTimeAndStatus(String directorId, LocalDateTime startTime,
+		QuestionStatus status);
 }

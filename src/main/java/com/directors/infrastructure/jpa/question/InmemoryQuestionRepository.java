@@ -1,5 +1,6 @@
 package com.directors.infrastructure.jpa.question;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
+import com.directors.domain.question.QuestionStatus;
 
 public class InmemoryQuestionRepository implements QuestionRepository {
 	private final Map<Long, Question> questionMap = new HashMap<>();
@@ -56,4 +58,12 @@ public class InmemoryQuestionRepository implements QuestionRepository {
 			.findAny()
 			.isPresent();
 	}
+
+	//구현예정
+	@Override
+	public boolean existsByDirectorIdAndStartTimeAndStatus(String directorId, LocalDateTime startTime,
+		QuestionStatus status) {
+		return false;
+	}
+
 }
