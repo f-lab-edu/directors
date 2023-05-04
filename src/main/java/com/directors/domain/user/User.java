@@ -2,12 +2,14 @@ package com.directors.domain.user;
 
 import com.directors.domain.common.BaseEntity;
 import com.directors.domain.region.Address;
+import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.exception.AuthenticationFailedException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +45,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Specialty> specialtyList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Schedule> scheduleList = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private UserRegion userRegion;
 
@@ -58,6 +63,12 @@ public class User extends BaseEntity {
                 .stream()
                 .map(Specialty::getSpecialtyInfo)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<LocalDateTime> getScheduleStartTimes() {
+        return scheduleList.stream()
+                .map(Schedule::getStartTime)
+                .collect(Collectors.toList());
     }
 
     public void setPasswordByEncryption(String encryptedPassword) {

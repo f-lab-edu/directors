@@ -2,6 +2,7 @@ package com.directors.domain.room;
 
 import com.directors.domain.chat.Chat;
 import com.directors.domain.common.BaseEntity;
+import com.directors.domain.question.Question;
 import com.directors.domain.room.exception.RoomNotFoundException;
 import com.directors.domain.user.User;
 import jakarta.persistence.*;
@@ -22,11 +23,9 @@ public class Room extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: 04.28 Question JPA 적용 시 수정
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "question_id")
-    // private Question question;
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "director_id")
@@ -44,10 +43,9 @@ public class Room extends BaseEntity {
         this.id = id;
     }
 
-    // TODO: 04.28 Question JPA 적용 시 수정
-    public static Room of(Long questionId, User director, User questioner) {
+    public static Room of(Question question, User director, User questioner) {
         return Room.builder()
-                .questionId(questionId)
+                .question(question)
                 .director(director)
                 .questioner(questioner)
                 .build();

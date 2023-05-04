@@ -16,15 +16,18 @@ public interface JpaUserRepository extends JpaRepository<User, String> {
             value = "SELECT * FROM user u " +
                     "INNER JOIN user_region ur ON u.id = ur.user_id " +
                     "LEFT JOIN specialty s ON u.id = s.user_id " +
+                    "LEFT JOIN schedule sc ON u.id = sc.user_id " +
                     "WHERE ur.user_id IN (:regionIds) " +
                     "AND u.user_status = 'JOINED' " +
                     "AND (u.name LIKE CONCAT('%', :searchText, '%') OR u.nickname LIKE CONCAT('%', :searchText, '%')) " +
                     "AND s.description LIKE CONCAT('%', :property, '%') " +
+                    "AND (:hasSchedule = false OR (sc.startTime > :currentTime AND sc.status = 'OPENED')) " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
     )
     List<User> findWithSearchConditions(
             @Param("regionIds") List<Long> regionIds,
+            @Param("hasSchedule") boolean hasSchedule,
             @Param("searchText") String searchText,
             @Param("property") String property,
             @Param("offset") int offset,

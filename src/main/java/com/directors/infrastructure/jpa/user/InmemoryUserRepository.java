@@ -15,7 +15,7 @@ public class InmemoryUserRepository implements UserRepository {
     }};
 
     @Override
-    public List<User> findWithSearchConditions(List<Long> nearestRegionIds, String searchText, String property, int offset, int limit) {
+    public List<User> findWithSearchConditions(List<Long> nearestRegionIds, boolean hasSchedule, String searchText, String property, int offset, int limit) {
         return null;
     }
 
@@ -34,5 +34,9 @@ public class InmemoryUserRepository implements UserRepository {
     public User save(User user) {
         userMap.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public void saveAll(List<User> user) {
     }
 }
