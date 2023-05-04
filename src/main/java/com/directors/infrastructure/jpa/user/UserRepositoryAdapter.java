@@ -34,4 +34,9 @@ public class UserRepositoryAdapter implements UserRepository {
     public List<User> findWithSearchConditions(List<Long> regionIds, boolean hasSchedule, String searchText, String property, int offset, int limit) {
         return userRepository.findWithSearchConditions(regionIds, hasSchedule, searchText, property, offset, limit);
     }
+
+    @Override
+    public void saveAll(List<User> user) {
+        userRepository.saveAll(user);
+    }
 }

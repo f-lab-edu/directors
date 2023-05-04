@@ -11,4 +11,6 @@ public interface UserRepository {
     User save(User user);
 
     List<User> findWithSearchConditions(List<Long> regionIds, boolean hasSchedule, String searchText, String property, int offset, int limit);
+
+    void saveAll(List<User> user);
 }

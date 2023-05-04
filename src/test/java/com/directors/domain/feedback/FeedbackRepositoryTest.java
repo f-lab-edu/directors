@@ -1,19 +1,14 @@
 package com.directors.domain.feedback;
 
+import com.directors.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static com.directors.domain.feedback.FeedbackRating.BEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@Transactional
-class FeedbackRepositoryTest {
+class FeedbackRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private FeedbackRepository feedbackRepository;

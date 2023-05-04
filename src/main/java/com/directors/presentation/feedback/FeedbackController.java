@@ -3,7 +3,9 @@ package com.directors.presentation.feedback;
 import com.directors.application.feedback.FeedbackService;
 import com.directors.presentation.feedback.request.CreateFeedbackRequest;
 import com.directors.presentation.feedback.request.UpdateFeedbackRequest;
+import com.directors.presentation.feedback.response.CreateFeedbackResponse;
 import com.directors.presentation.feedback.response.GetByFeedbackIdResponse;
+import com.directors.presentation.feedback.response.UpdateFeedbackResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +19,13 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping("/create")
-    public ResponseEntity<HttpStatus> create(CreateFeedbackRequest request, @AuthenticationPrincipal String userIdByToken) {
-        feedbackService.create(request, userIdByToken);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<CreateFeedbackResponse> create(CreateFeedbackRequest request, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(feedbackService.create(request, userIdByToken), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<HttpStatus> update(UpdateFeedbackRequest request) {
-        feedbackService.update(request);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UpdateFeedbackResponse> update(UpdateFeedbackRequest request) {
+        return new ResponseEntity<>(feedbackService.update(request), HttpStatus.OK);
     }
 
     @GetMapping("/{feedbackId}")

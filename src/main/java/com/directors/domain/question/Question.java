@@ -86,11 +86,15 @@ public class Question extends BaseEntity {
         this.status = QuestionStatus.CHATTING;
     }
 
+    public void changeQuestionStatusToComplete() {
+        this.status = QuestionStatus.COMPLETE;
+    }
+
     public void canCreateFeedback(String questionerId) {
-        if (this.questioner.getId().equals(questionerId)) {
+        if (!this.questioner.getId().equals(questionerId)) {
             throw new CannotCreateFeedbackException(this.id, CannotCreateFeedbackException.AUTH);
         }
-        if (this.status.equals(QuestionStatus.COMPLETE)) {
+        if (!this.status.equals(QuestionStatus.COMPLETE)) {
             throw new CannotCreateFeedbackException(this.id, CannotCreateFeedbackException.STATUS);
         }
     }

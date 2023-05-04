@@ -35,4 +35,8 @@ public class InmemoryUserRepository implements UserRepository {
         userMap.put(user.getId(), user);
         return user;
     }
+
+    @Override
+    public void saveAll(List<User> user) {
+    }
 }

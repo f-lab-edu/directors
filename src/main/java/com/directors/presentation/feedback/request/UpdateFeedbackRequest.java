@@ -1,10 +1,12 @@
 package com.directors.presentation.feedback.request;
 
 import com.directors.domain.feedback.FeedbackCheck;
+import lombok.Builder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Builder
 public record UpdateFeedbackRequest(
         Long feedbackId,
         String rating,
