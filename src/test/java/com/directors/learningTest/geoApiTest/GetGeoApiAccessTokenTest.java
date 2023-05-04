@@ -1,9 +1,6 @@
 package com.directors.learningTest.geoApiTest;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -40,6 +37,7 @@ public class GetGeoApiAccessTokenTest {
         entity = new HttpEntity<>(header);
     }
 
+    @Disabled
     @Test
     public void 토큰획득API요청성공테스트() {
         // GIVEN
@@ -62,6 +60,7 @@ public class GetGeoApiAccessTokenTest {
         assertThat(resultMap.get("accessToken")).isNotNull();
     }
 
+    @Disabled
     @Test
     public void 토큰획득API요청실패테스트_키의부재() {
         // GIVEN

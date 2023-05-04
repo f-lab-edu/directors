@@ -1,6 +1,7 @@
 package com.directors.learningTest.geoApiTest;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,6 +61,7 @@ public class GetAdministrativeDistrictTest {
         accessToken = resultMap.get("accessToken");
     }
 
+    @Disabled
     @Test
     public void 지오코딩_API요청_성공테스트() {
         // GIVEN
@@ -86,6 +88,7 @@ public class GetAdministrativeDistrictTest {
         assertThat(map.get("y")).isEqualTo("1951021.30829999992");
     }
 
+    @Disabled
     @Test
     public void 좌표에_대한_행정동_획득_동기반_지역명_API요청_성공테스트() {
         // GIVEN
@@ -115,6 +118,7 @@ public class GetAdministrativeDistrictTest {
         assertThat(resultMap.get("emdong_nm")).isEqualTo("송정동");
     }
 
+    @Disabled
     @Test
     public void 좌표에_대한_행정동_획득_동이아닌_지역명_API요청_성공테스트() {
         // GIVEN
@@ -144,6 +148,7 @@ public class GetAdministrativeDistrictTest {
         assertThat(resultMap.get("emdong_nm")).isEqualTo("호저면");
     }
 
+    @Disabled
     @Test
     public void 좌표변환_API요청_성공테스트() {
         // GIVEN
@@ -170,6 +175,7 @@ public class GetAdministrativeDistrictTest {
         assertThat(resultMap.get("posY")).isEqualTo(7843189.782712619);
     }
 
+    @Disabled
     @Test
     public void 좌표변환_API요청_성공테스트2() {
         // GIVEN
