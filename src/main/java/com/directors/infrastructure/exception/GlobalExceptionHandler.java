@@ -164,7 +164,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(QuestionDuplicateException.class)
     public ResponseEntity<?> questionDuplicateException(QuestionDuplicateException ex) {
-        log.info("questionDuplicateException occurred. questionId = {}", ex.getQuestionId());
+        log.info("questionDuplicateException occurred. questionerId = {}", ex.getQuestionerId());
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), ex.getStatusCode());
     }
 

@@ -25,7 +25,7 @@ public class ReceivedQuestionResponse {
 			.title(question.getTitle())
 			.category(question.getCategory())
 			.questionerId(question.getQuestionerId())
-			.startTime(question.getStartTime())
+			.startTime(question.getSchedule().getStartTime())
 			.build();
 	}
 }
