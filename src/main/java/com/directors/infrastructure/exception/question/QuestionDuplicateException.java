@@ -10,16 +10,16 @@ import lombok.Getter;
 public class QuestionDuplicateException extends RuntimeException {
 	private String message;
 	private HttpStatus statusCode;
-	private Long questionId;
+	private String questionerId;
 
 	public QuestionDuplicateException() {
 		super();
 	}
 
-	public QuestionDuplicateException(ExceptionCode exceptionCode, Long questionId) {
+	public QuestionDuplicateException(ExceptionCode exceptionCode, String questionerId) {
 		super(exceptionCode.getMessage());
 		this.message = exceptionCode.getMessage();
 		this.statusCode = exceptionCode.getStatus();
-		this.questionId = questionId;
+		this.questionerId = questionerId;
 	}
 }
