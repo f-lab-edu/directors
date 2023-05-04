@@ -1,6 +1,7 @@
 package com.directors.domain.feedback;
 
 import com.directors.domain.common.BaseEntity;
+import com.directors.domain.question.Question;
 import com.directors.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,11 +30,9 @@ public class Feedback extends BaseEntity {
 
     private String description;
 
-    //    TODO: 04.28 Question JPA 적용 시 변경
-    //    @OneToOne(fetch = FetchType.EAGER)
-    //    @JoinColumn(name ="question_Id")
-    //    private Question question;
-    private String questionId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "question_Id")
+    private Question question;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "director_id", referencedColumnName = "id")

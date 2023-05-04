@@ -31,7 +31,7 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public List<User> findWithSearchConditions(List<Long> regionIds, String searchText, String property, int offset, int limit) {
-        return userRepository.findWithSearchConditions(regionIds, searchText, property, offset, limit);
+    public List<User> findWithSearchConditions(List<Long> regionIds, boolean hasSchedule, String searchText, String property, int offset, int limit) {
+        return userRepository.findWithSearchConditions(regionIds, hasSchedule, searchText, property, offset, limit);
     }
 }

@@ -20,7 +20,7 @@ public class InmemeoryRoomRepository implements RoomRepository {
 
     public Optional<Room> findByQuestionId(Long questionId) {
         return roomMap.values().stream()
-                .filter(room -> questionId.equals(room.getQuestionId()))
+                .filter(room -> questionId.equals(room.getQuestion().getId()))
                 .findFirst();
     }
 

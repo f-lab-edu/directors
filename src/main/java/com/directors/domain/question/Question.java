@@ -4,6 +4,7 @@ import com.directors.domain.common.BaseEntity;
 import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.schedule.Schedule;
+import com.directors.domain.user.User;
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import jakarta.persistence.*;
@@ -27,8 +28,15 @@ public class Question extends BaseEntity {
     private QuestionStatus status;
     private Boolean directorCheck;
     private Boolean questionCheck;
-    private String questionerId;
-    private String directorId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "questioner_id", referencedColumnName = "id")
+    private User questioner;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "director_id", referencedColumnName = "id")
+    private User director;
+
     private String category; // 카테고리 결정되면 enum으로 변경 예정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
@@ -64,7 +72,7 @@ public class Question extends BaseEntity {
     }
 
     public void canCreateChatRoom(String directorId) {
-        if (this.directorId.equals(directorId)) {
+        if (this.director.getId().equals(directorId)) {
             throw new CannotCreateRoomException(this.id, CannotCreateRoomException.AUTH);
         }
 
@@ -78,9 +86,8 @@ public class Question extends BaseEntity {
         this.status = QuestionStatus.CHATTING;
     }
 
-
     public void canCreateFeedback(String questionerId) {
-        if (this.questionerId.equals(questionerId)) {
+        if (this.questioner.getId().equals(questionerId)) {
             throw new CannotCreateFeedbackException(this.id, CannotCreateFeedbackException.AUTH);
         }
         if (this.status.equals(QuestionStatus.COMPLETE)) {
