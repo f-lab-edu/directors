@@ -31,7 +31,6 @@ public class UpdateUserService {
         user.setPasswordByEncryption(encryptPassword);
     }
 
-
     @Transactional
     public void updateEmail(UpdateEmailRequest updateEmailRequest, String userIdByToken) {
         String oldEmail = updateEmailRequest.oldEmail();
