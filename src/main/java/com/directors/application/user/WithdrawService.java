@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class WithdrawService {
                 .filter(u -> pm.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
 
-        user.withdrawal(new Date());
+        user.withdrawal(LocalDateTime.now());
 
         tokenRepository.deleteAllTokenByUserId(user.getId());
     }

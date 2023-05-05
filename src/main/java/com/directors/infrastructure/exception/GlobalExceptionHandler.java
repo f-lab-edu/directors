@@ -13,6 +13,7 @@ import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
 import com.directors.infrastructure.exception.api.ExternalApiServerException;
 import com.directors.infrastructure.exception.api.NotFoundException;
+import com.directors.infrastructure.exception.common.EntityNotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
@@ -215,6 +216,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FeedbackNotFoundException.class)
     public ErrorMessage feedbackNotFoundException(FeedbackNotFoundException e) {
         log.info("FeedbackNotFoundException occurred. " + "feedbackId = " + e.getFeedbackId());
+        return new ErrorMessage(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ErrorMessage entityNotFoundException(EntityNotFoundException e) {
+        log.info("EntityNotFoundException occurred.");
         return new ErrorMessage(e.getMessage());
     }
 }
