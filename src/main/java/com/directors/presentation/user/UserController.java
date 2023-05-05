@@ -29,9 +29,8 @@ public class UserController {
     private final SearchDirectorService searchDiretorService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        signUpService.signUp(signUpRequest.toEntity());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return new ResponseEntity<>(signUpService.signUp(signUpRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/duplicated/{id}")
