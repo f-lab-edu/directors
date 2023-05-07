@@ -31,4 +31,7 @@ public abstract class UserTestSupport extends IntegrationTestSupport {
 
     @Autowired
     public WithdrawService withdrawService;
+
+    @Autowired
+    public AuthenticateRegionService authenticateRegionService;
 }

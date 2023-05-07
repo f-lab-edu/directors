@@ -2,7 +2,6 @@ package com.directors.infrastructure.api;
 
 import com.directors.domain.region.Address;
 import com.directors.domain.region.RegionApiClient;
-import com.directors.infrastructure.exception.api.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -61,8 +60,8 @@ public class RegionApiClientManager implements RegionApiClient {
     }
 
     private void checkNotFound(ResponseEntity<Map<String, Object>> response) {
-        if ((Integer) response.getBody().get("errCd") == -100) {
-            throw new NotFoundException();
+        if (response.getBody().get("errMsg").equals("검색결과가 존재하지 않습니다")) {
+            throw new IllegalArgumentException();
         }
     }
 
