@@ -82,8 +82,7 @@ public class QuestionService {
 
 	@Transactional
 	public void edit(Long questionId, EditQuestionRequest editQuestionRequest) {
-		Question question = questionRepository.findById(questionId)
-			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
+		Question question = getQuestionById(questionId);
 
 		question.checkUneditableStatus();
 
@@ -101,16 +100,14 @@ public class QuestionService {
 	}
 
 	public DetailQuestionResponse getQuestionDetail(Long questionId) {
-		Question question = questionRepository.findById(questionId)
-			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
+		Question question = getQuestionById(questionId);
 
 		return DetailQuestionResponse.from(question);
 	}
 
 	@Transactional
 	public void decline(Long questionId, String userId, DeclineQuestionRequest declineQuestionRequest) {
-		Question question = questionRepository.findById(questionId)
-			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
+		Question question = getQuestionById(questionId);
 
 		//Waitting 상태의 질문만 거절 가능
 		question.checkUneditableStatus();
@@ -121,6 +118,18 @@ public class QuestionService {
 		User questioner = question.getQuestioner();
 		questioner.addReword();
 
+	}
+
+	@Transactional
+	public void accept(Long questionId, String userId) {
+		Question question = getQuestionById(questionId);
+		question.checkUneditableStatus();
+
+		question.accept(userId);
+
+		//schedule close 처리
+		Schedule schedule = question.getSchedule();
+		schedule.closeSchedule();
 	}
 
 	private Schedule validateTime(LocalDateTime startTime, String userId) {
@@ -134,5 +143,10 @@ public class QuestionService {
 	private User getUserById(String questionerId) {
 		return userRepository.findByIdAndUserStatus(questionerId, UserStatus.JOINED)
 			.orElseThrow(() -> new NoSuchUserException(questionerId));
+	}
+
+	private Question getQuestionById(Long questionId) {
+		return questionRepository.findById(questionId)
+			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
 	}
 }

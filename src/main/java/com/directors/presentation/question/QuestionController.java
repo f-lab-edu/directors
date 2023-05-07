@@ -74,4 +74,10 @@ public class QuestionController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@PostMapping("/{questionId}/accept")
+	public ResponseEntity<?> acceptQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken) {
+		questionService.accept(questionId, userIdByToken);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

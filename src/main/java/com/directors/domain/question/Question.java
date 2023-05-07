@@ -6,11 +6,14 @@ import com.directors.domain.common.BaseEntity;
 import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.schedule.Schedule;
+import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.infrastructure.exception.ExceptionCode;
 import com.directors.infrastructure.exception.question.CannotDeclineQuestionException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
+import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
+import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -117,16 +120,33 @@ public class Question extends BaseEntity {
 	}
 
 	public void decline(String directorId, String deniedComment) {
-
-		canDeclineQuestion(directorId);
+		canDecideQuestion(directorId);
 
 		this.comment = deniedComment;
 		this.status = QuestionStatus.COMPLETE;
 	}
 
-	private void canDeclineQuestion(String directorId) {
+	public void accept(String directorId) {
+		canDecideQuestion(directorId);
+		validateStarTime();
+		this.status = QuestionStatus.CHATTING;
+	}
+
+	private void canDecideQuestion(String directorId) {
 		if (!this.director.getId().equals(directorId)) {
 			throw new CannotDeclineQuestionException(directorId);
+		}
+	}
+
+	private void validateStarTime() {
+		if (this.schedule.getStatus().equals(ScheduleStatus.CLOSED)) {
+			throw new ClosedScheduleException(this.schedule.getStartTime(), this.questioner.getId());
+		}
+
+		if (this.schedule.getStartTime().isBefore(LocalDateTime.now())) {
+			//현재시간보다 이전이면 exception
+			throw new InvalidMeetingTimeException(ExceptionCode.InvalidStartTime, this.schedule.getStartTime(),
+				questioner.getId());
 		}
 	}
 
