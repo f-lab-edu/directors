@@ -59,9 +59,8 @@ public class UserController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<HttpStatus> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
-        withdrawService.withdraw(withdrawRequest, userIdByToken);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<WithdrawResponse> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(withdrawService.withdraw(withdrawRequest, userIdByToken), HttpStatus.OK);
     }
 
     @PostMapping("/updatePassword")

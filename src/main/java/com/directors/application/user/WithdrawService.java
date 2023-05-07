@@ -6,6 +6,7 @@ import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.presentation.user.request.WithdrawRequest;
+import com.directors.presentation.user.response.WithdrawResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class WithdrawService {
     private final TokenRepository tokenRepository;
 
     @Transactional
-    public void withdraw(WithdrawRequest withdrawRequest, String userIdByToken) {
+    public WithdrawResponse withdraw(WithdrawRequest withdrawRequest, String userIdByToken) {
         var userId = withdrawRequest.userId();
         var password = withdrawRequest.password();
 
@@ -35,6 +36,8 @@ public class WithdrawService {
         user.withdrawal(LocalDateTime.now());
 
         tokenRepository.deleteAllTokenByUserId(user.getId());
+
+        return new WithdrawResponse(userId);
     }
 
     private void validateUserIds(String firstUserId, String secondUserId) {
