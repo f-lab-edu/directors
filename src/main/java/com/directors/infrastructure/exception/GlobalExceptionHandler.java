@@ -10,9 +10,6 @@ import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.domain.user.exception.DuplicateIdException;
 import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.domain.user.exception.UserRegionNotFoundException;
-import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
-import com.directors.infrastructure.exception.api.ExternalApiServerException;
-import com.directors.infrastructure.exception.api.NotFoundException;
 import com.directors.infrastructure.exception.api.RenewApiKeyException;
 import com.directors.infrastructure.exception.common.EntityNotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
@@ -47,9 +44,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * 이를 오버라이드하여 구현했습니다.
      */
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e,
                                                                   HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        BindingResult bindingResult = ex.getBindingResult();
+        BindingResult bindingResult = e.getBindingResult();
         return new ResponseEntity<>(new ErrorMessage(bindingResult.getFieldErrors().get(0).getDefaultMessage()),
                 HttpStatus.BAD_REQUEST);
     }
@@ -77,14 +74,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JwtException.class)
-    public ErrorMessage JwtExceptionHandler(JwtException e) {
+    public ErrorMessage JwtExceptionHandler() {
         log.info("JwtException occurred.");
         return new ErrorMessage("유효하지 않은 토큰입니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<HttpStatus> IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+    public ResponseEntity<HttpStatus> illegalArgumentExceptionHandler() {
         log.info("IllegalArgumentException occurred.");
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -113,9 +110,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(HttpClientErrorException.class)
-    public ErrorMessage httpClientErrorException(HttpClientErrorException ex) {
-        String errorMessage = "HttpClientErrorException occurred. " + ex.getStatusCode();
-        if (ex.getStatusCode().equals("412 PRECONDITION_FAILED")) {
+    public ErrorMessage httpClientErrorException(HttpClientErrorException e) {
+        String errorMessage = "HttpClientErrorException occurred. " + e.getStatusCode();
+        if (e.getStatusCode().equals("412 PRECONDITION_FAILED")) {
             errorMessage += "need to check api request parameter.";
         }
 
@@ -124,36 +121,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    @ExceptionHandler(ExteralApiAuthenticationException.class)
-    public ErrorMessage exteralApiAuthenticationException(ExteralApiAuthenticationException ex) {
-        log.error("ExteralApiAuthenticationException occurred. " + ex.getMessage());
-        return new ErrorMessage("잠시 후 다시 시도해주세요");
-    }
-
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(HttpServerErrorException.class)
-    public ErrorMessage httpServerErrorException(HttpServerErrorException ex) {
-        log.error("HttpServerErrorException occurred. " + ex.getStatusCode());
-        return new ErrorMessage("잠시 후 다시 시도해주세요");
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ErrorMessage notFoundException(NotFoundException ex) {
-        log.info("NotFoundException occurred.");
-        return new ErrorMessage(ex.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    @ExceptionHandler(ExternalApiServerException.class)
-    public ErrorMessage externalApiServerException(NotFoundException ex) {
-        log.warn("ExternalApiServerException occurred. An exception occurred in the sgis server.");
+    public ErrorMessage httpServerErrorException(HttpServerErrorException e) {
+        log.error("HttpServerErrorException occurred. " + e.getStatusCode());
         return new ErrorMessage("잠시 후 다시 시도해주세요");
     }
 
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(RenewApiKeyException.class)
-    public ErrorMessage externalApiServerException(RenewApiKeyException ex) {
+    public ErrorMessage renewApiKeyException() {
         log.error("RenewApiKeyException occurred. API key renewal is required.");
         return new ErrorMessage("잠시 후 다시 시도해주세요");
     }
@@ -179,16 +155,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchSpecialtyException.class)
-    public ErrorMessage noSuchSpecialtyException(NoSuchSpecialtyException ex) {
+    public ErrorMessage noSuchSpecialtyException(NoSuchSpecialtyException e) {
         log.warn("NoSuchSpecialtyException occurred.");
-        return new ErrorMessage(ex.getMessage());
+        return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserRegionNotFoundException.class)
-    public ErrorMessage userRegionNotFoundException(UserRegionNotFoundException ex) {
-        log.warn("UserRegionNotFoundException occurred. requestedUserId: " + ex.requestedUserId);
-        return new ErrorMessage(ex.getMessage());
+    public ErrorMessage userRegionNotFoundException(UserRegionNotFoundException e) {
+        log.warn("UserRegionNotFoundException occurred. requestedUserId: " + e.requestedUserId);
+        return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
