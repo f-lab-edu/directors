@@ -5,13 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleRepository {
-    Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId);
+	Optional<Schedule> findByStartTimeAndUserId(LocalDateTime startTime, String userId);
 
-    List<Schedule> findByUserIdAndStatus(String userId, ScheduleStatus status);
+	List<Schedule> findByUserIdAndStatus(String userId, ScheduleStatus status);
 
-    boolean existsByUserIdAndStatus(String userId, ScheduleStatus Status);
+	boolean existsByUserIdAndStatus(String userId, ScheduleStatus Status);
 
-    Schedule save(Schedule schedule);
+	Schedule save(Schedule schedule);
 
-    void delete(Schedule schedule);
+	List<Schedule> saveAll(List<Schedule> scheduleList);
+
+	void delete(Schedule schedule);
 }
