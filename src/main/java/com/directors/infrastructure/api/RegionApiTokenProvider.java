@@ -1,11 +1,10 @@
 package com.directors.infrastructure.api;
 
-import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
+import com.directors.infrastructure.exception.api.RenewApiKeyException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,10 +23,10 @@ public class RegionApiTokenProvider {
     @Value("${TOKEN_REQUEST_URL}")
     String TOKEN_REQUEST_URL;
 
-    String apiAccessToken;
+    private String apiAccessToken;
     private final ApiSender apiSender;
 
-    public void fetchApiAccessTokenFromAPI() {
+    public String fetchApiAccessTokenFromAPI() {
         var uri = UriComponentsBuilder
                 .fromHttpUrl(TOKEN_REQUEST_URL)
                 .queryParam("consumer_key", CONSUMER_KEY)
@@ -36,20 +35,18 @@ public class RegionApiTokenProvider {
 
         var response = apiSender.send(HttpMethod.GET, uri);
 
-        validateResponse(response);
+        if (!ApiResponseValidator.isCertificated(response)) {
+            throw new RenewApiKeyException();
+        }
 
         apiAccessToken = ((Map<String, Object>) response.getBody().get("result")).get("accessToken").toString();
-    }
 
-    private static void validateResponse(ResponseEntity<Map<String, Object>> response) {
-        if (response.getBody().get("errMsg").equals("인증정보가 존재하지 않습니다")) {
-            throw new ExteralApiAuthenticationException("Key verification is required for SGIS API");
-        }
+        return apiAccessToken;
     }
 
     public String getApiAccessToken() {
         if (apiAccessToken == null) {
-            fetchApiAccessTokenFromAPI();
+            return fetchApiAccessTokenFromAPI();
         }
         return apiAccessToken;
     }

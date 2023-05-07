@@ -29,9 +29,8 @@ public class UserController {
     private final SearchDirectorService searchDiretorService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<HttpStatus> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        signUpService.signUp(signUpRequest.toEntity());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        return new ResponseEntity<>(signUpService.signUp(signUpRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/duplicated/{id}")
@@ -60,9 +59,8 @@ public class UserController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<HttpStatus> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
-        withdrawService.withdraw(withdrawRequest, userIdByToken);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<WithdrawResponse> withdraw(@Valid @RequestBody WithdrawRequest withdrawRequest, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(withdrawService.withdraw(withdrawRequest, userIdByToken), HttpStatus.OK);
     }
 
     @PostMapping("/updatePassword")
