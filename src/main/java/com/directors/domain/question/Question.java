@@ -9,6 +9,7 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.infrastructure.exception.ExceptionCode;
+import com.directors.infrastructure.exception.question.CannotDeclineQuestionException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 
 import jakarta.persistence.Entity;
@@ -115,7 +116,18 @@ public class Question extends BaseEntity {
 		}
 	}
 
-	public void writeDeclineComment(String deniedComment) {
+	public void decline(String directorId, String deniedComment) {
+
+		canDeclineQuestion(directorId);
+
 		this.comment = deniedComment;
+		this.status = QuestionStatus.COMPLETE;
 	}
+
+	private void canDeclineQuestion(String directorId) {
+		if (!this.director.getId().equals(directorId)) {
+			throw new CannotDeclineQuestionException(directorId);
+		}
+	}
+
 }

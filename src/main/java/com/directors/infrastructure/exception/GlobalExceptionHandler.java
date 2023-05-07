@@ -27,6 +27,7 @@ import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
 import com.directors.infrastructure.exception.api.ExternalApiServerException;
 import com.directors.infrastructure.exception.api.NotFoundException;
+import com.directors.infrastructure.exception.question.CannotDeclineQuestionException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
@@ -221,8 +222,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ErrorMessage(e.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(InvalidChangeScheduleException.class)
 	public ErrorMessage invalidChangeScheduleException(InvalidChangeScheduleException e) {
 		log.info("Invalid Changeable Schedule Status, startTime = {}, Status = {}", e.getStartTime(), e.getStatus());
+		return new ErrorMessage(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(CannotDeclineQuestionException.class)
+	public ErrorMessage cannotDeclineQuestionException(CannotDeclineQuestionException e) {
+		log.info("Can not decline question exception, questionId = {}", e.questionId);
 		return new ErrorMessage(e.getMessage());
 	}
 }

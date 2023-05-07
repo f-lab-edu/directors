@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.directors.application.question.QuestionService;
 import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.request.DeclineQuestionRequest;
 import com.directors.presentation.question.request.EditQuestionRequest;
 import com.directors.presentation.question.response.DetailQuestionResponse;
 import com.directors.presentation.question.response.ReceivedQuestionResponse;
@@ -63,4 +64,14 @@ public class QuestionController {
 		DetailQuestionResponse questionDetail = questionService.getQuestionDetail(questionId);
 		return new ResponseEntity<>(questionDetail, HttpStatus.OK);
 	}
+
+	@PostMapping("/{questionId}/decline")
+	public ResponseEntity<?> declineQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken,
+		@RequestBody @Valid DeclineQuestionRequest declineQuestionRequest) {
+
+		questionService.decline(questionId, userIdByToken, declineQuestionRequest);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 }

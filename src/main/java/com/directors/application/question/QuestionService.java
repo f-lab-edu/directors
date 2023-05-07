@@ -20,6 +20,7 @@ import com.directors.infrastructure.exception.question.QuestionDuplicateExceptio
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingRequest;
 import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.request.DeclineQuestionRequest;
 import com.directors.presentation.question.request.EditQuestionRequest;
 import com.directors.presentation.question.response.DetailQuestionResponse;
 import com.directors.presentation.question.response.ReceivedQuestionResponse;
@@ -104,6 +105,22 @@ public class QuestionService {
 			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
 
 		return DetailQuestionResponse.from(question);
+	}
+
+	@Transactional
+	public void decline(Long questionId, String userId, DeclineQuestionRequest declineQuestionRequest) {
+		Question question = questionRepository.findById(questionId)
+			.orElseThrow(() -> new QuestionNotFoundException(ExceptionCode.QuestionNotFound, questionId));
+
+		//Waitting 상태의 질문만 거절 가능
+		question.checkUneditableStatus();
+
+		question.decline(userId, declineQuestionRequest.getComment());
+
+		//질문자 리워드 증가.
+		User questioner = question.getQuestioner();
+		questioner.addReword();
+
 	}
 
 	private Schedule validateTime(LocalDateTime startTime, String userId) {

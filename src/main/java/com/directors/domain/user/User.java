@@ -1,19 +1,32 @@
 package com.directors.domain.user;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.directors.domain.common.BaseEntity;
 import com.directors.domain.region.Address;
 import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.exception.AuthenticationFailedException;
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
@@ -60,15 +73,15 @@ public class User extends BaseEntity {
 
     public List<SpecialtyInfo> getSpecialtyInfoList() {
         return specialtyList
-                .stream()
-                .map(Specialty::getSpecialtyInfo)
-                .collect(Collectors.toUnmodifiableList());
+            .stream()
+            .map(Specialty::getSpecialtyInfo)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public List<LocalDateTime> getScheduleStartTimes() {
         return scheduleList.stream()
-                .map(Schedule::getStartTime)
-                .collect(Collectors.toList());
+            .map(Schedule::getStartTime)
+            .collect(Collectors.toList());
     }
 
     public void setPasswordByEncryption(String encryptedPassword) {
@@ -89,5 +102,9 @@ public class User extends BaseEntity {
         if (!this.email.equals(email)) {
             throw new AuthenticationFailedException(this.id);
         }
+    }
+
+    public void addReword() {
+        this.reward += 1L;
     }
 }
