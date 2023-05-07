@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class SignUpServiceTest extends UserTestSupport {
 
@@ -55,6 +56,23 @@ class SignUpServiceTest extends UserTestSupport {
         assertThatThrownBy(() -> signUpService.isDuplicatedUser(givenId))
                 .isInstanceOf(DuplicateIdException.class)
                 .hasMessage("이미 존재하는 Id입니다.");
+    }
+
+    @DisplayName("기존에 아이디가 없는 경우 예외가 발생하지 않는다.")
+    @Test
+    void isDuplicatedUserWithNotRegisteredUserId() {
+        // given
+        String givenId = "cnsong1234";
+        String notRegisteredUserId = "songsong";
+
+        SignUpRequest request = createSignUpRequest(givenId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        signUpService.signUp(request);
+
+        // when
+        signUpService.isDuplicatedUser(notRegisteredUserId);
+
+        // then
+        assertFalse(Thread.currentThread().isInterrupted());
     }
 
     private static SignUpRequest createSignUpRequest(String userId, String password, String name, String nickname, String email, String phoneNumber) {

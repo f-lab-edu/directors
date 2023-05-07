@@ -60,7 +60,7 @@ public class RegionApiClientManager implements RegionApiClient {
     }
 
     private void checkNotFound(ResponseEntity<Map<String, Object>> response) {
-        if (response.getBody().get("errMsg").equals("검색결과가 존재하지 않습니다")) {
+        if (response.getBody().get("errMsg").equals("검색결과가 존재하지 않습니다.")) {
             throw new IllegalArgumentException();
         }
     }

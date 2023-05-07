@@ -64,7 +64,7 @@ class UpdateUserServiceTest extends UserTestSupport {
 
     @DisplayName("탈퇴한 회원의 토큰을 이용해 패스워드 수정 요청 시 예외가 발생한다.")
     @Test
-    void updatePasswordWithUnregisteredUserId() {
+    void updatePasswordWithNotRegisteredUserId() {
         // given
         String givenUserId = "cnsong1234";
         String oldPassword = "1234567890";
@@ -113,7 +113,7 @@ class UpdateUserServiceTest extends UserTestSupport {
 
     @DisplayName("탈퇴한 회원의 토큰을 이용해 이메일 수정 요청 시 예외가 발생한다.")
     @Test
-    void updateEmailWithUnregisteredUserId() {
+    void updateEmailWithNotRegisteredUserId() {
         // given
         String givenUserId = "cnsong1234";
         String oldEmail = "cnsong0229@gmail.com";

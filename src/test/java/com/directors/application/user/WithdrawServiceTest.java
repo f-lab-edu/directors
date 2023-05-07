@@ -33,7 +33,7 @@ class WithdrawServiceTest extends UserTestSupport {
 
     @DisplayName("회원가입되지 않은 회원 아이디로 탈퇴 요청을 하면 예외가 발생한다.")
     @Test
-    void withdrawWithUnregisteredUserId() {
+    void withdrawWithNotRegisteredUserId() {
         // given
         String givenUserId = "cnsong1234";
         SignUpRequest signUpRequest = UserTestHelper
