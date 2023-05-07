@@ -10,7 +10,7 @@ import com.directors.domain.schedule.ScheduleStatus;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.infrastructure.exception.ExceptionCode;
-import com.directors.infrastructure.exception.question.CannotDeclineQuestionException;
+import com.directors.infrastructure.exception.question.CannotDecideQuestionException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.schedule.ClosedScheduleException;
 import com.directors.infrastructure.exception.schedule.InvalidMeetingTimeException;
@@ -128,17 +128,17 @@ public class Question extends BaseEntity {
 
 	public void accept(String directorId) {
 		canDecideQuestion(directorId);
-		validateStarTime();
+		validateStartTime();
 		this.status = QuestionStatus.CHATTING;
 	}
 
 	private void canDecideQuestion(String directorId) {
 		if (!this.director.getId().equals(directorId)) {
-			throw new CannotDeclineQuestionException(directorId);
+			throw new CannotDecideQuestionException(ExceptionCode.InvalidDecideQuestion, directorId);
 		}
 	}
 
-	private void validateStarTime() {
+	private void validateStartTime() {
 		if (this.schedule.getStatus().equals(ScheduleStatus.CLOSED)) {
 			throw new ClosedScheduleException(this.schedule.getStartTime(), this.questioner.getId());
 		}
@@ -148,6 +148,35 @@ public class Question extends BaseEntity {
 			throw new InvalidMeetingTimeException(ExceptionCode.InvalidStartTime, this.schedule.getStartTime(),
 				questioner.getId());
 		}
+	}
+
+	public void finish(String userId) {
+		canFinishedQuestionStatus();
+		checkFinish(userId);
+	}
+
+	private void checkFinish(String userId) {
+		if (this.questioner.getId().equals(userId)) {
+			questionCheck = true;
+			return;
+		}
+
+		if (this.director.getId().equals(userId)) {
+			directorCheck = true;
+			return;
+		}
+
+		throw new CannotDecideQuestionException(ExceptionCode.InvalidFinishQuestion, userId);
+	}
+
+	private void canFinishedQuestionStatus() {
+		if (this.status != QuestionStatus.CHATTING) {
+			throw new InvalidQuestionStatusException(ExceptionCode.InvalidFinishQuestionStatus, this.id, this.status);
+		}
+	}
+
+	public boolean isFinishedQuestion() {
+		return this.questionCheck && this.directorCheck;
 	}
 
 }

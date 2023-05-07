@@ -23,11 +23,12 @@ import com.directors.domain.specialty.exception.NoSuchSpecialtyException;
 import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.domain.user.exception.DuplicateIdException;
 import com.directors.domain.user.exception.NoSuchUserException;
+import com.directors.domain.user.exception.NotEnoughRewardException;
 import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
 import com.directors.infrastructure.exception.api.ExternalApiServerException;
 import com.directors.infrastructure.exception.api.NotFoundException;
-import com.directors.infrastructure.exception.question.CannotDeclineQuestionException;
+import com.directors.infrastructure.exception.question.CannotDecideQuestionException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
@@ -229,10 +230,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ErrorMessage(e.getMessage());
 	}
 
+	@ExceptionHandler(CannotDecideQuestionException.class)
+	public ResponseEntity<?> cannotDecideQuestionException(CannotDecideQuestionException e) {
+		log.info("Can not decide question exception, questionId = {}", e.questionId);
+		return new ResponseEntity<>(new ErrorMessage(e.getMessage()), e.getStatusCode());
+	}
+
 	@ResponseStatus(HttpStatus.CONFLICT)
-	@ExceptionHandler(CannotDeclineQuestionException.class)
-	public ErrorMessage cannotDeclineQuestionException(CannotDeclineQuestionException e) {
-		log.info("Can not decline question exception, questionId = {}", e.questionId);
+	@ExceptionHandler(NotEnoughRewardException.class)
+	public ErrorMessage notEnoughRewardException(NotEnoughRewardException e) {
+		log.info("Not Enough Reward Exception, userId = {}", e.userId);
 		return new ErrorMessage(e.getMessage());
 	}
 }

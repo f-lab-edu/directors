@@ -80,4 +80,11 @@ public class QuestionController {
 		questionService.accept(questionId, userIdByToken);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
+
+	@PutMapping("{questionId}/finish")
+	public ResponseEntity<?> finishQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken) {
+		questionService.finish(questionId, userIdByToken);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

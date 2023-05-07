@@ -62,8 +62,10 @@ public class QuestionService {
 			throw new QuestionDuplicateException(ExceptionCode.QuestionDuplicated, questionerId);
 		}
 
-		User questioner = getUserById(questionerId);
 		User director = getUserById(request.getDirectorId());
+		User questioner = getUserById(questionerId);
+
+		questioner.paymentReward();
 
 		Question question = Question.builder()
 			.title(request.getTitle())
@@ -130,6 +132,16 @@ public class QuestionService {
 		//schedule close 처리
 		Schedule schedule = question.getSchedule();
 		schedule.closeSchedule();
+	}
+
+	@Transactional
+	public void finish(Long questionId, String userId) {
+		Question question = getQuestionById(questionId);
+		question.finish(userId);
+
+		//디렉터 리워드 증가
+		User director = question.getDirector();
+		director.addReword();
 	}
 
 	private Schedule validateTime(LocalDateTime startTime, String userId) {
