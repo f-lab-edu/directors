@@ -1,24 +1,16 @@
 package com.directors.application.user;
 
-import com.directors.IntegrationTestSupport;
 import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.presentation.user.request.SignUpRequest;
 import com.directors.presentation.user.request.WithdrawRequest;
 import com.directors.presentation.user.response.WithdrawResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class WithdrawServiceTest extends IntegrationTestSupport {
-
-    @Autowired
-    SignUpService signUpService;
-
-    @Autowired
-    WithdrawService withdrawService;
+class WithdrawServiceTest extends UserTestSupport {
 
     @DisplayName("탈퇴 요청을 통해 회원을 탈퇴 처리한다.")
     @Test
@@ -29,10 +21,8 @@ class WithdrawServiceTest extends IntegrationTestSupport {
                 .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = WithdrawRequest.builder()
-                .userId(givenUserId)
-                .password("1234567890")
-                .build();
+
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
 
         // when
         WithdrawResponse response = withdrawService.withdraw(withdrawRequest, givenUserId);
@@ -40,7 +30,6 @@ class WithdrawServiceTest extends IntegrationTestSupport {
         // then
         assertThat(response.userId()).isEqualTo(givenUserId);
     }
-
 
     @DisplayName("회원가입되지 않은 회원 아이디로 탈퇴 요청을 하면 예외가 발생한다.")
     @Test
@@ -51,10 +40,7 @@ class WithdrawServiceTest extends IntegrationTestSupport {
                 .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = WithdrawRequest.builder()
-                .userId("wrongUserId")
-                .password("1234567890")
-                .build();
+        WithdrawRequest withdrawRequest = createWithdrawRequest("wrongUserId");
 
         // when then
         assertThatThrownBy(() -> withdrawService.withdraw(withdrawRequest, givenUserId))
@@ -71,10 +57,7 @@ class WithdrawServiceTest extends IntegrationTestSupport {
                 .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = WithdrawRequest.builder()
-                .userId(givenUserId)
-                .password("1234567890")
-                .build();
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
         withdrawService.withdraw(withdrawRequest, givenUserId);
 
         // when then
@@ -93,14 +76,18 @@ class WithdrawServiceTest extends IntegrationTestSupport {
                 .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = WithdrawRequest.builder()
-                .userId(givenUserId)
-                .password("1234567890")
-                .build();
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
 
         // when then
         assertThatThrownBy(() -> withdrawService.withdraw(withdrawRequest, userIdByToken))
                 .isInstanceOf(AuthenticationFailedException.class)
                 .hasMessage("유저 인증이 실패했습니다.");
+    }
+
+    private static WithdrawRequest createWithdrawRequest(String givenUserId) {
+        return WithdrawRequest.builder()
+                .userId(givenUserId)
+                .password("1234567890")
+                .build();
     }
 }

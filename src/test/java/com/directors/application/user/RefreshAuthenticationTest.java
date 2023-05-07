@@ -1,8 +1,5 @@
 package com.directors.application.user;
 
-import com.directors.IntegrationTestSupport;
-import com.directors.infrastructure.auth.JwtAuthenticationManager;
-import com.directors.infrastructure.auth.JwtTokenGenerator;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.RefreshAuthenticationRequest;
 import com.directors.presentation.user.request.SignUpRequest;
@@ -11,25 +8,12 @@ import com.directors.presentation.user.response.RefreshAuthenticationResponse;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class RefreshAuthenticationTest extends IntegrationTestSupport {
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private SignUpService signUpService;
-
-    @Autowired
-    private JwtAuthenticationManager jwtAuthenticationManager;
-
-    @Autowired
-    private JwtTokenGenerator tokenGenerator;
+public class RefreshAuthenticationTest extends UserTestSupport {
 
     @DisplayName("액세스 토큰과 리프레시 토큰을 통해 토큰을 재발급받는다.")
     @Test

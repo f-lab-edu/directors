@@ -23,7 +23,7 @@ public class UpdateUserService {
         var oldPassword = updatePasswordRequest.oldPassword();
         var newPassword = updatePasswordRequest.newPassword();
 
-        var user = validateUser(userIdByToken);
+        var user = getUser(userIdByToken);
         validatePassword(oldPassword, user);
 
         String encryptPassword = passwordManager.encryptPassword(newPassword);
@@ -33,20 +33,18 @@ public class UpdateUserService {
 
     @Transactional
     public void updateEmail(UpdateEmailRequest updateEmailRequest, String userIdByToken) {
-        String oldEmail = updateEmailRequest.oldEmail();
         String newEmail = updateEmailRequest.newEmail();
 
-        var user = validateUser(userIdByToken);
+        var user = getUser(userIdByToken);
 
-        user.changeEmail(oldEmail, newEmail);
+        user.changeEmail(newEmail);
     }
 
-    private User validateUser(String userId) {
+    private User getUser(String userId) {
         return userRepository
                 .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
     }
-
 
     private void validatePassword(String password, User user) {
         if (!passwordManager.checkPassword(password, user.getPassword())) {

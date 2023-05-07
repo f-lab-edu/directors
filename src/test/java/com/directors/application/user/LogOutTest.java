@@ -1,9 +1,6 @@
 package com.directors.application.user;
 
-import com.directors.IntegrationTestSupport;
 import com.directors.domain.auth.Token;
-import com.directors.domain.auth.TokenRepository;
-import com.directors.infrastructure.auth.JwtTokenGenerator;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.LogOutRequest;
 import com.directors.presentation.user.request.SignUpRequest;
@@ -12,26 +9,13 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class LogOutTest extends IntegrationTestSupport {
-
-    @Autowired
-    private SignUpService signUpService;
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private TokenRepository tokenRepository;
-
-    @Autowired
-    private JwtTokenGenerator tokenGenerator;
+public class LogOutTest extends UserTestSupport {
 
     @DisplayName("로그아웃 성공 시 유저의 모든 토큰 데이터가 삭제된다.")
     @Test

@@ -1,20 +1,15 @@
 package com.directors.application.user;
 
-import com.directors.IntegrationTestSupport;
 import com.directors.domain.user.exception.DuplicateIdException;
 import com.directors.presentation.user.request.SignUpRequest;
 import com.directors.presentation.user.response.SignUpResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class SignUpServiceTest extends IntegrationTestSupport {
-
-    @Autowired
-    private SignUpService signUpService;
+class SignUpServiceTest extends UserTestSupport {
 
     @DisplayName("회원 정보를 통해 회원 가입을 한다.")
     @Test

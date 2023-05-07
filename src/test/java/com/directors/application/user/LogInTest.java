@@ -1,17 +1,13 @@
 package com.directors.application.user;
 
-import com.directors.IntegrationTestSupport;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
 import com.directors.domain.user.exception.AuthenticationFailedException;
-import com.directors.infrastructure.auth.JwtAuthenticationManager;
 import com.directors.presentation.user.request.LogInRequest;
 import com.directors.presentation.user.request.SignUpRequest;
 import com.directors.presentation.user.response.LogInResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
@@ -19,19 +15,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class LogInTest extends IntegrationTestSupport {
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private SignUpService signUpService;
-
-    @Autowired
-    private JwtAuthenticationManager jwtAuthenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
+class LogInTest extends UserTestSupport {
 
     @DisplayName("아이디와 패스워드를 통해 로그인을 한다.")
     @Test
