@@ -13,6 +13,7 @@ import com.directors.domain.user.exception.UserRegionNotFoundException;
 import com.directors.infrastructure.exception.api.ExteralApiAuthenticationException;
 import com.directors.infrastructure.exception.api.ExternalApiServerException;
 import com.directors.infrastructure.exception.api.NotFoundException;
+import com.directors.infrastructure.exception.api.RenewApiKeyException;
 import com.directors.infrastructure.exception.common.EntityNotFoundException;
 import com.directors.infrastructure.exception.question.InvalidQuestionStatusException;
 import com.directors.infrastructure.exception.question.QuestionDuplicateException;
@@ -147,6 +148,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExternalApiServerException.class)
     public ErrorMessage externalApiServerException(NotFoundException ex) {
         log.warn("ExternalApiServerException occurred. An exception occurred in the sgis server.");
+        return new ErrorMessage("잠시 후 다시 시도해주세요");
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(RenewApiKeyException.class)
+    public ErrorMessage externalApiServerException(RenewApiKeyException ex) {
+        log.error("RenewApiKeyException occurred. API key renewal is required.");
         return new ErrorMessage("잠시 후 다시 시도해주세요");
     }
 
