@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.directors.application.question.QuestionService;
 import com.directors.presentation.question.request.CreateQuestionRequest;
 import com.directors.presentation.question.request.EditQuestionRequest;
+import com.directors.presentation.question.response.DetailQuestionResponse;
 import com.directors.presentation.question.response.ReceivedQuestionResponse;
 import com.directors.presentation.question.response.SentQuestionResponse;
 
@@ -55,5 +56,11 @@ public class QuestionController {
 		@RequestBody @Valid EditQuestionRequest editQuestionRequest) {
 		questionService.edit(questionId, editQuestionRequest);
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping("/{questionId}")
+	public ResponseEntity<?> getQuestionDetail(@PathVariable Long questionId) {
+		DetailQuestionResponse questionDetail = questionService.getQuestionDetail(questionId);
+		return new ResponseEntity<>(questionDetail, HttpStatus.OK);
 	}
 }
