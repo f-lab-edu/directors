@@ -1,7 +1,9 @@
 package com.directors.presentation.user.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
+@Builder
 public record WithdrawRequest(
         @NotBlank(message = "아이디가 입력되지 않았습니다.")
         String userId,
