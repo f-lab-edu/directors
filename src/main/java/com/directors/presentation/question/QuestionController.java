@@ -84,7 +84,7 @@ public class QuestionController {
 	@PutMapping("{questionId}/finish")
 	public ResponseEntity<?> finishQuestion(@PathVariable Long questionId,
 		@AuthenticationPrincipal String userIdByToken) {
-		questionService.finish(questionId, userIdByToken);
+		questionService.complete(questionId, userIdByToken);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

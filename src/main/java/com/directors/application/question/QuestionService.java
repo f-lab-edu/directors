@@ -135,13 +135,20 @@ public class QuestionService {
 	}
 
 	@Transactional
-	public void finish(Long questionId, String userId) {
+	public void complete(Long questionId, String userId) {
 		Question question = getQuestionById(questionId);
-		question.finish(userId);
+		question.mettingCompleteChecking(userId);
 
-		//디렉터 리워드 증가
-		User director = question.getDirector();
-		director.addReword();
+		boolean isFinish = question.isFinishedQuestion();
+		if (isFinish) {
+
+			question.changeQuestionStatusToComplete();
+
+			//디렉터 리워드 증가
+			User director = question.getDirector();
+			director.addReword();
+		}
+
 	}
 
 	private Schedule validateTime(LocalDateTime startTime, String userId) {

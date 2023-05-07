@@ -150,12 +150,12 @@ public class Question extends BaseEntity {
 		}
 	}
 
-	public void finish(String userId) {
+	public void mettingCompleteChecking(String userId) {
 		canFinishedQuestionStatus();
-		checkFinish(userId);
+		checkComplete(userId);
 	}
 
-	private void checkFinish(String userId) {
+	private void checkComplete(String userId) {
 		if (this.questioner.getId().equals(userId)) {
 			questionCheck = true;
 			return;
