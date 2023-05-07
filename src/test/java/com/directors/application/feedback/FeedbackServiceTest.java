@@ -1,7 +1,6 @@
 package com.directors.application.feedback;
 
 import com.directors.IntegrationTestSupport;
-import com.directors.domain.feedback.FeedbackRepository;
 import com.directors.domain.feedback.exception.CannotCreateFeedbackException;
 import com.directors.domain.feedback.exception.FeedbackNotFoundException;
 import com.directors.domain.question.Question;
@@ -32,16 +31,10 @@ class FeedbackServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private QuestionRepository questionRepository;
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private FeedbackRepository feedbackRepository;
-
     @Autowired
     private ScheduleRepository scheduleRepository;
-
     @Autowired
     FeedbackService feedbackService;
 

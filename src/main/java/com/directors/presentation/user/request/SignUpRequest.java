@@ -6,7 +6,9 @@ import com.directors.domain.user.UserStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record SignUpRequest(
 	@NotBlank(message = "아이디가 입력되지 않았습니다.")
 	@Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.")

@@ -4,6 +4,8 @@ import com.directors.domain.user.PasswordManager;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.exception.DuplicateIdException;
+import com.directors.presentation.user.request.SignUpRequest;
+import com.directors.presentation.user.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +18,14 @@ public class SignUpService {
     private final PasswordManager pm;
 
     @Transactional
-    public void signUp(User newUser) {
-        isDuplicatedUser(newUser.getId());
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+        User user = signUpRequest.toEntity();
 
-        newUser.setPasswordByEncryption(pm.encryptPassword(newUser.getPassword()));
+        isDuplicatedUser(user.getId());
 
-        userRepository.save(newUser);
+        user.setPasswordByEncryption(pm.encryptPassword(user.getPassword()));
+
+        return SignUpResponse.of(userRepository.save(user));
     }
 
     @Transactional

@@ -2,7 +2,6 @@ package com.directors.domain.user;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import com.directors.domain.region.Address;
 import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
-import com.directors.domain.user.exception.AuthenticationFailedException;
 import com.directors.domain.user.exception.NotEnoughRewardException;
 
 import jakarta.persistence.CascadeType;
@@ -54,7 +52,7 @@ public class User extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private UserStatus userStatus;
 
-	private Date withdrawalDate;
+	private LocalDateTime withdrawalDate;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Specialty> specialtyList = new ArrayList<>();
@@ -89,20 +87,13 @@ public class User extends BaseEntity {
 		this.password = encryptedPassword;
 	}
 
-	public void changeEmail(String oldEmail, String newEmail) {
-		validateEmail(oldEmail);
+	public void changeEmail(String newEmail) {
 		this.email = newEmail;
 	}
 
-	public void withdrawal(Date withdrawalDate) {
+	public void withdrawal(LocalDateTime withdrawalTime) {
 		this.userStatus = UserStatus.WITHDRAWN;
 		this.withdrawalDate = withdrawalDate;
-	}
-
-	private void validateEmail(String email) {
-		if (!this.email.equals(email)) {
-			throw new AuthenticationFailedException(this.id);
-		}
 	}
 
 	public void addReword() {

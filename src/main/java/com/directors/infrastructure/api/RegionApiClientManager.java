@@ -2,15 +2,11 @@ package com.directors.infrastructure.api;
 
 import com.directors.domain.region.Address;
 import com.directors.domain.region.RegionApiClient;
-import com.directors.infrastructure.exception.api.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -26,6 +22,10 @@ public class RegionApiClientManager implements RegionApiClient {
     private final RegionApiTokenProvider regionApiTokenProvider;
     private final ApiSender apiSender;
 
+    private final String regionOneDepth = "sido_nm";
+    private final String regionTwoDepth = "sgg_nm";
+    private final String regionThreeDepth = "emdong_nm";
+
     @Override
     public Address findRegionAddressByLocation(double latitude, double longitude) {
         var uri = UriComponentsBuilder
@@ -38,37 +38,24 @@ public class RegionApiClientManager implements RegionApiClient {
 
         var response = apiSender.send(HttpMethod.GET, uri);
 
-        recoverIfTokenUnvalidate(uri, response);
-        checkNotFound(response);
-
-        var result = getResultFromResponse(response);
-
-        String fullAddress = result.get("sido_nm") + " " + result.get("sgg_nm") + " " + result.get("emdong_nm");
-        String unitAddress = result.get("emdong_nm");
-
-        return new Address(fullAddress, unitAddress);
-    }
-
-    private void recoverIfTokenUnvalidate(UriComponents uri, ResponseEntity<Map<String, Object>> response) {
-        if (response.getBody().get("errMsg").equals("인증 정보가 존재하지 않습니다")) {
+        // TODO: 토큰 유효 기간 주기(2시간)에 맞추어 토큰을 새로 가져오는 스케줄링 로직이 필요. 현재는 토큰이 유효하지 않으면 토큰을 업데이트하도록 하고 있음.
+        if (!ApiResponseValidator.isCertificated(response)) {
             regionApiTokenProvider.fetchApiAccessTokenFromAPI();
             response = apiSender.send(HttpMethod.GET, uri);
-
-            if (response == null) {
-                throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
         }
+
+        ApiResponseValidator.checkNotFound(response);
+
+        return getAddressFromResponse(response);
     }
 
-    private void checkNotFound(ResponseEntity<Map<String, Object>> response) {
-        if ((Integer) response.getBody().get("errCd") == -100) {
-            throw new NotFoundException();
-        }
-    }
-
-    private Map<String, String> getResultFromResponse(ResponseEntity<Map<String, Object>> response) {
+    private Address getAddressFromResponse(ResponseEntity<Map<String, Object>> response) {
         var result = (ArrayList<Object>) response.getBody().get("result");
         var resultMap = (Map<String, String>) result.get(0);
-        return resultMap;
+
+        var fullAddress = resultMap.get(regionOneDepth) + " " + resultMap.get(regionTwoDepth) + " " + resultMap.get(regionThreeDepth);
+        var unitAddress = resultMap.get(regionThreeDepth);
+
+        return new Address(fullAddress, unitAddress);
     }
 }
