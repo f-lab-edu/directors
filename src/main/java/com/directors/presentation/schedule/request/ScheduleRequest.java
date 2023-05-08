@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateScheduleRequest {
+public class ScheduleRequest {
 	@NotBlank(message = "허용 가능한 스케쥴 시간이 입력되지 않았습니다.")
 	private List<LocalDateTime> startTimeList;
 }

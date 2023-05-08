@@ -1,5 +1,7 @@
 package com.directors.infrastructure.jpa.question;
 
+import static com.directors.domain.question.QQuestion.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.question.QuestionStatus;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuestionRepositoryAdapter implements QuestionRepository {
 	private final JpaQuestionRepository jpaQuestionRepository;
+	private final JPAQueryFactory queryFactory;
 
 	@Override
 	public List<Question> findByDirectorId(String directorId) {
@@ -42,11 +46,16 @@ public class QuestionRepositoryAdapter implements QuestionRepository {
 		return jpaQuestionRepository.existsByQuestionerIdAndDirectorId(questionerId, directorId);
 	}
 
-	//구현예정
 	@Override
 	public boolean existsByDirectorIdAndStartTimeAndStatus(String directorId, LocalDateTime startTime,
 		QuestionStatus status) {
-		return false;
-	}
+		Integer fetchOne = queryFactory
+			.selectOne()
+			.from(question)
+			.where(question.director.id.eq(directorId), question.schedule.startTime.eq(startTime),
+				question.status.eq(status))
+			.fetchFirst();
 
+		return fetchOne != null;
+	}
 }
