@@ -4,15 +4,15 @@ import com.directors.domain.specialty.Specialty;
 import lombok.Builder;
 
 @Builder
-public record CreateSpecialtyResponse(
+public record UpdateSpecialtyResponse(
         Long id,
-        String specialtyProperty,
+        String property,
         String description
 ) {
-    public static CreateSpecialtyResponse from(Specialty specialty) {
-        return CreateSpecialtyResponse.builder()
+    public static UpdateSpecialtyResponse from(Specialty specialty) {
+        return UpdateSpecialtyResponse.builder()
                 .id(specialty.getId())
-                .specialtyProperty(specialty.getSpecialtyInfo().getProperty().getValue())
+                .property(specialty.getSpecialtyInfo().getProperty().getValue())
                 .description(specialty.getSpecialtyInfo().getDescription())
                 .build();
     }

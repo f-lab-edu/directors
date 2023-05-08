@@ -4,6 +4,8 @@ package com.directors.presentation.specialty;
 import com.directors.application.specialty.SpecialtyService;
 import com.directors.presentation.specialty.request.CreateSpecialtyRequest;
 import com.directors.presentation.specialty.request.UpdateSpecialtyRequest;
+import com.directors.presentation.specialty.response.CreateSpecialtyResponse;
+import com.directors.presentation.specialty.response.UpdateSpecialtyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +20,13 @@ public class SpecialtyController {
     private final SpecialtyService specialtyService;
 
     @PostMapping("/create")
-    public ResponseEntity<HttpStatus> create(@RequestBody CreateSpecialtyRequest createSpecialtyRequest, @AuthenticationPrincipal String userIdByToken) {
-        specialtyService.createSpecialty(createSpecialtyRequest.toEntity(), userIdByToken);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<CreateSpecialtyResponse> create(@RequestBody CreateSpecialtyRequest request, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(specialtyService.createSpecialty(request, userIdByToken), HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<HttpStatus> update(@RequestBody UpdateSpecialtyRequest updateSpecialtyRequest) {
-        specialtyService.updateSpecialty(updateSpecialtyRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UpdateSpecialtyResponse> update(@RequestBody UpdateSpecialtyRequest request) {
+        return new ResponseEntity<>(specialtyService.updateSpecialty(request), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{specialtyId}")
