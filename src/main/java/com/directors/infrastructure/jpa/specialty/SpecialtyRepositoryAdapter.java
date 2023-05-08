@@ -18,8 +18,8 @@ public class SpecialtyRepositoryAdapter implements SpecialtyRepository {
     }
 
     @Override
-    public void save(Specialty specialty) {
-        specialtyRepository.save(specialty);
+    public Specialty save(Specialty specialty) {
+        return specialtyRepository.save(specialty);
     }
 
     @Override

@@ -18,11 +18,13 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     }
 
     @Override
-    public void save(Specialty specialty) {
+    public Specialty save(Specialty specialty) {
         if (specialty.getId() == null) {
             specialty.setId(nextId++);
         }
         specialtyMap.put(specialty.getId(), specialty);
+
+        return specialty;
     }
 
     @Override

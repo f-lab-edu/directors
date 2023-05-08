@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface SpecialtyRepository {
     Optional<Specialty> findById(Long specialtyId);
 
-    void save(Specialty specialty);
+    Specialty save(Specialty specialty);
 
     void delete(Long specialtyId);
 }
