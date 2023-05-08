@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.directors.application.question.QuestionService;
 import com.directors.presentation.question.request.CreateQuestionRequest;
+import com.directors.presentation.question.request.DeclineQuestionRequest;
 import com.directors.presentation.question.request.EditQuestionRequest;
+import com.directors.presentation.question.response.DetailQuestionResponse;
 import com.directors.presentation.question.response.ReceivedQuestionResponse;
 import com.directors.presentation.question.response.SentQuestionResponse;
 
@@ -54,6 +56,35 @@ public class QuestionController {
 	public ResponseEntity<?> editQuestion(@PathVariable Long questionId,
 		@RequestBody @Valid EditQuestionRequest editQuestionRequest) {
 		questionService.edit(questionId, editQuestionRequest);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping("/{questionId}")
+	public ResponseEntity<?> getQuestionDetail(@PathVariable Long questionId) {
+		DetailQuestionResponse questionDetail = questionService.getQuestionDetail(questionId);
+		return new ResponseEntity<>(questionDetail, HttpStatus.OK);
+	}
+
+	@PostMapping("/{questionId}/decline")
+	public ResponseEntity<?> declineQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken,
+		@RequestBody @Valid DeclineQuestionRequest declineQuestionRequest) {
+
+		questionService.decline(questionId, userIdByToken, declineQuestionRequest);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PostMapping("/{questionId}/accept")
+	public ResponseEntity<?> acceptQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken) {
+		questionService.accept(questionId, userIdByToken);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PutMapping("{questionId}/finish")
+	public ResponseEntity<?> finishQuestion(@PathVariable Long questionId,
+		@AuthenticationPrincipal String userIdByToken) {
+		questionService.complete(questionId, userIdByToken);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
