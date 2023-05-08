@@ -5,7 +5,6 @@ import com.directors.domain.specialty.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,11 +15,6 @@ public class SpecialtyRepositoryAdapter implements SpecialtyRepository {
     @Override
     public Optional<Specialty> findById(Long specialtyId) {
         return specialtyRepository.findById(specialtyId);
-    }
-
-    @Override
-    public List<Specialty> findByUserId(String userId) {
-        return specialtyRepository.findByUserId(userId);
     }
 
     @Override
