@@ -3,6 +3,7 @@ package com.directors.presentation.room;
 import com.directors.application.room.RoomService;
 import com.directors.presentation.room.response.GetRoomInfosByDirectorIdResponse;
 import com.directors.presentation.room.response.GetRoomInfosByQuestionerIdResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,9 @@ public class RoomController {
 
     @PostMapping("/create/{questionId}")
     public ResponseEntity<Long> create(
-            @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.") Long questionId,
-            @AuthenticationPrincipal String userIdByToken
+            @Valid @RequestBody CreateRoomRequest request, @AuthenticationPrincipal String userIdByToken
     ) {
-        return new ResponseEntity<>(roomService.create(questionId, userIdByToken), HttpStatus.OK);
+        return new ResponseEntity<>(roomService.create(request, userIdByToken), HttpStatus.OK);
     }
 
     @GetMapping("/roomInfosBydirectorId/{directorId}")

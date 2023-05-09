@@ -7,6 +7,7 @@ import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
+import com.directors.presentation.room.CreateRoomRequest;
 import com.directors.presentation.room.response.GetRoomInfosByDirectorIdResponse;
 import com.directors.presentation.room.response.GetRoomInfosByQuestionerIdResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,10 @@ public class RoomService {
     private final ChatRepository chatRepository;
 
     @Transactional
-    public Long create(Long questionId, String directorId) {
-        var question = getQuestionById(questionId);
-        question.canCreateChatRoom(directorId);
+    public Long create(CreateRoomRequest request, String directorId) {
+        var question = getQuestionById(request.questionId());
+
+        question.canCreateChatRoom(directorId, request.requestTime());
 
         var room = Room.of(question, question.getDirector(), question.getQuestioner());
         Room savedRoom = roomRepository.save(room);
