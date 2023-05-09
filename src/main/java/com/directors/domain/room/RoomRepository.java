@@ -7,8 +7,6 @@ public interface RoomRepository {
 
     Optional<Room> findById(Long roomId);
 
-    Optional<Room> findByQuestionId(Long questionId);
-
     List<Room> findByDirectorId(String directorId);
 
     List<Room> findByQuestionerId(String questionerId);

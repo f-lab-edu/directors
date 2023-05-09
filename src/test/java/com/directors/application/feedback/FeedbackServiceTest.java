@@ -9,6 +9,7 @@ import com.directors.domain.question.QuestionStatus;
 import com.directors.domain.schedule.Schedule;
 import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.schedule.ScheduleStatus;
+import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
@@ -239,7 +240,7 @@ class FeedbackServiceTest extends IntegrationTestSupport {
                 .directorCheck(false)
                 .questioner(questioner)
                 .director(director)
-                .category("개발")
+                .category(SpecialtyProperty.BS)
                 .schedule(savedSchedule)
                 .build();
 

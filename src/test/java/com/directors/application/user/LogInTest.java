@@ -22,10 +22,10 @@ class LogInTest extends UserTestSupport {
     void logIn() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper.createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        LogInRequest loginRequest = UserTestHelper.createLogInRequest(givenUserId, "1234567890");
+        LogInRequest loginRequest = createLogInRequest(givenUserId, "1234567890");
 
         // when
         LogInResponse logInResponse = authenticationService.logIn(loginRequest);
@@ -59,7 +59,7 @@ class LogInTest extends UserTestSupport {
     @Test
     void logInWithWrongId() {
         // given
-        LogInRequest givenLoginRequest = UserTestHelper.createLogInRequest("cnsong1234", "1234567890");
+        LogInRequest givenLoginRequest = createLogInRequest("cnsong1234", "1234567890");
 
         // when then
         assertThatThrownBy(() -> authenticationService.logIn(givenLoginRequest))
@@ -74,10 +74,10 @@ class LogInTest extends UserTestSupport {
         String givenUserId = "cnsong1234";
         String givenPassword = "1234567890";
 
-        SignUpRequest signUpRequest = UserTestHelper.createSignUpRequest(givenUserId, givenPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, givenPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        LogInRequest givenLoginRequest = UserTestHelper.createLogInRequest(givenUserId, givenPassword + "1");
+        LogInRequest givenLoginRequest = createLogInRequest(givenUserId, givenPassword + "1");
 
         // when then
         assertThatThrownBy(() -> authenticationService.logIn(givenLoginRequest))
@@ -91,7 +91,7 @@ class LogInTest extends UserTestSupport {
         // given
         String givenUserId = "cnsong1234";
         String givenPassword = "1234567890";
-        SignUpRequest signUpRequest = UserTestHelper.createSignUpRequest(givenUserId, givenPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, givenPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         User user = userRepository
@@ -100,7 +100,7 @@ class LogInTest extends UserTestSupport {
 
         user.withdrawal(LocalDateTime.now());
 
-        LogInRequest givenLoginRequest = UserTestHelper.createLogInRequest(givenUserId, givenPassword);
+        LogInRequest givenLoginRequest = createLogInRequest(givenUserId, givenPassword);
 
         // when then
         assertThatThrownBy(() -> authenticationService.logIn(givenLoginRequest))

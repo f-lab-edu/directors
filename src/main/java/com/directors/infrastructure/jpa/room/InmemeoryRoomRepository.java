@@ -18,12 +18,6 @@ public class InmemeoryRoomRepository implements RoomRepository {
         return Optional.ofNullable(roomMap.get(roomId));
     }
 
-    public Optional<Room> findByQuestionId(Long questionId) {
-        return roomMap.values().stream()
-                .filter(room -> questionId.equals(room.getQuestion().getId()))
-                .findFirst();
-    }
-
     @Override
     public List<Room> findByDirectorId(String directorId) {
         return roomMap.values().stream()

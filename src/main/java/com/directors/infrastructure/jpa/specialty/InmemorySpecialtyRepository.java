@@ -4,10 +4,8 @@ import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyRepository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class InmemorySpecialtyRepository implements SpecialtyRepository {
 
@@ -20,20 +18,13 @@ public class InmemorySpecialtyRepository implements SpecialtyRepository {
     }
 
     @Override
-    public List<Specialty> findByUserId(String userId) {
-        return specialtyMap.values()
-                .stream()
-                .filter(sp -> sp.getUser().getId().equals(userId))
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public void save(Specialty specialty) {
+    public Specialty save(Specialty specialty) {
         if (specialty.getId() == null) {
             specialty.setId(nextId++);
         }
         specialtyMap.put(specialty.getId(), specialty);
+
+        return specialty;
     }
 
     @Override

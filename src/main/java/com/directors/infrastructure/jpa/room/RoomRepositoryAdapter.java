@@ -19,11 +19,6 @@ public class RoomRepositoryAdapter implements RoomRepository {
     }
 
     @Override
-    public Optional<Room> findByQuestionId(Long questionId) {
-        return jpaRoomRepository.findByQuestionId(questionId);
-    }
-
-    @Override
     public List<Room> findByDirectorId(String directorId) {
         return jpaRoomRepository.findByDirectorId(directorId);
     }
