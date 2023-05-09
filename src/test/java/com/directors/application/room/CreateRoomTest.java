@@ -1,24 +1,15 @@
 package com.directors.application.room;
 
-import com.directors.IntegrationTestSupport;
-import com.directors.application.schedule.ScheduleService;
 import com.directors.domain.question.Question;
-import com.directors.domain.question.QuestionRepository;
-import com.directors.domain.question.QuestionStatus;
 import com.directors.domain.room.Room;
-import com.directors.domain.room.RoomRepository;
 import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.schedule.Schedule;
-import com.directors.domain.schedule.ScheduleRepository;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
-import com.directors.domain.user.UserRepository;
-import com.directors.domain.user.UserStatus;
 import com.directors.infrastructure.exception.question.QuestionNotFoundException;
 import com.directors.presentation.room.CreateRoomRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,25 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class CreateRoomTest extends IntegrationTestSupport {
-
-    @Autowired
-    RoomService roomService;
-
-    @Autowired
-    RoomRepository roomRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ScheduleService scheduleService;
-
-    @Autowired
-    ScheduleRepository scheduleRepository;
-
-    @Autowired
-    QuestionRepository questionRepository;
+class CreateRoomTest extends RoomTestSupport {
 
     @DisplayName("질문 id와 요청시간, 디렉터 id를 통해 채팅방을 생성한다.")
     @Test
@@ -175,32 +148,5 @@ class CreateRoomTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> roomService.create(request, savedDirector.getId()))
                 .isInstanceOf(CannotCreateRoomException.class)
                 .hasMessage("채팅 방을 만들 수 없는 상태입니다.");
-    }
-
-    private User createUser(String id, String password, String email, String phoneNumber, String name, String nickname) {
-        return User.builder()
-                .id(id)
-                .password(password)
-                .userStatus(UserStatus.JOINED)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .name(name)
-                .reward(0L)
-                .nickname(nickname)
-                .build();
-    }
-
-    private Question createQuestion(String title, String content, User director, User questioner, SpecialtyProperty property, Schedule schedule) {
-        return Question.builder()
-                .title(title)
-                .content(content)
-                .status(QuestionStatus.WAITING)
-                .questionCheck(false)
-                .directorCheck(false)
-                .director(director)
-                .questioner(questioner)
-                .category(property)
-                .schedule(schedule)
-                .build();
     }
 }
