@@ -39,10 +39,7 @@ class CreateRoomTest extends RoomTestSupport {
         Question savedQuestion = questionRepository.save(question);
 
         LocalDateTime requestTime = LocalDateTime.of(2023, 05, 8, 14, 0);
-        CreateRoomRequest request = CreateRoomRequest.builder()
-                .questionId(question.getId())
-                .requestTime(requestTime)
-                .build();
+        CreateRoomRequest request = createCreateRoomRequest(savedQuestion.getId(), requestTime);
 
         // when
         Long roomId = roomService.create(request, savedDirector.getId());
@@ -55,7 +52,8 @@ class CreateRoomTest extends RoomTestSupport {
                 .contains(savedQuestion, savedDirector, savedQuestioner);
     }
 
-    @DisplayName("잘못된 질문 id로 채팅방 생성을 요청할 경우, 예외가 생성한다.")
+
+    @DisplayName("잘못된 질문 id로 채팅방 생성을 요청하면 예외가 발생한다.")
     @Test
     void createRoomWithWrongQuestionId() {
         // given
@@ -77,10 +75,7 @@ class CreateRoomTest extends RoomTestSupport {
         Long givenWrongQuestionId = -10L;
 
         LocalDateTime requestTime = LocalDateTime.of(2023, 05, 8, 14, 0);
-        CreateRoomRequest request = CreateRoomRequest.builder()
-                .questionId(givenWrongQuestionId)
-                .requestTime(requestTime)
-                .build();
+        CreateRoomRequest request = createCreateRoomRequest(givenWrongQuestionId, requestTime);
 
         // when
         assertThatThrownBy(() -> roomService.create(request, savedDirector.getId()))
@@ -105,13 +100,11 @@ class CreateRoomTest extends RoomTestSupport {
         Question question =
                 createQuestion("원하는 질문", "질문 내용은 ~~~입니다.", savedDirector, savedQuestioner, SpecialtyProperty.ART, savedSchedule);
         Question savedQuestion = questionRepository.save(question);
+
         savedQuestion.changeQuestionStatusToChat();
 
         LocalDateTime requestTime = LocalDateTime.of(2023, 05, 8, 14, 0);
-        CreateRoomRequest request = CreateRoomRequest.builder()
-                .questionId(question.getId())
-                .requestTime(requestTime)
-                .build();
+        CreateRoomRequest request = createCreateRoomRequest(savedQuestion.getId(), requestTime);
 
         // when
         assertThatThrownBy(() -> roomService.create(request, savedDirector.getId()))
@@ -138,11 +131,9 @@ class CreateRoomTest extends RoomTestSupport {
                 createQuestion("원하는 질문", "질문 내용은 ~~~입니다.", savedDirector, savedQuestioner, SpecialtyProperty.ART, savedSchedule);
         Question savedQuestion = questionRepository.save(question);
 
-        LocalDateTime requestTime = LocalDateTime.of(2023, 05, 9, 14, 1);
-        CreateRoomRequest request = CreateRoomRequest.builder()
-                .questionId(savedQuestion.getId())
-                .requestTime(requestTime)
-                .build();
+        LocalDateTime lateRequestTime = LocalDateTime.of(2023, 05, 9, 14, 1);
+
+        CreateRoomRequest request = createCreateRoomRequest(savedQuestion.getId(), lateRequestTime);
 
         // when
         assertThatThrownBy(() -> roomService.create(request, savedDirector.getId()))

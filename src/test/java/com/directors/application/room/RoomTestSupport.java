@@ -12,7 +12,10 @@ import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
+import com.directors.presentation.room.CreateRoomRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
 
 public class RoomTestSupport extends IntegrationTestSupport {
     @Autowired
@@ -32,7 +35,6 @@ public class RoomTestSupport extends IntegrationTestSupport {
 
     @Autowired
     QuestionRepository questionRepository;
-
 
     protected User createUser(String id, String password, String email, String phoneNumber, String name, String nickname) {
         return User.builder()
@@ -58,6 +60,13 @@ public class RoomTestSupport extends IntegrationTestSupport {
                 .questioner(questioner)
                 .category(property)
                 .schedule(schedule)
+                .build();
+    }
+
+    public static CreateRoomRequest createCreateRoomRequest(Long questionId, LocalDateTime requestTime) {
+        return CreateRoomRequest.builder()
+                .questionId(questionId)
+                .requestTime(requestTime)
                 .build();
     }
 }
