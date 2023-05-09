@@ -70,7 +70,7 @@ class CreateRoomTest extends RoomTestSupport {
 
         Question question =
                 createQuestion("원하는 질문", "질문 내용은 ~~~입니다.", savedDirector, savedQuestioner, SpecialtyProperty.ART, savedSchedule);
-        Question savedQuestion = questionRepository.save(question);
+        questionRepository.save(question);
 
         Long givenWrongQuestionId = -10L;
 
