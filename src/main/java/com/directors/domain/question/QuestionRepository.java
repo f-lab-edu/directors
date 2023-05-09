@@ -16,7 +16,6 @@ public interface QuestionRepository {
 
 	boolean existsByQuestionerIdAndDirectorId(String questionerId, String directorId);
 
-	//구현예정
 	boolean existsByDirectorIdAndStartTimeAndStatus(String directorId, LocalDateTime startTime,
 		QuestionStatus status);
 }

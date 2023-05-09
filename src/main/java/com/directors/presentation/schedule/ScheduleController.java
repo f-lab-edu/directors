@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.directors.application.schedule.ScheduleService;
-import com.directors.presentation.schedule.request.CreateScheduleRequest;
+import com.directors.presentation.schedule.request.ScheduleRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +17,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/schedules")
 public class ScheduleController {
 
 	private final ScheduleService scheduleService;
 
-	@PutMapping
+	@PutMapping("/open")
 	ResponseEntity<?> open(@AuthenticationPrincipal String userIdByToken,
-		@RequestBody CreateScheduleRequest createScheduleRequest) {
-		scheduleService.open(userIdByToken, createScheduleRequest.getStartTimeList());
+		@RequestBody ScheduleRequest scheduleRequest) {
+		scheduleService.open(userIdByToken, scheduleRequest.getStartTimeList());
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@PutMapping("/close")
+	ResponseEntity<?> close(@AuthenticationPrincipal String userIdByToken,
+		@RequestBody ScheduleRequest scheduleRequest) {
+		scheduleService.close(userIdByToken, scheduleRequest.getStartTimeList());
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
