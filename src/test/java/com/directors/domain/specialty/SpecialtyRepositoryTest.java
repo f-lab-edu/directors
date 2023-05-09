@@ -35,12 +35,12 @@ class SpecialtyRepositoryTest extends IntegrationTestSupport {
         Specialty savedSpecialty = specialtyRepository.save(specialty);
 
         // when
-        Specialty findedSpecialty = specialtyRepository.findById(savedSpecialty.getId())
+        Specialty foundSpecialty = specialtyRepository.findById(savedSpecialty.getId())
                 .orElseThrow(null);
 
         // then
-        assertThat(findedSpecialty.getId()).isNotNull();
-        assertThat(findedSpecialty).extracting("id", "SpecialtyInfo", "user")
+        assertThat(foundSpecialty.getId()).isNotNull();
+        assertThat(foundSpecialty).extracting("id", "SpecialtyInfo", "user")
                 .contains(savedSpecialty.getId(), savedSpecialty.getSpecialtyInfo(), savedSpecialty.getUser());
     }
 

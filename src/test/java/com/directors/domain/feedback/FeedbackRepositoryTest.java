@@ -25,11 +25,11 @@ class FeedbackRepositoryTest extends IntegrationTestSupport {
         Feedback savedFeedback = feedbackRepository.save(feedback);
 
         // when
-        var findedFeedback = feedbackRepository.findById(savedFeedback.getId()).orElseThrow(null);
+        var foundFeedback = feedbackRepository.findById(savedFeedback.getId()).orElseThrow(null);
         // optional 해체의 책임은 어디있어야 할까?
 
         // then
-        assertThat(findedFeedback)
+        assertThat(foundFeedback)
                 .extracting("feedbackRating", "description")
                 .contains(BEST, "최고의 피드백!");
     }
