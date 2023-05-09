@@ -1,11 +1,11 @@
 package com.directors.application.region;
 
-import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
 import com.directors.domain.user.UserRegion;
 import com.directors.domain.user.UserRegionRepository;
 import com.directors.domain.user.exception.UserRegionNotFoundException;
+import com.directors.presentation.region.response.NearestAddressResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,17 +58,17 @@ public class RegionService {
     }
 
     @Transactional
-    public List<Address> getNearestAddress(String userId, int distance) {
+    public List<NearestAddressResponse> getNearestAddress(int distance, String userId) {
         UserRegion userRegion = getUserRegion(userId);
 
         return getNearestRegion(userRegion.getRegion(), distance)
                 .stream()
-                .map(Region::getAddress)
+                .map(NearestAddressResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<Long> getNearestRegionId(String userId, int distance) {
+    public List<Long> getNearestRegionId(int distance, String userId) {
         UserRegion userRegion = getUserRegion(userId);
 
         return getNearestRegion(userRegion.getRegion(), distance)
