@@ -78,10 +78,9 @@ public class RegionService {
     }
 
     private UserRegion getUserRegion(String userId) {
-        var userRegion = userRegionRepository
+        return userRegionRepository
                 .findByUserId(userId)
                 .orElseThrow(() -> new UserRegionNotFoundException(userId));
-        return userRegion;
     }
 
     private Region regionDataLineToRegion(String regionLine) {
