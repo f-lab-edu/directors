@@ -17,12 +17,11 @@ class WithdrawServiceTest extends UserTestSupport {
     void withdraw() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
 
-        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId, "1234567890");
 
         // when
         WithdrawResponse response = withdrawService.withdraw(withdrawRequest, givenUserId);
@@ -36,11 +35,10 @@ class WithdrawServiceTest extends UserTestSupport {
     void withdrawWithNotRegisteredUserId() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = createWithdrawRequest("wrongUserId");
+        WithdrawRequest withdrawRequest = createWithdrawRequest("wrongUserId", "1234567890");
 
         // when then
         assertThatThrownBy(() -> withdrawService.withdraw(withdrawRequest, givenUserId))
@@ -53,11 +51,10 @@ class WithdrawServiceTest extends UserTestSupport {
     void withdrawWithWithdrawalUserId() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId, "1234567890");
         withdrawService.withdraw(withdrawRequest, givenUserId);
 
         // when then
@@ -72,22 +69,14 @@ class WithdrawServiceTest extends UserTestSupport {
         // given
         String givenUserId = "cnsong1234";
         String userIdByToken = "userIdByToken";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
-        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId);
+        WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId, "1234567890");
 
         // when then
         assertThatThrownBy(() -> withdrawService.withdraw(withdrawRequest, userIdByToken))
                 .isInstanceOf(AuthenticationFailedException.class)
                 .hasMessage("유저 인증이 실패했습니다.");
-    }
-
-    private static WithdrawRequest createWithdrawRequest(String givenUserId) {
-        return WithdrawRequest.builder()
-                .userId(givenUserId)
-                .password("1234567890")
-                .build();
     }
 }

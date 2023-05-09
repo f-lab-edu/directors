@@ -20,9 +20,9 @@ public class RefreshAuthenticationTest extends UserTestSupport {
     void refreshAuthentication() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper.createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
-        LogInRequest loginRequest = UserTestHelper.createLogInRequest(givenUserId, "1234567890");
+        LogInRequest loginRequest = createLogInRequest(givenUserId, "1234567890");
 
         LogInResponse logInResponse = authenticationService.logIn(loginRequest);
 
@@ -61,10 +61,9 @@ public class RefreshAuthenticationTest extends UserTestSupport {
     void refreshAuthenticationWithWrongTokens() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
-        LogInRequest loginRequest = UserTestHelper.createLogInRequest(givenUserId, "1234567890");
+        LogInRequest loginRequest = createLogInRequest(givenUserId, "1234567890");
 
         LogInResponse logInResponse = authenticationService.logIn(loginRequest);
 
@@ -81,8 +80,7 @@ public class RefreshAuthenticationTest extends UserTestSupport {
     void refreshAuthenticationWithExpiredToken() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         String expiredAccessToken = tokenGenerator.generateJwtTokenWithDay(givenUserId, 0);
@@ -100,8 +98,7 @@ public class RefreshAuthenticationTest extends UserTestSupport {
     void refreshAuthenticationWithOutLogin() {
         // given
         String givenUserId = "cnsong1234";
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         String expiredAccessToken = tokenGenerator.generateJwtTokenWithDay(givenUserId, 2);

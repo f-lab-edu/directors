@@ -75,14 +75,4 @@ class SignUpServiceTest extends UserTestSupport {
         assertFalse(Thread.currentThread().isInterrupted());
     }
 
-    private static SignUpRequest createSignUpRequest(String userId, String password, String name, String nickname, String email, String phoneNumber) {
-        return SignUpRequest.builder()
-                .userId(userId)
-                .password(password)
-                .name(name)
-                .nickname(nickname)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .build();
-    }
 }

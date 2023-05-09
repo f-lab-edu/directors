@@ -22,8 +22,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         String oldPassword = "1234567890";
         String newPassword = "987654321";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         UpdatePasswordRequest request = createUpdatePasswordRequest(oldPassword, newPassword);
@@ -34,7 +33,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         // then
         assertFalse(Thread.currentThread().isInterrupted());
 
-        LogInRequest loginRequest = UserTestHelper.createLogInRequest(givenUserId, newPassword);
+        LogInRequest loginRequest = createLogInRequest(givenUserId, newPassword);
         LogInResponse logInResponse = authenticationService.logIn(loginRequest);
 
         assertThat(logInResponse).isNotNull();
@@ -50,8 +49,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         String oldPassword = "1234567890";
         String newPassword = "987654321";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         UpdatePasswordRequest request = createUpdatePasswordRequest(newPassword, newPassword);
@@ -70,8 +68,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         String oldPassword = "1234567890";
         String newPassword = "987654321";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, oldPassword, "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId, oldPassword);
@@ -93,8 +90,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         String oldEmail = "cnsong0229@gmail.com";
         String newEmail = "songsong@gmail.com";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567879", "송은석", "cnsong0229", oldEmail, "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567879", "송은석", "cnsong0229", oldEmail, "01077021045");
         signUpService.signUp(signUpRequest);
 
         UpdateEmailRequest updateEmailRequest = new UpdateEmailRequest(newEmail);
@@ -119,8 +115,7 @@ class UpdateUserServiceTest extends UserTestSupport {
         String oldEmail = "cnsong0229@gmail.com";
         String newEmail = "songsong@gmail.com";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567879", "송은석", "cnsong0229", oldEmail, "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567879", "송은석", "cnsong0229", oldEmail, "01077021045");
         signUpService.signUp(signUpRequest);
 
         WithdrawRequest withdrawRequest = createWithdrawRequest(givenUserId, "1234567879");
@@ -138,13 +133,6 @@ class UpdateUserServiceTest extends UserTestSupport {
         return UpdatePasswordRequest.builder()
                 .oldPassword(oldPassword)
                 .newPassword(newPassword)
-                .build();
-    }
-
-    private static WithdrawRequest createWithdrawRequest(String userId, String password) {
-        return WithdrawRequest.builder()
-                .userId(userId)
-                .password(password)
                 .build();
     }
 }

@@ -29,8 +29,7 @@ class AuthenticateRegionServiceTest extends UserTestSupport {
         String givenFullAddress = "서울특별시 성동구 송정동";
         String givenUnitAddress = "송정동";
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         AuthenticateRegionRequest request = AuthenticateRegionRequest.builder()
@@ -58,8 +57,7 @@ class AuthenticateRegionServiceTest extends UserTestSupport {
         double givenLatitude = 1;
         double givenLongitude = 1;
 
-        SignUpRequest signUpRequest = UserTestHelper
-                .createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
+        SignUpRequest signUpRequest = createSignUpRequest(givenUserId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(signUpRequest);
 
         AuthenticateRegionRequest request = AuthenticateRegionRequest.builder()
