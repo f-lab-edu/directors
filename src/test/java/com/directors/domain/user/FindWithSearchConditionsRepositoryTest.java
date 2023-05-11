@@ -10,8 +10,6 @@ import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.specialty.SpecialtyRepository;
 import com.directors.presentation.user.request.AuthenticateRegionRequest;
-import com.directors.presentation.user.request.SearchDirectorRequest;
-import com.directors.presentation.user.response.SearchDirectorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -19,13 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class FindWithSearchConditionsTest extends UserTestSupport {
+public class FindWithSearchConditionsRepositoryTest extends UserTestSupport {
 
     @MockBean
     RegionApiClient regionApiClient;
@@ -43,6 +42,10 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
     @TestFactory
     Collection<DynamicTest> findWithSearchConditionsDynamicTest() {
         // common given
+        List<Long> givenRegionIds = new ArrayList<>();
+        int givenOffset = 0;
+        int givenLimit = 100;
+
         String testUserId = "testIdForSearch10";
 
         String sampleTestId = "testIdForSearch";
@@ -50,10 +53,7 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
 
         when(regionApiClient.findRegionAddressByLocation(961487, 1949977))
                 .thenReturn(new Address("서울특별시 성동구 송정동", "송정동"));
-        when(regionApiClient.findRegionAddressByLocation(963576.244004357955, 1951579.27269738005)) // 위경도 찾기
-                .thenReturn(new Address("서울특별시 광진구 중곡동", "중곡동"));
         AuthenticateRegionRequest songjeongdong = createAuthenticateRegionRequest(961487, 1949977);
-        AuthenticateRegionRequest joonggokdong = createAuthenticateRegionRequest(963576.244004357955, 1951579.27269738005);
 
         // 유저 1~100 save
         for (int i = 1; i <= 100; i++) {
@@ -64,9 +64,6 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
 
             if (i >= 10 && i < 40) { // 유저 10~39 -> 지역을 서울특별시 성동구 송정동 할당
                 authenticateRegionService.authenticate(songjeongdong, userTestId);
-            }
-            if (i >= 40 && i < 70) { // 유저 40~79 -> 지역을 서울특별시 광진구 중곡동 할당
-                authenticateRegionService.authenticate(joonggokdong, userTestId);
             }
 
             // 유저 20~29 -> specialty로 EDUCATION 할당
@@ -79,48 +76,35 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
             if (i >= 30 && i < 40) {
                 specialtyRepository.save(specialty);
             }
-            // 유저 40~59 -> specialty로 PROGRAMMING 할당
-            specialty = createSpecialty(user, SpecialtyProperty.PROGRAMMING);
-            if (i >= 40 && i < 60) {
-                specialtyRepository.save(specialty);
-            }
 
             if (i % 5 == 0) { // 5 단위로 스케줄 할당
                 scheduleService.open(userTestId, List.of(LocalDateTime.of(2030, 5, 11, 12, 0)));
             }
         }
 
+        User user = userRepository.findById(testUserId).orElseThrow(null);
+        givenRegionIds.add(user.getRegion().getId());
+
         return List.of(
                 DynamicTest.dynamicTest("기본 조건으로 디렉터를 조회한다.", () -> {
-                    // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, null, 1, null, false);
-
-                    // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
+                    // given when
+                    List<User> users = userRepository
+                            .findWithSearchConditions(givenRegionIds, false, null, null, givenOffset, givenLimit);
 
                     // then
-                    assertThat(responses).hasSize(30);
-                }),
-                DynamicTest.dynamicTest("유저 근처 거리를 기준으로 디렉터를 조회한다.", () -> {
-                    // given
-                    int givenDistance = 3;
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, null, givenDistance, null, false);
-
-                    // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
-
-                    // then
-                    assertThat(responses).hasSize(60);
+                    assertThat(users).hasSize(30);
                 }),
                 DynamicTest.dynamicTest("specialty가 교육인 디렉터를 조회한다.", () -> {
                     // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, null, 1, "교육", false);
+                    SpecialtyProperty givenProperty = SpecialtyProperty.EDUCATION;
 
                     // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
+                    List<User> users = userRepository
+                            .findWithSearchConditions(givenRegionIds, false, null, givenProperty, givenOffset, givenLimit);
+
                     // then
-                    assertThat(responses).hasSize(10);
-                    assertThat(responses).extracting("directorId")
+                    assertThat(users).hasSize(10);
+                    assertThat(users).extracting("id")
                             .contains(
                                     "testIdForSearch29",
                                     "testIdForSearch28",
@@ -134,38 +118,17 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
                                     "testIdForSearch20"
                             );
                 }),
-                DynamicTest.dynamicTest("specialty가 예술인 디렉터를 조회한다.", () -> {
-                    // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, null, 3, "예술", false);
-
-                    // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
-                    // then
-                    assertThat(responses).hasSize(10);
-                    assertThat(responses).extracting("directorId")
-                            .contains(
-                                    "testIdForSearch39",
-                                    "testIdForSearch38",
-                                    "testIdForSearch37",
-                                    "testIdForSearch36",
-                                    "testIdForSearch35",
-                                    "testIdForSearch34",
-                                    "testIdForSearch33",
-                                    "testIdForSearch32",
-                                    "testIdForSearch31",
-                                    "testIdForSearch30"
-                            );
-                }),
                 DynamicTest.dynamicTest("searchText를 통해 디렉터를 조회한다.", () -> {
                     // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, "testNickname1", 1, null, false);
+                    String givenSearchText = "testNickname1";
 
                     // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
+                    List<User> users = userRepository
+                            .findWithSearchConditions(givenRegionIds, false, givenSearchText, null, givenOffset, givenLimit);
 
                     // then
-                    assertThat(responses).hasSize(10);
-                    assertThat(responses).extracting("directorId")
+                    assertThat(users).hasSize(10);
+                    assertThat(users).extracting("id")
                             .contains(
                                     "testIdForSearch19",
                                     "testIdForSearch18",
@@ -181,14 +144,15 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
                 }),
                 DynamicTest.dynamicTest("스케줄 유무를 통해 디렉터를 조회한다.", () -> {
                     // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 100, null, 1, null, true);
+                    boolean givenHasSchedule = true;
 
                     // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
+                    List<User> users = userRepository
+                            .findWithSearchConditions(givenRegionIds, givenHasSchedule, null, null, givenOffset, givenLimit);
 
                     // then
-                    assertThat(responses).hasSize(6);
-                    assertThat(responses).extracting("directorId")
+                    assertThat(users).hasSize(6);
+                    assertThat(users).extracting("id")
                             .contains(
                                     "testIdForSearch35",
                                     "testIdForSearch30",
@@ -198,19 +162,22 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
                                     "testIdForSearch10"
                             );
                 }),
-                DynamicTest.dynamicTest("복합 조건 검색: text + distance + SpecialtyProperty + hasSchedule", () -> {
+                DynamicTest.dynamicTest("복합 조건 검색: hasSchedule + text + SpecialtyProperty", () -> {
                     // given
-                    SearchDirectorRequest request = createSearchDirectorRequest(1, 10, "testNickname4", 3, "프로그래밍", true);
+                    boolean givenHasSchedule = true;
+                    String givenSearchText = "testNickname3";
+                    SpecialtyProperty givenProperty = SpecialtyProperty.ART;
 
                     // when
-                    List<SearchDirectorResponse> responses = searchDirectorService.searchDirector(request, testUserId);
+                    List<User> users = userRepository
+                            .findWithSearchConditions(givenRegionIds, givenHasSchedule, givenSearchText, givenProperty, givenOffset, givenLimit);
 
                     // then
-                    assertThat(responses).hasSize(2);
-                    assertThat(responses).extracting("directorId")
+                    assertThat(users).hasSize(2);
+                    assertThat(users).extracting("id")
                             .contains(
-                                    "testIdForSearch45",
-                                    "testIdForSearch40"
+                                    "testIdForSearch35",
+                                    "testIdForSearch30"
                             );
                 })
         );
@@ -220,17 +187,6 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
         return AuthenticateRegionRequest.builder()
                 .latitude(latitude)
                 .longitude(longitude)
-                .build();
-    }
-
-    private static SearchDirectorRequest createSearchDirectorRequest(int page, int size, String searchText, int distance, String property, boolean hasSchedule) {
-        return SearchDirectorRequest.builder()
-                .page(page)
-                .size(size)
-                .searchText(searchText)
-                .distance(distance)
-                .property(property)
-                .hasSchedule(hasSchedule)
                 .build();
     }
 
