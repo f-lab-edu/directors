@@ -2,9 +2,9 @@ package com.directors.application.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
-import com.directors.domain.user.UserRegion;
-import com.directors.domain.user.UserRegionRepository;
-import com.directors.domain.user.exception.UserRegionNotFoundException;
+import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
+import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.presentation.region.response.NearestAddressResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,8 @@ public class RegionService {
     private static final int KILOMETER = 1000;
 
     private final RegionRepository regionRepository;
-    private final UserRegionRepository userRegionRepository;
+
+    private final UserRepository userRepository;
 
     @PostConstruct
     @Transactional
@@ -59,9 +60,7 @@ public class RegionService {
 
     @Transactional
     public List<NearestAddressResponse> getNearestAddress(int distance, String userId) {
-        UserRegion userRegion = getUserRegion(userId);
-
-        return getNearestRegion(userRegion.getRegion(), distance)
+        return getNearestRegion(distance, getRegionFromUser(userId))
                 .stream()
                 .map(NearestAddressResponse::from)
                 .collect(Collectors.toList());
@@ -69,18 +68,10 @@ public class RegionService {
 
     @Transactional
     public List<Long> getNearestRegionId(int distance, String userId) {
-        UserRegion userRegion = getUserRegion(userId);
-
-        return getNearestRegion(userRegion.getRegion(), distance)
+        return getNearestRegion(distance, getRegionFromUser(userId))
                 .stream()
                 .map(Region::getId)
                 .collect(Collectors.toList());
-    }
-
-    private UserRegion getUserRegion(String userId) {
-        return userRegionRepository
-                .findByUserId(userId)
-                .orElseThrow(() -> new UserRegionNotFoundException(userId));
     }
 
     private Region regionDataLineToRegion(String regionLine) {
@@ -94,7 +85,13 @@ public class RegionService {
         return new GeometryFactory().createPoint(new Coordinate(lon, lat));
     }
 
-    private List<Region> getNearestRegion(Region region, int distance) {
+    private Region getRegionFromUser(String userId) {
+        return userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED)
+                .orElseThrow(() -> new NoSuchUserException(userId))
+                .getRegion();
+    }
+
+    private List<Region> getNearestRegion(int distance, Region region) {
         return regionRepository.findRegionWithin(region.getPoint(), distance * KILOMETER);
     }
 }

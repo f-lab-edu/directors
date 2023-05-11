@@ -12,12 +12,11 @@ public record SearchDirectorResponse(
         String directorName,
         List<SpecialtyInfo> specialtyInfos
 ) {
-    public static SearchDirectorResponse of(User user) {
+    public static SearchDirectorResponse from(User user) {
         return SearchDirectorResponse.builder()
                 .directorId(user.getId())
                 .directorName(user.getName())
                 .specialtyInfos(user.getSpecialtyInfoList())
                 .build();
     }
-
 }

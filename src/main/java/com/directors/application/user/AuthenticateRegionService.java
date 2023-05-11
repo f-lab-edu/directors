@@ -5,7 +5,9 @@ import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionApiClient;
 import com.directors.domain.region.RegionRepository;
 import com.directors.domain.region.exception.RegionNotFoundException;
-import com.directors.domain.user.*;
+import com.directors.domain.user.User;
+import com.directors.domain.user.UserRepository;
+import com.directors.domain.user.UserStatus;
 import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.presentation.user.request.AuthenticateRegionRequest;
 import com.directors.presentation.user.response.AuthenticateRegionResponse;
@@ -20,42 +22,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticateRegionService {
     private final RegionApiClient regionApiClient;
     private final RegionRepository regionRepository;
-    private final UserRegionRepository userRegionRepository;
     private final UserRepository userRepository;
 
     @Transactional
     public AuthenticateRegionResponse authenticate(AuthenticateRegionRequest request, String userId) {
         var addressByApi = regionApiClient.findRegionAddressByLocation(request.latitude(), request.longitude());
 
-        var region = regionRepository.findByFullAddress(addressByApi.getFullAddress())
+        User user = getUser(userId);
+        user.authenticateRegion(getRegion(addressByApi));
+
+        return new AuthenticateRegionResponse(user.getUserAddress().getFullAddress(), user.getUserAddress().getUnitAddress());
+    }
+
+    private Region getRegion(Address addressByApi) {
+        return regionRepository
+                .findByFullAddress(addressByApi.getFullAddress())
                 .orElseThrow(() -> new RegionNotFoundException(addressByApi.getFullAddress()));
-
-        var userAddress = updateUserRegionAddress(userId, region);
-
-        return new AuthenticateRegionResponse(userAddress.getFullAddress(), userAddress.getUnitAddress());
     }
 
-    private Address updateUserRegionAddress(String userId, Region region) {
-        if (userRegionRepository.existsByUserId(userId)) {
-            return updateExistUserRegion(userId, region).getAddress();
-        }
-        return saveUserRegion(userId, region).getAddress();
-    }
-
-    private UserRegion updateExistUserRegion(String userId, Region region) {
-        var userRegion = userRegionRepository.findByUserId(userId).get();
-
-        userRegion.updateRegionInfo(region.getAddress(), region);
-
-        return userRegion;
-    }
-
-    private UserRegion saveUserRegion(String userId, Region region) {
-        User user = userRepository
+    private User getUser(String userId) {
+        return userRepository
                 .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .orElseThrow(() -> new NoSuchUserException(userId));
-        var newUserRegion = UserRegion.of(region.getAddress(), user, region);
-
-        return userRegionRepository.save(newUserRegion);
     }
 }

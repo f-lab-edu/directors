@@ -1,6 +1,7 @@
 package com.directors.application.user;
 
 import com.directors.application.region.RegionService;
+import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
@@ -38,10 +39,10 @@ public class SearchDirectorService {
 
         int offset = calcOffset(request.page(), request.size());
 
-        List<User> users = userRepository.findWithSearchConditions(nearestRegionIds, request.hasSchedule(), request.searchText(),
-                request.property(), offset, request.size());
+        List<User> directors = userRepository.findWithSearchConditions(nearestRegionIds, request.hasSchedule(), request.searchText(),
+                SpecialtyProperty.fromValue(request.property()), offset, request.size());
 
-        return generateDirectors(users);
+        return from(directors);
     }
 
     private User getJoinedUserByUserId(String userId) {
@@ -54,9 +55,9 @@ public class SearchDirectorService {
         return (page - 1) * size;
     }
 
-    private List<SearchDirectorResponse> generateDirectors(List<User> users) {
+    private List<SearchDirectorResponse> from(List<User> users) {
         return users.stream()
-                .map(SearchDirectorResponse::of)
+                .map(SearchDirectorResponse::from)
                 .collect(Collectors.toList());
     }
 }
