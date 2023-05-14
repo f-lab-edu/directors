@@ -31,4 +31,9 @@ public class ChatRepositoryAdapter implements ChatRepository {
     public Chat save(Chat chat) {
         return jpaChatRepository.save(chat);
     }
+
+    @Override
+    public void saveAll(List<Chat> chats) {
+        jpaChatRepository.saveAll(chats);
+    }
 }

@@ -32,4 +32,9 @@ public class InmemoryChatRepository implements ChatRepository {
         chatmap.put(chat.getId(), chat);
         return chat;
     }
+
+    @Override
+    public void saveAll(List<Chat> chats) {
+
+    }
 }
