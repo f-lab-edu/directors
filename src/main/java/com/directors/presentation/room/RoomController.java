@@ -21,7 +21,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
 
-    @PostMapping("/create/{questionId}")
+    @PostMapping("/create")
     public ResponseEntity<Long> create(
             @Valid @RequestBody CreateRoomRequest request, @AuthenticationPrincipal String userIdByToken
     ) {
@@ -29,7 +29,7 @@ public class RoomController {
     }
 
     @GetMapping("/roomInfosBydirectorId/{directorId}")
-    public ResponseEntity<List<GetRoomInfosByDirectorIdResponse>> getRoomInfosBydirectorId(
+    public ResponseEntity<List<GetRoomInfosByDirectorIdResponse>> getRoomInfosByDirectorId(
             @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.") String directorId
     ) {
         var responseList = roomService.getRoomInfosByDirectorId(directorId);

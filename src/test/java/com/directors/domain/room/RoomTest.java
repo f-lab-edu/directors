@@ -9,9 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoomTest {
-
-
-
     @DisplayName("채팅방의 사용자인지 확인한다.")
     @Test
     void validateRoomUser() {
