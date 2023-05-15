@@ -10,7 +10,7 @@ public record ChatListResponse(
         String sendUserId,
         LocalDateTime createTime
 ) {
-    public static ChatListResponse from(Chat chat) {
-        return new ChatListResponse(chat.getRoom().getId(), chat.getContent(), chat.getSendUser().getId(), chat.getCreatedTime());
+    public static ChatListResponse from(Long roomId, Chat chat) {
+        return new ChatListResponse(roomId, chat.getContent(), chat.getSendUser().getId(), chat.getCreatedTime());
     }
 }

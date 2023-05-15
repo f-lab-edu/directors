@@ -41,7 +41,6 @@ public class ChatService {
 
         SseEmitter receiveStream = new SseEmitter();
 
-
         liveChatManager.addReceiver(roomId, receiveStream);
 
         receiveStream.onCompletion(() -> liveChatManager.removeReceiver(roomId, receiveStream));
@@ -67,7 +66,7 @@ public class ChatService {
         List<Chat> chatList = chatRepository.findChatListByRoomId(request.roomId(), request.offset(), request.size());
 
         return chatList.stream()
-                .map(chat -> ChatListResponse.from(chat))
+                .map(chat -> ChatListResponse.from(request.roomId(), chat))
                 .collect(Collectors.toList());
     }
 
@@ -79,13 +78,10 @@ public class ChatService {
     }
 
     private void saveChat(Long roomId, String chatContent, LocalDateTime sendTime, String sendUserId) {
-        Room room = roomRepository
-                .findById(roomId)
-                .orElseThrow(() -> new RoomNotFoundException(roomId, sendUserId));
         User sendUser = userRepository
                 .findById(sendUserId)
                 .orElseThrow(() -> new NoSuchUserException(sendUserId));
 
-        chatRepository.save(Chat.of(room, chatContent, sendUser, sendTime));
+        chatRepository.save(Chat.of(roomId, chatContent, sendUser, sendTime));
     }
 }

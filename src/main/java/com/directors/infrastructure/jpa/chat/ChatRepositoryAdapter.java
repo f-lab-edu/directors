@@ -20,7 +20,7 @@ public class ChatRepositoryAdapter implements ChatRepository {
     @Override
     public List<Chat> findChatListByRoomId(Long roomId, int offset, int size) {
         return queryFactory.selectFrom(chat)
-                .where(chat.room.id.eq(roomId))
+                .where(chat.roomId.eq(roomId))
                 .orderBy(chat.createdTime.desc())
                 .limit(size)
                 .offset(offset)
