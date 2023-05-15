@@ -48,7 +48,7 @@ public class GetReceiveStreamTest extends ChatTestSupport {
                 .when(liveChatManager).addReceiver(any(Long.class), any(SseEmitter.class));
 
         // when
-        SseEmitter receiveStream = chatService.getReceiveStream(roomId, director.getId());
+        SseEmitter receiveStream = chatService.getChatStream(roomId, director.getId());
 
         // then
         assertThat(receiveStream)
@@ -65,7 +65,7 @@ public class GetReceiveStreamTest extends ChatTestSupport {
         User savedDirector = userRepository.save(director);
 
         // when then
-        assertThatThrownBy(() -> chatService.getReceiveStream(givenNotCreatedRoomId, savedDirector.getId()))
+        assertThatThrownBy(() -> chatService.getChatStream(givenNotCreatedRoomId, savedDirector.getId()))
                 .isInstanceOf(RoomNotFoundException.class)
                 .hasMessage("존재하지 않는 채팅방입니다.");
     }

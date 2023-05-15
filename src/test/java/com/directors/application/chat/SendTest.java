@@ -25,14 +25,14 @@ public class SendTest extends ChatTestSupport {
 
     @DisplayName("채팅방에 채팅을 전송한다.")
     @Test
-    void send() {
+    void sendChat() {
         // given
         String givenChatContent = "채팅을 보냅니다.";
 
         doAnswer((Answer<Void>) invocation -> null)
                 .when(liveChatManager).addReceiver(any(Long.class), any(SseEmitter.class));
         doAnswer((Answer<Void>) invocation -> null)
-                .when(liveChatManager).sendMessage(any(Long.class), any(String.class), any(String.class));
+                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(LocalDateTime.class), any(String.class));
 
         User director = createUser("cnsong", "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");
         User savedDirector = userRepository.save(director);
@@ -62,7 +62,7 @@ public class SendTest extends ChatTestSupport {
                 .chatContent(givenChatContent)
                 .build();
         // when
-        boolean isSend = chatService.send(request, savedDirector.getId());
+        boolean isSend = chatService.sendChat(request, savedDirector.getId());
 
         // then
         assertThat(isSend).isTrue();
@@ -72,14 +72,14 @@ public class SendTest extends ChatTestSupport {
 
     @DisplayName("생성되지 않은 채팅방 아이디로 채팅 전송을 요청하면 예외가 발생한다.")
     @Test
-    void sendWithNotCreateRoomId() {
+    void sendChatWithNotCreateRoomId() {
         // given
         Long givenNotCreatedRoomId = 10L;
 
         doAnswer((Answer<Void>) invocation -> null)
                 .when(liveChatManager).addReceiver(any(Long.class), any(SseEmitter.class));
         doAnswer((Answer<Void>) invocation -> null)
-                .when(liveChatManager).sendMessage(any(Long.class), any(String.class), any(String.class));
+                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(LocalDateTime.class), any(String.class));
 
         User director = createUser("cnsong", "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");
         User savedDirector = userRepository.save(director);
@@ -90,7 +90,7 @@ public class SendTest extends ChatTestSupport {
                 .build();
 
         // when then
-        assertThatThrownBy(() -> chatService.send(request, savedDirector.getId()))
+        assertThatThrownBy(() -> chatService.sendChat(request, savedDirector.getId()))
                 .isInstanceOf(RoomNotFoundException.class)
                 .hasMessage("존재하지 않는 채팅방입니다.");
     }

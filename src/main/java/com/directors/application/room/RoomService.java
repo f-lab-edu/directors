@@ -35,12 +35,12 @@ public class RoomService {
     public Long create(CreateRoomRequest request, String directorId) {
         var question = getQuestionById(request.questionId());
 
+        question.changeQuestionStatusToChat();
+
         question.canCreateChatRoom(directorId, request.requestTime());
 
         var room = Room.of(question, question.getDirector(), question.getQuestioner());
         Room savedRoom = roomRepository.save(room);
-
-        question.changeQuestionStatusToChat();
 
         return savedRoom.getId();
     }
@@ -54,12 +54,8 @@ public class RoomService {
         List<Room> roomByDirectorId = roomRepository.findByDirectorId(director.getId());
 
         for (Room room : roomByDirectorId) {
-            Chat recentChat = getRecentChatByRoom(room);
-
-            var response = new GetRoomInfosByDirectorIdResponse(
-                    room.getId(), room.getQuestion().getId(), room.getQuestioner().getId(), recentChat.getContent(),
-                    recentChat.getCreatedTime());
-
+            var response =
+                    GetRoomInfosByDirectorIdResponse.from(room, getRecentChatByRoom(room));
             responseList.add(response);
         }
 
@@ -75,12 +71,8 @@ public class RoomService {
         List<Room> roomByQuestionerId = roomRepository.findByQuestionerId(questioner.getId());
 
         for (Room room : roomByQuestionerId) {
-            Chat recentChat = getRecentChatByRoom(room);
-
-            var response = new GetRoomInfosByQuestionerIdResponse(
-                    room.getId(), room.getQuestion().getId(), room.getDirector().getId(), recentChat.getContent(),
-                    recentChat.getCreatedTime());
-
+            var response =
+                    GetRoomInfosByQuestionerIdResponse.from(room, getRecentChatByRoom(room));
             responseList.add(response);
         }
 
