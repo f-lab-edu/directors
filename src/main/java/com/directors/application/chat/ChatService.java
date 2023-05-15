@@ -13,11 +13,13 @@ import com.directors.presentation.chat.request.ChatListRequest;
 import com.directors.presentation.chat.request.SendChatRequest;
 import com.directors.presentation.chat.response.ChatListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,11 +33,14 @@ public class ChatService {
 
     private final RoomRepository roomRepository;
     private final LiveChatManager liveChatManager;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public SseEmitter getReceiveStream(Long roomId, String userId) {
+
+    public SseEmitter getChatStream(Long roomId, String userId) {
         roomValidate(roomId, userId);
 
         SseEmitter receiveStream = new SseEmitter();
+
 
         liveChatManager.addReceiver(roomId, receiveStream);
 
@@ -46,12 +51,12 @@ public class ChatService {
         return receiveStream;
     }
 
-    public boolean send(SendChatRequest request, String userId) {
+    public boolean sendChat(SendChatRequest request, String userId) {
         roomValidate(request.roomId(), userId);
 
-        liveChatManager.sendMessage(request.roomId(), request.chatContent(), userId);
+        liveChatManager.sendChat(request.roomId(), request.chatContent(), request.sendTime(), userId);
 
-        saveChat(request.roomId(), request.chatContent(), userId);
+        saveChat(request.roomId(), request.chatContent(), request.sendTime(), userId);
 
         return true;
     }
@@ -66,21 +71,21 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    private void saveChat(Long roomId, String chatContent, String sendUserId) {
-        Room room = roomRepository
-                .findById(roomId)
-                .orElseThrow(() -> new RoomNotFoundException(roomId, sendUserId));
-        User user = userRepository
-                .findById(sendUserId)
-                .orElseThrow(() -> new NoSuchUserException(sendUserId));
-
-        chatRepository.save(Chat.of(room, chatContent, user));
-    }
-
     private void roomValidate(Long roomId, String userId) {
         Room room = roomRepository
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, userId));
         room.validateRoomUser(userId);
+    }
+
+    private void saveChat(Long roomId, String chatContent, LocalDateTime sendTime, String sendUserId) {
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new RoomNotFoundException(roomId, sendUserId));
+        User sendUser = userRepository
+                .findById(sendUserId)
+                .orElseThrow(() -> new NoSuchUserException(sendUserId));
+
+        chatRepository.save(Chat.of(room, chatContent, sendUser, sendTime));
     }
 }

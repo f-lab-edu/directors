@@ -1,12 +1,6 @@
 package com.directors.presentation.chat;
 
 import com.directors.application.chat.ChatService;
-import com.directors.domain.chat.Chat;
-import com.directors.domain.chat.ChatRepository;
-import com.directors.domain.room.Room;
-import com.directors.domain.room.RoomRepository;
-import com.directors.domain.room.exception.RoomNotFoundException;
-import com.directors.domain.user.UserRepository;
 import com.directors.presentation.chat.request.ChatListRequest;
 import com.directors.presentation.chat.request.SendChatRequest;
 import com.directors.presentation.chat.response.ChatListResponse;
@@ -20,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -31,12 +24,12 @@ public class ChatController {
 
     @GetMapping("/receiveStream/{roomId}")
     public SseEmitter getReceiveStream(@PathVariable Long roomId, @AuthenticationPrincipal String userIdByToken) {
-        return chatService.getReceiveStream(roomId, userIdByToken);
+        return chatService.getChatStream(roomId, userIdByToken);
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Boolean> send(@Valid @RequestBody SendChatRequest request, @AuthenticationPrincipal String userIdByToken) {
-        return new ResponseEntity<>(chatService.send(request, userIdByToken), HttpStatus.OK);
+    public ResponseEntity<Boolean> sendChat(@Valid @RequestBody SendChatRequest request, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(chatService.sendChat(request, userIdByToken), HttpStatus.OK);
     }
 
     @GetMapping("/chatList")
