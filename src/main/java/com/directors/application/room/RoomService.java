@@ -94,7 +94,7 @@ public class RoomService {
         List<Chat> chatListByRoomId = chatRepository.findChatListByRoomId(room.getId(), 0, 1);
 
         if (chatListByRoomId.size() == 0) {
-            return Chat.of(room, "최근 채팅 내역이 존재하지 않습니다.", null, null);
+            return Chat.of(room.getId(), "최근 채팅 내역이 존재하지 않습니다.", null, null);
         }
 
         return chatListByRoomId.get(0);

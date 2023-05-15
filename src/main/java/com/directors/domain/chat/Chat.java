@@ -1,6 +1,5 @@
 package com.directors.domain.chat;
 
-import com.directors.domain.common.BaseEntity;
 import com.directors.domain.room.Room;
 import com.directors.domain.user.User;
 import jakarta.persistence.*;
@@ -15,13 +14,13 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class Chat {
+    // TODO: 추후 db 엔티티가 아닌
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    private Long roomId;
 
     private String content;
 
@@ -36,9 +35,9 @@ public class Chat {
         this.id = id;
     }
 
-    public static Chat of(Room room, String content, User sendUser, LocalDateTime sendTime) {
+    public static Chat of(Long roomId, String content, User sendUser, LocalDateTime sendTime) {
         return Chat.builder()
-                .room(room)
+                .roomId(roomId)
                 .content(content)
                 .sendUser(sendUser)
                 .createdTime(sendTime)

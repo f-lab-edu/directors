@@ -35,10 +35,6 @@ public class Room extends BaseEntity {
     @JoinColumn(name = "questioner_id")
     private User questioner;
 
-    // TODO: 04.28 보통 페이징 방식으로 조회하므로, 유지 여부 생각해보기
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Chat> chatList = new ArrayList<>();
-
     public void setId(Long id) {
         this.id = id;
     }
