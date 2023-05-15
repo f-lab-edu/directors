@@ -1,16 +1,11 @@
 package com.directors.domain.room;
 
-import com.directors.domain.chat.Chat;
 import com.directors.domain.common.BaseEntity;
 import com.directors.domain.question.Question;
 import com.directors.domain.room.exception.RoomNotFoundException;
 import com.directors.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Entity
 @Table(name = "room")
