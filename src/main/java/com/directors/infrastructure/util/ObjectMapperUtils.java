@@ -7,10 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class ObjectMapperUtils {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    static {
-        objectMapper.registerModule(new JavaTimeModule());
-    }
+    private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public static <T> T readValue(String value, Class<T> clazz) {
         try {
