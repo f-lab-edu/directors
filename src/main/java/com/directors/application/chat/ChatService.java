@@ -28,7 +28,7 @@ public class ChatService {
     public SseEmitter getChatStream(Long roomId, String userId) {
         roomValidate(roomId, userId);
 
-        SseEmitter receiveStream = new SseEmitter();
+        var receiveStream = new SseEmitter();
 
         liveChatManager.addReceiver(roomId, receiveStream);
 
@@ -52,7 +52,7 @@ public class ChatService {
     public List<ChatResponse> chatList(ChatListRequest request) {
         roomValidate(request.roomId(), request.userId());
 
-        List<Chat> chatList = chatRepository.findChatListByRoomId(request.roomId(), request.offset(), request.size());
+        var chatList = chatRepository.findChatListByRoomId(request.roomId(), request.offset(), request.size());
 
         return chatList.stream()
                 .map(chat -> ChatResponse.from(request.roomId(), chat))
@@ -60,7 +60,7 @@ public class ChatService {
     }
 
     private void roomValidate(Long roomId, String userId) {
-        Room room = roomRepository
+        var room = roomRepository
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, userId));
         room.validateRoomUser(userId);
