@@ -6,6 +6,7 @@ import com.directors.domain.question.Question;
 import com.directors.domain.question.QuestionRepository;
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
+import com.directors.domain.room.exception.CannotCreateRoomException;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +37,13 @@ public class RoomService {
     public Long create(CreateRoomRequest request, String directorId) {
         var question = getQuestionById(request.questionId());
 
-        question.changeQuestionStatusToChat();
-
         question.canCreateChatRoom(directorId, request.requestTime());
+
+        if (roomRepository.existsByQuestionId(question.getId())) {
+            throw new CannotCreateRoomException(question.getId(), CannotCreateRoomException.STATUS);
+        }
+
+        question.changeQuestionStatusToChat();
 
         var room = Room.of(question, question.getDirector(), question.getQuestioner());
         Room savedRoom = roomRepository.save(room);
@@ -49,34 +55,22 @@ public class RoomService {
     public List<GetRoomInfosByDirectorIdResponse> getRoomInfosByDirectorId(String directorId) {
         User director = getUser(directorId);
 
-        List<GetRoomInfosByDirectorIdResponse> responseList = new ArrayList<>();
-
         List<Room> roomByDirectorId = roomRepository.findByDirectorId(director.getId());
 
-        for (Room room : roomByDirectorId) {
-            var response =
-                    GetRoomInfosByDirectorIdResponse.from(room, getRecentChatByRoom(room));
-            responseList.add(response);
-        }
-
-        return responseList;
+        return roomByDirectorId.stream()
+                .map(room -> GetRoomInfosByDirectorIdResponse.from(room, getRecentChatByRoom(room)))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public List<GetRoomInfosByQuestionerIdResponse> getRoomInfosByQuestionerId(String questionerId) {
         User questioner = getUser(questionerId);
 
-        List<GetRoomInfosByQuestionerIdResponse> responseList = new ArrayList<>();
-
         List<Room> roomByQuestionerId = roomRepository.findByQuestionerId(questioner.getId());
 
-        for (Room room : roomByQuestionerId) {
-            var response =
-                    GetRoomInfosByQuestionerIdResponse.from(room, getRecentChatByRoom(room));
-            responseList.add(response);
-        }
-
-        return responseList;
+        return roomByQuestionerId.stream()
+                .map(room -> GetRoomInfosByQuestionerIdResponse.from(room, getRecentChatByRoom(room)))
+                .collect(Collectors.toList());
     }
 
     private Question getQuestionById(Long questionId) {
