@@ -3,7 +3,7 @@ package com.directors.presentation.chat;
 import com.directors.application.chat.ChatService;
 import com.directors.presentation.chat.request.ChatListRequest;
 import com.directors.presentation.chat.request.SendChatRequest;
-import com.directors.presentation.chat.response.ChatListResponse;
+import com.directors.presentation.chat.response.ChatResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class ChatController {
     }
 
     @GetMapping("/chatList")
-    public ResponseEntity<List<ChatListResponse>> chatList(@Valid @RequestBody ChatListRequest request) {
+    public ResponseEntity<List<ChatResponse>> chatList(@Valid @RequestBody ChatListRequest request) {
         return new ResponseEntity<>(chatService.chatList(request), HttpStatus.OK);
     }
 }

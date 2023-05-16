@@ -6,20 +6,14 @@ import com.directors.domain.chat.LiveChatManager;
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
 import com.directors.domain.room.exception.RoomNotFoundException;
-import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
-import com.directors.domain.user.exception.NoSuchUserException;
 import com.directors.presentation.chat.request.ChatListRequest;
 import com.directors.presentation.chat.request.SendChatRequest;
-import com.directors.presentation.chat.response.ChatListResponse;
+import com.directors.presentation.chat.response.ChatResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +22,8 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final ChatRepository chatRepository;
-
-    private final UserRepository userRepository;
-
     private final RoomRepository roomRepository;
     private final LiveChatManager liveChatManager;
-    private final RedisTemplate<String, Object> redisTemplate;
-
 
     public SseEmitter getChatStream(Long roomId, String userId) {
         roomValidate(roomId, userId);
@@ -55,18 +44,18 @@ public class ChatService {
 
         liveChatManager.sendChat(request.roomId(), request.chatContent(), request.sendTime(), userId);
 
-        saveChat(request.roomId(), request.chatContent(), request.sendTime(), userId);
+        chatRepository.save(Chat.of(request.roomId(), request.chatContent(), userId, request.sendTime()));
 
         return true;
     }
 
-    public List<ChatListResponse> chatList(ChatListRequest request) {
+    public List<ChatResponse> chatList(ChatListRequest request) {
         roomValidate(request.roomId(), request.userId());
 
         List<Chat> chatList = chatRepository.findChatListByRoomId(request.roomId(), request.offset(), request.size());
 
         return chatList.stream()
-                .map(chat -> ChatListResponse.from(request.roomId(), chat))
+                .map(chat -> ChatResponse.from(request.roomId(), chat))
                 .collect(Collectors.toList());
     }
 
@@ -75,13 +64,5 @@ public class ChatService {
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, userId));
         room.validateRoomUser(userId);
-    }
-
-    private void saveChat(Long roomId, String chatContent, LocalDateTime sendTime, String sendUserId) {
-        User sendUser = userRepository
-                .findById(sendUserId)
-                .orElseThrow(() -> new NoSuchUserException(sendUserId));
-
-        chatRepository.save(Chat.of(roomId, chatContent, sendUser, sendTime));
     }
 }

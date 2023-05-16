@@ -8,7 +8,7 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.presentation.chat.request.ChatListRequest;
-import com.directors.presentation.chat.response.ChatListResponse;
+import com.directors.presentation.chat.response.ChatResponse;
 import com.directors.presentation.room.CreateRoomRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -61,9 +61,9 @@ public class ChatListTest extends ChatTestSupport {
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, savedDirector.getId()));
 
-        Chat chat1 = Chat.of(room.getId(), givenContent1, savedDirector, null);
-        Chat chat2 = Chat.of(room.getId(), givenContent2, savedDirector, null);
-        Chat chat3 = Chat.of(room.getId(), givenContent3, savedDirector, null);
+        Chat chat1 = Chat.of(room.getId(), givenContent1, savedDirector.getId(), null);
+        Chat chat2 = Chat.of(room.getId(), givenContent2, savedDirector.getId(), null);
+        Chat chat3 = Chat.of(room.getId(), givenContent3, savedDirector.getId(), null);
 
         chatRepository.saveAll(List.of(chat1, chat2, chat3));
 
@@ -74,7 +74,7 @@ public class ChatListTest extends ChatTestSupport {
                 .size(10).build();
 
         // when
-        List<ChatListResponse> responses = chatService.chatList(request);
+        List<ChatResponse> responses = chatService.chatList(request);
 
         // then
         assertThat(responses).hasSize(3)

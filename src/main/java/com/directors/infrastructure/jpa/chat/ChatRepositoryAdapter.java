@@ -21,7 +21,7 @@ public class ChatRepositoryAdapter implements ChatRepository {
     public List<Chat> findChatListByRoomId(Long roomId, int offset, int size) {
         return queryFactory.selectFrom(chat)
                 .where(chat.roomId.eq(roomId))
-                .orderBy(chat.createdTime.desc())
+                .orderBy(chat.sendTime.desc())
                 .limit(size)
                 .offset(offset)
                 .fetch();

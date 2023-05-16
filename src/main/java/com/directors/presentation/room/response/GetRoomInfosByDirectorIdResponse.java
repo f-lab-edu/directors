@@ -20,7 +20,7 @@ public record GetRoomInfosByDirectorIdResponse(
                 .questionId(room.getQuestion().getId())
                 .questionerId(room.getQuestioner().getId())
                 .recentChatContent(chat.getContent())
-                .recentChatTime(chat.getCreatedTime())
+                .recentChatTime(chat.getSendTime())
                 .build();
     }
 }

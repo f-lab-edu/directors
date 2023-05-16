@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class Chat {
-    // TODO: 추후 db 엔티티가 아닌
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,23 +22,21 @@ public class Chat {
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "send_user_id")
-    private User sendUser;
+    private String  sendUserId;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime createdTime;
+    private LocalDateTime sendTime;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public static Chat of(Long roomId, String content, User sendUser, LocalDateTime sendTime) {
+    public static Chat of(Long roomId, String content, String sendUserId, LocalDateTime sendTime) {
         return Chat.builder()
                 .roomId(roomId)
                 .content(content)
-                .sendUser(sendUser)
-                .createdTime(sendTime)
+                .sendUserId(sendUserId)
+                .sendTime(sendTime)
                 .build();
     }
 }

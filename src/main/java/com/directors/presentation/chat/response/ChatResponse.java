@@ -4,13 +4,13 @@ import com.directors.domain.chat.Chat;
 
 import java.time.LocalDateTime;
 
-public record ChatListResponse(
+public record ChatResponse(
         Long roomId,
         String content,
         String sendUserId,
         LocalDateTime createTime
 ) {
-    public static ChatListResponse from(Long roomId, Chat chat) {
-        return new ChatListResponse(roomId, chat.getContent(), chat.getSendUser().getId(), chat.getCreatedTime());
+    public static ChatResponse from(Long roomId, Chat chat) {
+        return new ChatResponse(roomId, chat.getContent(), chat.getSendUserId(), chat.getSendTime());
     }
 }
