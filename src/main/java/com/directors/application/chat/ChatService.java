@@ -42,7 +42,7 @@ public class ChatService {
     public boolean sendChat(SendChatRequest request, String userId) {
         roomValidate(request.roomId(), userId);
 
-        liveChatManager.sendChat(request.roomId(), request.chatContent(), request.sendTime(), userId);
+        liveChatManager.sendChat(request.roomId(), request.chatContent(), userId, request.sendTime());
 
         chatRepository.save(Chat.of(request.roomId(), request.chatContent(), userId, request.sendTime()));
 

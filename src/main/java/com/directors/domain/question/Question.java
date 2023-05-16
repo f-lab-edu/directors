@@ -81,7 +81,7 @@ public class Question extends BaseEntity {
         if (!this.director.getId().equals(directorId)) {
             throw new CannotCreateRoomException(this.id, CannotCreateRoomException.AUTH);
         }
-        if (!status.equals(QuestionStatus.CHATTING) || !(requestTime.isBefore(this.schedule.getStartTime()))) {
+        if (!status.equals(QuestionStatus.WAITING) || !(requestTime.isBefore(this.schedule.getStartTime()))) {
             throw new CannotCreateRoomException(this.id, CannotCreateRoomException.STATUS);
         }
     }

@@ -32,7 +32,7 @@ public class SendTest extends ChatTestSupport {
         doAnswer((Answer<Void>) invocation -> null)
                 .when(liveChatManager).addReceiver(any(Long.class), any(SseEmitter.class));
         doAnswer((Answer<Void>) invocation -> null)
-                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(LocalDateTime.class), any(String.class));
+                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(String.class), any(LocalDateTime.class));
 
         User director = createUser("cnsong", "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");
         User savedDirector = userRepository.save(director);
@@ -60,7 +60,9 @@ public class SendTest extends ChatTestSupport {
         SendChatRequest request = SendChatRequest.builder()
                 .roomId(roomId)
                 .chatContent(givenChatContent)
+                .sendTime(LocalDateTime.now())
                 .build();
+
         // when
         boolean isSend = chatService.sendChat(request, savedDirector.getId());
 
@@ -79,7 +81,7 @@ public class SendTest extends ChatTestSupport {
         doAnswer((Answer<Void>) invocation -> null)
                 .when(liveChatManager).addReceiver(any(Long.class), any(SseEmitter.class));
         doAnswer((Answer<Void>) invocation -> null)
-                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(LocalDateTime.class), any(String.class));
+                .when(liveChatManager).sendChat(any(Long.class), any(String.class), any(String.class), any(LocalDateTime.class));
 
         User director = createUser("cnsong", "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");
         User savedDirector = userRepository.save(director);

@@ -18,7 +18,7 @@ class UserRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("회원 가입 상태인 유저 아이디로 유저를 조회한다.")
     @Test
-    void findJoindedUserById() {
+    void findJoinedUserById() {
         // given
         String testId = "cnsong";
         User user = createUser(testId, "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");

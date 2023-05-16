@@ -90,9 +90,9 @@ class ChatRepositoryTest extends IntegrationTestSupport {
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, savedDirector.getId()));
 
-        Chat chat1 = Chat.of(room.getId(), "chatContent123", savedDirector, null);
-        Chat chat2 = Chat.of(room.getId(), "chatContent456", savedDirector, null);
-        Chat chat3 = Chat.of(room.getId(), "chatContent789", savedDirector, null);
+        Chat chat1 = Chat.of(room.getId(), "chatContent123", savedDirector.getId(), LocalDateTime.now());
+        Chat chat2 = Chat.of(room.getId(), "chatContent456", savedDirector.getId(), LocalDateTime.now());
+        Chat chat3 = Chat.of(room.getId(), "chatContent789", savedDirector.getId(), LocalDateTime.now());
 
         chatRepository.saveAll(List.of(chat1, chat2, chat3));
 

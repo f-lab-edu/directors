@@ -61,9 +61,9 @@ public class ChatListTest extends ChatTestSupport {
                 .findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId, savedDirector.getId()));
 
-        Chat chat1 = Chat.of(room.getId(), givenContent1, savedDirector.getId(), null);
-        Chat chat2 = Chat.of(room.getId(), givenContent2, savedDirector.getId(), null);
-        Chat chat3 = Chat.of(room.getId(), givenContent3, savedDirector.getId(), null);
+        Chat chat1 = Chat.of(room.getId(), givenContent1, savedDirector.getId(), LocalDateTime.now());
+        Chat chat2 = Chat.of(room.getId(), givenContent2, savedDirector.getId(), LocalDateTime.now());
+        Chat chat3 = Chat.of(room.getId(), givenContent3, savedDirector.getId(), LocalDateTime.now());
 
         chatRepository.saveAll(List.of(chat1, chat2, chat3));
 

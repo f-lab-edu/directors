@@ -9,5 +9,5 @@ public interface LiveChatManager {
 
     void removeReceiver(Long roomId, SseEmitter sseEmitter);
 
-    void sendChat(Long roomId, String chatContent, LocalDateTime sendTime, String sendUserId);
+    void sendChat(Long roomId, String chatContent, String sendUserId, LocalDateTime sendTime);
 }

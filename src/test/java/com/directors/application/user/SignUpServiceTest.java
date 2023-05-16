@@ -63,7 +63,7 @@ class SignUpServiceTest extends UserTestSupport {
     void isDuplicatedUserWithNotRegisteredUserId() {
         // given
         String givenId = "cnsong1234";
-        String notRegisteredUserId = "songsong";
+        String notRegisteredUserId = "songsong1234";
 
         SignUpRequest request = createSignUpRequest(givenId, "1234567890", "송은석", "cnsong0229", "thddmstjrwkd@naver.com", "01077021045");
         signUpService.signUp(request);

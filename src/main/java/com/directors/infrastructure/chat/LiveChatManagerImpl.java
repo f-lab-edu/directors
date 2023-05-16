@@ -50,7 +50,7 @@ public class LiveChatManagerImpl implements LiveChatManager, MessageListener {
         }
     }
 
-    public void sendChat(Long roomId, String chatContent, LocalDateTime sendTime, String sendUserId)  {
+    public void sendChat(Long roomId, String chatContent, String sendUserId, LocalDateTime sendTime)  {
         if (!sseListMap.containsKey(roomId)) {
             return;
         }
