@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class LiveChatManagerImpl implements LiveChatManager, MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String messageBody = getBodyString(message.getBody());
+        log.info(messageBody);
         Chat chat = ObjectMapperUtils.readValue(messageBody, Chat.class);
 
         publishChatToEmitters(chat.getRoomId(), chat);
@@ -87,7 +89,7 @@ public class LiveChatManagerImpl implements LiveChatManager, MessageListener {
     private void publishChatToEmitters(Long roomId, Chat chat) {
         List<SseEmitter> emitterList = sseListMap.get(roomId);
 
-        if (emitterList.isEmpty()) {
+        if (emitterList == null) {
             return;
         }
 
@@ -102,7 +104,9 @@ public class LiveChatManagerImpl implements LiveChatManager, MessageListener {
 
     private void addTopicToListener(Long roomId) {
         var channel = new ChannelTopic(String.valueOf(roomId));
+
         listenerContainer.addMessageListener(this, channel);
+
         channels.put(roomId, channel);
     }
 

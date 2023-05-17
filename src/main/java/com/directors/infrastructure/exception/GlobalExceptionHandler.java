@@ -40,6 +40,8 @@ import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.ConnectException;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -233,6 +235,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ErrorMessage notEnoughRewardException(NotEnoughRewardException e) {
 		log.info("Not Enough Reward Exception, userId = {}", e.userId);
 		return new ErrorMessage(e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_GATEWAY)
+	@ExceptionHandler(ConnectException.class)
+	public ErrorMessage connectException(CannotCreateRoomException e) {
+		log.info("ConnectException occurred. Please check redis connection.");
+		return new ErrorMessage("잠시 후 다시 시도해주세요");
 	}
 }
 
