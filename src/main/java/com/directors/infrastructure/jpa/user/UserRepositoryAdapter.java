@@ -56,9 +56,10 @@ public class UserRepositoryAdapter implements UserRepository {
                         )
                         .and(propertyExpression(property))
                 )
-                .orderBy(user.createdTime.desc())
                 .offset(offset)
                 .limit(limit)
+                .distinct()
+                .orderBy(user.createdTime.desc())
                 .fetch();
     }
 

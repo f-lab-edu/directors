@@ -21,7 +21,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
 
-    @PostMapping("/create/{questionId}")
+    @PostMapping("/create")
     public ResponseEntity<Long> create(
             @Valid @RequestBody CreateRoomRequest request, @AuthenticationPrincipal String userIdByToken
     ) {
