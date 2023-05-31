@@ -74,11 +74,10 @@ public class AuthenticationService {
     }
 
     private User validateUser(String userId, String password) {
-        var user = userRepository
+        return userRepository
                 .findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .filter(u -> passwordManager.checkPassword(password, u.getPassword()))
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
-        return user;
     }
 
     private String compareUserIdWithTokens(String accessToken, String refreshToken) {
