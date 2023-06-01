@@ -25,6 +25,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    private static int EXPIRATION_PERIOD = 7;
+
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordManager passwordManager;
@@ -51,7 +53,7 @@ public class AuthenticationService {
     public void logOut(LogOutRequest logOutRequest) {
         String refreshToken = logOutRequest.refreshToken();
 
-        validateTokenWithExpireDay(refreshToken);
+        validateRefreshToken(refreshToken);
 
         tokenRepository.deleteToken(logOutRequest.refreshToken());
     }
@@ -61,16 +63,14 @@ public class AuthenticationService {
         var accessToken = request.accessToken();
         var refreshToken = request.refreshToken();
 
-        var userId = compareUserIdWithTokens(accessToken, refreshToken);
+        var userId = validateTokens(accessToken, refreshToken);
 
-        validateUserIdByToken(userId);
+        var newAccessToken = tokenGenerator.generateAccessToken(userId);
 
-        accessToken = tokenGenerator.generateAccessToken(userId);
+        validateRefreshToken(refreshToken);
+        refreshToken = regenerateRefreshTokenByExpiration(refreshToken, userId);
 
-        long refreshExpirationDay = validateTokenWithExpireDay(refreshToken);
-        refreshToken = refreshTokenIfExpiringWithinWeek(refreshToken, userId, refreshExpirationDay);
-
-        return new RefreshAuthenticationResponse(accessToken, refreshToken);
+        return new RefreshAuthenticationResponse(newAccessToken, refreshToken);
     }
 
     private User validateUser(String userId, String password) {
@@ -80,7 +80,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AuthenticationFailedException(userId));
     }
 
-    private String compareUserIdWithTokens(String accessToken, String refreshToken) {
+    private String validateTokens(String accessToken, String refreshToken) {
         String userIdByAccessToken = authenticationManager
                 .getUserIdByToken(accessToken)
                 .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
@@ -92,27 +92,26 @@ public class AuthenticationService {
             throw new JwtException("유효하지 않은 토큰입니다.");
         }
 
-        return userIdByAccessToken;
+        return getUserId(userIdByAccessToken);
     }
 
-    private void validateUserIdByToken(String userId) {
-        userRepository
+    private String getUserId(String userId) {
+        return userRepository
                 .findByIdAndUserStatus(userId, UserStatus.JOINED)
-                .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
+                .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."))
+                .getId();
     }
 
-    private long validateTokenWithExpireDay(String token) {
+    private void validateRefreshToken(String token) {
         tokenRepository
                 .findTokenByTokenString(token)
                 .orElseThrow(() -> new JwtException("유효하지 않은 토큰입니다."));
-
-        long refreshExpirationDay = authenticationManager.getExpirationDayByToken(token);
-
-        return refreshExpirationDay;
     }
 
-    private String refreshTokenIfExpiringWithinWeek(String refreshToken, String userId, long expirationDay) {
-        if (expirationDay < 7) {
+    private String regenerateRefreshTokenByExpiration(String refreshToken, String userId) {
+        long expirationDay = authenticationManager.getExpirationDayByToken(refreshToken);
+
+        if (expirationDay < EXPIRATION_PERIOD) {
             tokenRepository.deleteToken(refreshToken);
 
             refreshToken = tokenGenerator.generateRefreshToken(userId);
