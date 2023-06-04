@@ -19,7 +19,7 @@ public class Region extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(name = "point", columnDefinition = "GEOMETRY")
+    @Column(name = "point", columnDefinition = "POINT", nullable = false)
     private Point point;
 
     public void setId(Long id) {
