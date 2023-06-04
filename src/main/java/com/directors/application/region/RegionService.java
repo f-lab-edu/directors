@@ -47,6 +47,6 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(int distance, Region region) {
-        return regionRepository.findRegionWithin(region.getPoint(), distance * KILOMETER);
+        return regionRepository.findRegionWithin(region.getPoint().getX(), region.getPoint().getY(), distance * KILOMETER);
     }
 }

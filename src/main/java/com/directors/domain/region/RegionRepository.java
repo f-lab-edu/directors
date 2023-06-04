@@ -1,7 +1,5 @@
 package com.directors.domain.region;
 
-import org.locationtech.jts.geom.Point;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +12,7 @@ public interface RegionRepository {
 
     void saveAll(List<Region> regions);
 
-    List<Region> findRegionWithin(Point point, double distance);
+    List<Region> findRegionWithin(double x, double y, double distance);
 
     Long count();
 }

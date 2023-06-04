@@ -2,8 +2,10 @@ package com.directors.infrastructure.jpa.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegionRepositoryAdapter implements RegionRepository {
     private final JpaRegionRepository regionRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Optional<Region> findByFullAddress(String fullAddress) {
@@ -39,8 +44,13 @@ public class RegionRepositoryAdapter implements RegionRepository {
         return regionRepository.count();
     }
 
-    @Override
-    public List<Region> findRegionWithin(Point point, double distance) {
-        return regionRepository.findRegionByPointDistanceLessThan(point, distance);
+    public List<Region> findRegionWithin(double x, double y, double distance) {
+        String nativeQuery = "SELECT * FROM mydb.region WHERE ST_Contains(ST_Buffer(ST_GeomFromText(?, 5179), ?), point)";
+        Query query = entityManager.createNativeQuery(nativeQuery, Region.class);
+
+        query.setParameter(1, String.format("POINT(%f %f)", x, y));
+        query.setParameter(2, distance);
+
+        return query.getResultList();
     }
 }
