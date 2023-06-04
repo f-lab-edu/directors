@@ -33,9 +33,7 @@ public class SearchDirectorService {
     @Transactional
     public List<SearchDirectorResponse> searchDirector(SearchDirectorRequest request, String userId) {
         // TODO: 04.10 Option -> 자기 소개 엔티티 or VO 추가 여부 , Sorting -> 검색에 평점(높은 순, 최소), 요청된 질문 수 반영 여부
-        User joinedUser = getJoinedUserByUserId(userId);
-
-        List<Long> nearestRegionIds = regionService.getNearestRegionId(request.distance(), joinedUser.getId());
+        List<Long> nearestRegionIds = regionService.getNearestRegionId(request.distance(), userId);
 
         int offset = calcOffset(request.page(), request.size());
 

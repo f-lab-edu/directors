@@ -10,7 +10,7 @@ import lombok.Builder;
 @Builder
 public record SearchDirectorRequest(
         @Min(value = 1, message = "지역의 범위는 1보다 크거나 같아야 합니다.")
-        @Max(value = 5, message = "지역의 범위는 1보다 작거나 같아야 합니다.")
+        @Max(value = 5, message = "지역의 범위는 5보다 작거나 같아야 합니다.")
         Integer distance,
         @Nullable
         String property,
