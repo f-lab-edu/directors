@@ -45,7 +45,7 @@ public class RegionRepositoryAdapter implements RegionRepository {
     }
 
     public List<Region> findRegionWithin(double x, double y, double distance) {
-        String nativeQuery = "SELECT * FROM region r WHERE ST_Contains(ST_Buffer(ST_GeomFromText(?, 5179), ?), point)";
+        String nativeQuery = "SELECT * FROM region r WHERE ST_Contains(ST_Buffer(ST_PointFromText(?, 5179), ?), point)";
         Query query = entityManager.createNativeQuery(nativeQuery, Region.class);
 
         query.setParameter(1, String.format("POINT(%f %f)", x, y));
