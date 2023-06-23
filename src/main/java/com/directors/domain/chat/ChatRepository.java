@@ -6,4 +6,6 @@ public interface ChatRepository {
     List<Chat> findChatListByRoomId(Long roomId, int offset, int limit);
 
     Chat save(Chat chat);
+
+    void saveAll(List<Chat> chats);
 }

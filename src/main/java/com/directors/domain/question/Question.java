@@ -44,7 +44,7 @@ public class Question extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private SpecialtyProperty category;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private Schedule schedule;
     private String comment;

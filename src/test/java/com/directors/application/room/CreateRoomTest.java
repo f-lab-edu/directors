@@ -10,6 +10,7 @@ import com.directors.infrastructure.exception.question.QuestionNotFoundException
 import com.directors.presentation.room.CreateRoomRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -82,6 +83,8 @@ class CreateRoomTest extends RoomTestSupport {
                 .isInstanceOf(QuestionNotFoundException.class);
     }
 
+
+
     @DisplayName("채팅 상태가 아닌 질문의 채팅방을 생성을 요청하면 예외가 발생한다.")
     @Test
     void createRoomAboutNotChatStatusQuestion() {
@@ -91,7 +94,7 @@ class CreateRoomTest extends RoomTestSupport {
         User questioner = createUser("cnsong123", "1234567890", "thddmstjrwkd@naver.com", "01077021045", "송은석", "cnsong");
         User savedQuestioner = userRepository.save(questioner);
 
-        LocalDateTime schedule = LocalDateTime.of(2023, 05, 9, 14, 0);
+        LocalDateTime schedule = LocalDateTime.of(2030, 05, 9, 14, 0);
         List<LocalDateTime> scheduleList = List.of(schedule);
         scheduleService.open(savedDirector.getId(), scheduleList);
         Schedule savedSchedule = scheduleRepository.findByStartTimeAndUserId(schedule, director.getId())
@@ -101,7 +104,7 @@ class CreateRoomTest extends RoomTestSupport {
                 createQuestion("원하는 질문", "질문 내용은 ~~~입니다.", savedDirector, savedQuestioner, SpecialtyProperty.ART, savedSchedule);
         Question savedQuestion = questionRepository.save(question);
 
-        savedQuestion.changeQuestionStatusToChat();
+        savedQuestion.changeQuestionStatusToComplete();
 
         LocalDateTime requestTime = LocalDateTime.of(2023, 05, 8, 14, 0);
         CreateRoomRequest request = createCreateRoomRequest(savedQuestion.getId(), requestTime);

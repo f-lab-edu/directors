@@ -9,4 +9,6 @@ public interface JpaRoomRepository extends JpaRepository<Room, Long> {
     List<Room> findByDirectorId(String directorId);
 
     List<Room> findByQuestionerId(String questionerId);
+
+    boolean existsByQuestionId(Long questionId);
 }

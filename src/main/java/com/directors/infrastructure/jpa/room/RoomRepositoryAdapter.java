@@ -2,6 +2,7 @@ package com.directors.infrastructure.jpa.room;
 
 import com.directors.domain.room.Room;
 import com.directors.domain.room.RoomRepository;
+import com.directors.domain.schedule.ScheduleStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +28,12 @@ public class RoomRepositoryAdapter implements RoomRepository {
     public List<Room> findByQuestionerId(String questionerId) {
         return jpaRoomRepository.findByQuestionerId(questionerId);
     }
+
+    @Override
+    public boolean existsByQuestionId(Long questionId) {
+        return jpaRoomRepository.existsByQuestionId(questionId);
+    }
+
 
     @Override
     public Room save(Room room) {

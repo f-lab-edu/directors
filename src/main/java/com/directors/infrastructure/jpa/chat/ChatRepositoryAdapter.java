@@ -20,8 +20,8 @@ public class ChatRepositoryAdapter implements ChatRepository {
     @Override
     public List<Chat> findChatListByRoomId(Long roomId, int offset, int size) {
         return queryFactory.selectFrom(chat)
-                .where(chat.room.id.eq(roomId))
-                .orderBy(chat.createdTime.desc())
+                .where(chat.roomId.eq(roomId))
+                .orderBy(chat.sendTime.desc())
                 .limit(size)
                 .offset(offset)
                 .fetch();
@@ -30,5 +30,10 @@ public class ChatRepositoryAdapter implements ChatRepository {
     @Override
     public Chat save(Chat chat) {
         return jpaChatRepository.save(chat);
+    }
+
+    @Override
+    public void saveAll(List<Chat> chats) {
+        jpaChatRepository.saveAll(chats);
     }
 }

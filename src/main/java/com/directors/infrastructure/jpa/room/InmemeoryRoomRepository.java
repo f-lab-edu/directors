@@ -33,6 +33,11 @@ public class InmemeoryRoomRepository implements RoomRepository {
     }
 
     @Override
+    public boolean existsByQuestionId(Long questionId) {
+        return false;
+    }
+
+    @Override
     public Room save(Room room) {
         if (room.getId() == null) {
             room.setId(nextId++);

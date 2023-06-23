@@ -1,10 +1,11 @@
 package com.directors.domain.chat;
 
-import com.directors.domain.common.BaseEntity;
 import com.directors.domain.room.Room;
 import com.directors.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat")
@@ -12,30 +13,30 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Builder
-public class Chat extends BaseEntity {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    private Long roomId;
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "send_user_id")
-    private User sendUser;
+    private String  sendUserId;
+
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime sendTime;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public static Chat of(Room room, String content, User sendUser) {
+    public static Chat of(Long roomId, String content, String sendUserId, LocalDateTime sendTime) {
         return Chat.builder()
-                .room(room)
+                .roomId(roomId)
                 .content(content)
-                .sendUser(sendUser)
+                .sendUserId(sendUserId)
+                .sendTime(sendTime)
                 .build();
     }
 }
