@@ -1,5 +1,6 @@
 package com.directors.infrastructure.jpa.user;
 
+import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
@@ -15,7 +16,7 @@ public class InmemoryUserRepository implements UserRepository {
     }};
 
     @Override
-    public List<User> findWithSearchConditions(List<Long> nearestRegionIds, boolean hasSchedule, String searchText, String property, int offset, int limit) {
+    public List<User> findWithSearchConditions(List<Long> nearestRegionIds, boolean hasSchedule, String searchText, SpecialtyProperty property, int offset, int limit) {
         return null;
     }
 

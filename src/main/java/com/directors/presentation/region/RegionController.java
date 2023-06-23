@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/region")
@@ -18,8 +20,7 @@ public class RegionController {
     private final RegionService regionService;
 
     @GetMapping("/nearestAddress/{distance}")
-    public ResponseEntity<NearestAddressResponse> getNearestAddress(@PathVariable int distance, @AuthenticationPrincipal String userIdByToken) {
-        var nearestAddress = regionService.getNearestAddress(userIdByToken, distance);
-        return new ResponseEntity<>(new NearestAddressResponse(nearestAddress), HttpStatus.OK);
+    public ResponseEntity<List<NearestAddressResponse>> getNearestAddress(@PathVariable int distance, @AuthenticationPrincipal String userIdByToken) {
+        return new ResponseEntity<>(regionService.getNearestAddress(distance, userIdByToken), HttpStatus.OK);
     }
 }

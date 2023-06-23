@@ -39,6 +39,9 @@ public enum SpecialtyProperty {
     }
 
     public static SpecialtyProperty fromValue(String value) {
+        if (value == null) {
+            return null;
+        }
         for (SpecialtyProperty category : SpecialtyProperty.values()) {
             if (category.getValue().equals(value)) {
                 return category;
