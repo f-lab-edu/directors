@@ -34,4 +34,18 @@ class SpecialtyPropertyTest {
                 .hasMessage("Invalid value: " + givenSpecialtyPropertyString);
     }
 
+    @DisplayName("null 값을 전문 분야 객체로 변환 시도할 경우 null 값을 반환한다.")
+    @Test
+    void fromNull() {
+        // given
+        String givenSpecialtyProperty = null;
+
+        // when
+        SpecialtyProperty specialtyProperty = SpecialtyProperty.fromValue(givenSpecialtyProperty);
+
+        // then
+        assertThat(specialtyProperty).isNull();
+    }
+
+
 }

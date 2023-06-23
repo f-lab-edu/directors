@@ -69,8 +69,6 @@ class UserRepositoryTest extends IntegrationTestSupport {
                 .hasMessage("존재하지 않는 유저 Id입니다.");
     }
 
-    // TODO: 05.05 findWithSearchConditions 는 추후 테스트
-
     private User createUser(String id, String password, String email, String phoneNumber, String name, String nickname) {
         return User.builder()
                 .id(id)

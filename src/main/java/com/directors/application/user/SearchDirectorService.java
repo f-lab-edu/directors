@@ -1,6 +1,7 @@
 package com.directors.application.user;
 
 import com.directors.application.region.RegionService;
+import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.user.User;
 import com.directors.domain.user.UserRepository;
 import com.directors.domain.user.UserStatus;
@@ -32,16 +33,14 @@ public class SearchDirectorService {
     @Transactional
     public List<SearchDirectorResponse> searchDirector(SearchDirectorRequest request, String userId) {
         // TODO: 04.10 Option -> 자기 소개 엔티티 or VO 추가 여부 , Sorting -> 검색에 평점(높은 순, 최소), 요청된 질문 수 반영 여부
-        User joinedUser = getJoinedUserByUserId(userId);
-
-        List<Long> nearestRegionIds = regionService.getNearestRegionId(joinedUser.getId(), request.distance());
+        List<Long> nearestRegionIds = regionService.getNearestRegionId(request.distance(), userId);
 
         int offset = calcOffset(request.page(), request.size());
 
-        List<User> users = userRepository.findWithSearchConditions(nearestRegionIds, request.hasSchedule(), request.searchText(),
-                request.property(), offset, request.size());
+        List<User> directors = userRepository.findWithSearchConditions(nearestRegionIds, request.hasSchedule(), request.searchText(),
+                SpecialtyProperty.fromValue(request.property()), offset, request.size());
 
-        return generateDirectors(users);
+        return from(directors);
     }
 
     private User getJoinedUserByUserId(String userId) {
@@ -54,9 +53,9 @@ public class SearchDirectorService {
         return (page - 1) * size;
     }
 
-    private List<SearchDirectorResponse> generateDirectors(List<User> users) {
+    private List<SearchDirectorResponse> from(List<User> users) {
         return users.stream()
-                .map(SearchDirectorResponse::of)
+                .map(SearchDirectorResponse::from)
                 .collect(Collectors.toList());
     }
 }

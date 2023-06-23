@@ -2,7 +2,6 @@ package com.directors.infrastructure.jpa.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
-import org.locationtech.jts.geom.Point;
 
 import java.util.*;
 
@@ -44,15 +43,14 @@ public class InmemoryRegionRepository implements RegionRepository {
         }
     }
 
-    @Override
-    public List<Region> findRegionWithin(Point point, double distance) {
+    public List<Region> findRegionWithin(double x, double y, double distance) {
         List<Region> result = new ArrayList<>();
 
-        for (Region oneRegion : regionMap.values()) {
-            if (oneRegion.getPoint().distance(point) <= distance) {
-                result.add(oneRegion);
-            }
-        }
+//        for (Region oneRegion : regionMap.values()) {
+//            if (oneRegion.getPoint().distance(point) <= distance) {
+//                result.add(oneRegion);
+//            }
+//        }
 
         return result;
     }

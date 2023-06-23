@@ -15,5 +15,6 @@ public record SendChatRequest(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
         @NotNull(message = "보낸 시간이 입력되지 않았습니다.")
         LocalDateTime sendTime
+
 ) {
 }
