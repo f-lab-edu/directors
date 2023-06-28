@@ -1,14 +1,22 @@
 # _Directors_
+![di_logo](https://github.com/f-lab-edu/directors/assets/76680394/6580c1fd-efb8-448f-93d5-649717b5e654)
 
 ## 📌프로젝트 개요
 - 지역 기반으로 취준생들과 경력 있는 전문가들 간의 인적 네트워크를 중개하는 플랫폼 서비스
   
 - 이 서비스를 통해 취준생들은 자신의 직업과 직무에 대한 궁금한 점을 1:1 대면으로 해결할 수 있고, 경력 있는 전문가들은 자신의 지식과 경험을 나누며 멘토링의 역할을 수행할 수 있습니다.
+<br>
 
 
 ## ✅ 사용 기술 및 개발 환경
 Java, Spring Boot, Jpa, Gradle, MySQL, Redis, Junit, Naver Cloud, Github Action, Docker, Nodejs
 
+<br>
+
+## 프론트엔드 코드를 작성 중에 있습니다. 
+- Github: https://github.com/tilsong/directors_front
+- 근 시일 내에 서버와 연동하여 배포할 예정입니다.
+<br>
 
 
 ## 📰 기술적 issue 
