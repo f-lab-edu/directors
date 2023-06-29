@@ -47,7 +47,7 @@ public class UserRepositoryAdapter implements UserRepository {
         return queryFactory.selectFrom(user)
                 .leftJoin(schedule).on(schedule.user.id.eq(user.id)).fetchJoin()
                 .leftJoin(specialty).on(specialty.user.id.eq(user.id)).fetchJoin()
-                .where(user.region.id.in(regionIds)
+                .where(regionExpression(regionIds)
                         .and(user.userStatus.eq(UserStatus.JOINED))
                         .and(hasScheduleExpression(hasSchedule))
                         .and(containExpression(user.nickname, searchText)
@@ -66,6 +66,13 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public void saveAll(List<User> user) {
         userRepository.saveAll(user);
+    }
+
+    private BooleanExpression regionExpression(List<Long> regionIds) {
+        if (regionIds == null || regionIds.isEmpty()) {
+            return Expressions.asBoolean(true).isTrue();
+        }
+        return user.region.id.in(regionIds);
     }
 
     private BooleanExpression hasScheduleExpression(boolean hasSchedule) {
