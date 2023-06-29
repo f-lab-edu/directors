@@ -16,4 +16,19 @@ public class SpecialtyInfo {
     @Enumerated(EnumType.STRING)
     SpecialtyProperty property;
     String description;
+
+    public SpecialtyInfoValue getSpecialtyInfoValue() {
+        return new SpecialtyInfoValue(this.getProperty().getValue(), this.description);
+    }
+
+    @Getter
+    public static class SpecialtyInfoValue {
+        String property;
+        String description;
+
+        public SpecialtyInfoValue(String property, String description) {
+            this.property = property;
+            this.description = description;
+        }
+    }
 }
