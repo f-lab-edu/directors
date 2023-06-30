@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,16 +82,17 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     private BooleanExpression containExpression(final StringPath stringPath, final String searchText) {
-        if (searchText == null) {
-            return Expressions.asBoolean(true).isTrue();
+        if (searchText != null) {
+            return stringPath.likeIgnoreCase("%" + searchText + "%");
         }
-        return stringPath.likeIgnoreCase("%" + searchText + "%");
+        return Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression propertyExpression(SpecialtyProperty property) {
-        if (property == null) {
-            return Expressions.asBoolean(true).isTrue();
+        if (property != null) {
+            return specialty.specialtyInfo.property.eq(property);
+        } else {
+            return specialty.specialtyInfo.property.in(Arrays.asList(SpecialtyProperty.values()));
         }
-        return specialty.specialtyInfo.property.eq(property);
     }
 }

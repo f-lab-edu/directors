@@ -25,6 +25,6 @@ public class SearchDirectorResponse {
             s -> s.getSpecialtyInfo().getSpecialtyInfoValue()
         ).collect(Collectors.toList());
 
-        return new SearchDirectorResponse(user.getId(), user.getName(), responses);
+        return new SearchDirectorResponse(user.getId(), user.getNickname(), responses);
     }
 }
