@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,9 +44,10 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public List<User> findWithSearchConditions(List<Long> regionIds, boolean hasSchedule, String searchText, SpecialtyProperty property, int offset, int limit) {
-        return queryFactory.selectFrom(user)
-                .leftJoin(schedule).on(schedule.user.id.eq(user.id)).fetchJoin()
-                .leftJoin(specialty).on(specialty.user.id.eq(user.id)).fetchJoin()
+        List<String> userIds = queryFactory.select(user.id)
+                .from(user)
+                .join(user.specialtyList, specialty)
+                .join(user.scheduleList, schedule)
                 .where(regionExpression(regionIds)
                         .and(user.userStatus.eq(UserStatus.JOINED))
                         .and(hasScheduleExpression(hasSchedule))
@@ -57,11 +57,16 @@ public class UserRepositoryAdapter implements UserRepository {
                         )
                         .and(propertyExpression(property))
                 )
-                .offset(offset)
-                .limit(limit)
                 .distinct()
-                .orderBy(user.createdTime.desc())
+            .offset(offset)
+            .limit(limit)
+            .fetch();
+
+        return queryFactory.selectFrom(user)
+                .join(user.specialtyList, specialty).fetchJoin()
+                .where(user.id.in(userIds))
                 .fetch();
+
     }
 
     @Override
@@ -77,8 +82,10 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     private BooleanExpression hasScheduleExpression(boolean hasSchedule) {
-        return hasSchedule ?
-                schedule.startTime.after(LocalDateTime.now()).and(schedule.status.eq(ScheduleStatus.OPENED)) : null;
+        if (!hasSchedule) {
+            return Expressions.asBoolean(true).isTrue();
+        }
+        return schedule.startTime.after(LocalDateTime.now()).and(schedule.status.eq(ScheduleStatus.OPENED));
     }
 
     private BooleanExpression containExpression(final StringPath stringPath, final String searchText) {
@@ -92,7 +99,7 @@ public class UserRepositoryAdapter implements UserRepository {
         if (property != null) {
             return specialty.specialtyInfo.property.eq(property);
         } else {
-            return specialty.specialtyInfo.property.in(Arrays.asList(SpecialtyProperty.values()));
+            return Expressions.asBoolean(true).isTrue();
         }
     }
 }

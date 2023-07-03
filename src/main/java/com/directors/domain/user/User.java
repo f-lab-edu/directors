@@ -7,7 +7,6 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.exception.NotEnoughRewardException;
-import com.directors.domain.user.exception.UserRegionNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +49,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_Id")
     private Region region;
 
