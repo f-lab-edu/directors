@@ -7,7 +7,6 @@ import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
 import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.exception.NotEnoughRewardException;
-import com.directors.domain.user.exception.UserRegionNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +49,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_Id")
     private Region region;
 
@@ -63,7 +62,9 @@ public class User extends BaseEntity {
 
     public Region getRegion() {
         if (region == null) {
-            throw new UserRegionNotFoundException(this.id);
+            return null;
+            // TODO: 06.28 로그인하지 않은 접속자를 고려하여 지역 인증 후 디렉터 리스트를 조회한다는 기존 로직을 무효화함. 추후 다시 고려 필요.
+            // throw new UserRegionNotFoundException(this.id);
         }
         return region;
     }
@@ -75,7 +76,7 @@ public class User extends BaseEntity {
         return specialtyList
                 .stream()
                 .map(Specialty::getSpecialtyInfo)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     public List<LocalDateTime> getScheduleStartTimes() {

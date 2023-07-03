@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,13 @@ public class RegionService {
 
     @Transactional
     public List<NearestAddressResponse> getNearestAddress(int distance, String userId) {
-        return getNearestRegion(distance, getRegionFromUser(userId))
+        List<Region> nearestRegion = getNearestRegion(distance, getRegionFromUser(userId));
+
+        if (nearestRegion == null) {
+            return Collections.emptyList();
+        }
+
+        return nearestRegion
                 .stream()
                 .map(NearestAddressResponse::from)
                 .collect(Collectors.toList());
@@ -34,7 +41,13 @@ public class RegionService {
 
     @Transactional
     public List<Long> getNearestRegionId(int distance, String userId) {
-        return getNearestRegion(distance, getRegionFromUser(userId))
+        List<Region> nearestRegion = getNearestRegion(distance, getRegionFromUser(userId));
+
+        if (nearestRegion == null) {
+            return Collections.emptyList();
+        }
+
+        return nearestRegion
                 .stream()
                 .map(Region::getId)
                 .collect(Collectors.toList());
@@ -47,6 +60,9 @@ public class RegionService {
     }
 
     private List<Region> getNearestRegion(int distance, Region region) {
+        if (region == null) {
+            return null;
+        }
         return regionRepository.findRegionWithin(region.getPoint().getX(), region.getPoint().getY(), distance * KILOMETER);
     }
 }
