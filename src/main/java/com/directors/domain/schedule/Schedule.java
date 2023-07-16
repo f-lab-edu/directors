@@ -30,10 +30,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "schedule")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-@Builder
 public class Schedule extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,12 +45,35 @@ public class Schedule extends BaseEntity {
 	@OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Question> questionList = new ArrayList<>();
 
+	@Builder
+	public Schedule(LocalDateTime startTime, ScheduleStatus status, User user) {
+		this.startTime = startTime;
+		this.status = status;
+		this.user = user;
+	}
+
 	public static Schedule of(LocalDateTime startTime, ScheduleStatus status, User user) {
 		return Schedule.builder()
 			.startTime(startTime)
 			.status(status)
 			.user(user)
 			.build();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public LocalDateTime getStartTime() {
+		return startTime;
+	}
+
+	public ScheduleStatus getStatus() {
+		return status;
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 	public void checkChangeableScheduleTime() {
