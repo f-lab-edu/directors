@@ -7,10 +7,8 @@ import org.locationtech.jts.geom.Point;
 
 @Entity
 @Table(name = "region")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 public class Region extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,12 +22,5 @@ public class Region extends BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public static Region of(String fullAddress, String unitAddress, Point point) {
-        return Region.builder()
-                .address(new Address(fullAddress, unitAddress))
-                .point(point)
-                .build();
     }
 }

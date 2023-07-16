@@ -25,7 +25,7 @@ class FeedbackTest {
                 .build();
 
         // when
-        List<FeedbackCheck> feedbackCheckList = feedback.getFeedbackCheckList();
+        List<String> feedbackCheckList = feedback.getFeedbackCheckValues();
 
         // then
         assertThat(feedbackCheckList).hasSize(2)

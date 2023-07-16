@@ -20,9 +20,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "question")
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder(access = AccessLevel.PUBLIC)
 public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +46,19 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private Schedule schedule;
     private String comment;
+
+    @Builder
+    public Question(String title, String content, QuestionStatus status, Boolean directorCheck, Boolean questionCheck, User questioner, User director, SpecialtyProperty category, Schedule schedule) {
+        this.title = title;
+        this.content = content;
+        this.status = status;
+        this.directorCheck = directorCheck;
+        this.questionCheck = questionCheck;
+        this.questioner = questioner;
+        this.director = director;
+        this.category = category;
+        this.schedule = schedule;
+    }
 
     public void editQuestion(String title, String content) {
         this.title = title;
