@@ -18,10 +18,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@Getter
 public class User extends BaseEntity {
     @Id
     private String id;
@@ -41,6 +38,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
+    @Column(nullable = true)
     private LocalDateTime withdrawalDate;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -53,6 +51,46 @@ public class User extends BaseEntity {
     @JoinColumn(name = "region_Id")
     private Region region;
 
+    @Builder
+    public User(String id, String password, String name, String nickname, String email, String phoneNumber, UserStatus userStatus, Long reward) {
+        this.id = id;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.userStatus = userStatus;
+        this.reward= reward;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
     public Address getUserAddress() {
         if (region == null) {
             return null;
@@ -61,17 +99,21 @@ public class User extends BaseEntity {
     }
 
     public Region getRegion() {
-        if (region == null) {
-            return null;
-            // TODO: 06.28 로그인하지 않은 접속자를 고려하여 지역 인증 후 디렉터 리스트를 조회한다는 기존 로직을 무효화함. 추후 다시 고려 필요.
-            // throw new UserRegionNotFoundException(this.id);
-        }
+        // TODO: 06.28 로그인하지 않은 접속자를 고려하여 지역 인증 후 디렉터 리스트를 조회한다는 기존 로직을 무효화함. 추후 다시 고려 필요.
+        // throw new UserRegionNotFoundException(this.id);
         return region;
+    }
+
+    public List<Specialty> getSpecialtyList() {
+        if (specialtyList == null) {
+            return Collections.emptyList();
+        }
+        return specialtyList;
     }
 
     public List<SpecialtyInfo> getSpecialtyInfoList() {
         if (specialtyList == null) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return specialtyList
                 .stream()
