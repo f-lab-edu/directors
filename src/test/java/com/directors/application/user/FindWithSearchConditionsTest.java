@@ -4,7 +4,6 @@ import com.directors.application.schedule.ScheduleService;
 import com.directors.domain.region.Address;
 import com.directors.domain.region.RegionApiClient;
 import com.directors.domain.specialty.Specialty;
-import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.specialty.SpecialtyRepository;
 import com.directors.domain.user.User;
@@ -237,7 +236,8 @@ public class FindWithSearchConditionsTest extends UserTestSupport {
 
     private static Specialty createSpecialty(User user, SpecialtyProperty specialtyProperty) {
         return Specialty.builder()
-                .specialtyInfo(new SpecialtyInfo(specialtyProperty, "매우 잘함."))
+                .property(specialtyProperty)
+                .description( "매우 잘함.")
                 .user(user)
                 .build();
     }

@@ -29,7 +29,8 @@ class SpecialtyRepositoryTest extends IntegrationTestSupport {
         User savedUser = userRepository.save(user);
 
         Specialty specialty = Specialty.builder()
-                .specialtyInfo(new SpecialtyInfo(SpecialtyProperty.EDUCATION, "매우 잘함."))
+                .property(SpecialtyProperty.EDUCATION)
+                .description("매우 잘함.")
                 .user(savedUser)
                 .build();
         Specialty savedSpecialty = specialtyRepository.save(specialty);
@@ -40,8 +41,8 @@ class SpecialtyRepositoryTest extends IntegrationTestSupport {
 
         // then
         assertThat(foundSpecialty.getId()).isNotNull();
-        assertThat(foundSpecialty).extracting("id", "SpecialtyInfo", "user")
-                .contains(savedSpecialty.getId(), savedSpecialty.getSpecialtyInfo(), savedSpecialty.getUser());
+        assertThat(foundSpecialty).extracting("id", "property", "description", "user")
+                .contains(savedSpecialty.getId(), savedSpecialty.getProperty(), savedSpecialty.getDescription(), savedSpecialty.getUser());
     }
 
     @DisplayName("잘못된 아이디로 전문 분야 엔티티를 조회하면 예외가 발생한다.")
@@ -53,7 +54,8 @@ class SpecialtyRepositoryTest extends IntegrationTestSupport {
         User savedUser = userRepository.save(user);
 
         Specialty specialty = Specialty.builder()
-                .specialtyInfo(new SpecialtyInfo(SpecialtyProperty.EDUCATION, "매우 잘함."))
+                .property(SpecialtyProperty.EDUCATION)
+                .description("매우 잘함.")
                 .user(savedUser)
                 .build();
         Specialty savedSpecialty = specialtyRepository.save(specialty);

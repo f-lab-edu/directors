@@ -27,7 +27,7 @@ public class SearchDirectorService {
         var director = getJoinedUserByUserId(directorId);
 
         return new GetDirectorResponse(director.getName(), director.getNickname(), director.getUserAddress(),
-                director.getSpecialtyInfoList(), director.getScheduleStartTimes());
+                director.getSpecialtyList(), director.getScheduleStartTimes());
     }
 
     @Transactional

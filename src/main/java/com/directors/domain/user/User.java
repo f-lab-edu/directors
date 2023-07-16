@@ -5,7 +5,6 @@ import com.directors.domain.region.Address;
 import com.directors.domain.region.Region;
 import com.directors.domain.schedule.Schedule;
 import com.directors.domain.specialty.Specialty;
-import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.user.exception.NotEnoughRewardException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -109,16 +108,6 @@ public class User extends BaseEntity {
             return Collections.emptyList();
         }
         return specialtyList;
-    }
-
-    public List<SpecialtyInfo> getSpecialtyInfoList() {
-        if (specialtyList == null) {
-            return Collections.emptyList();
-        }
-        return specialtyList
-                .stream()
-                .map(Specialty::getSpecialtyInfo)
-                .collect(Collectors.toList());
     }
 
     public List<LocalDateTime> getScheduleStartTimes() {

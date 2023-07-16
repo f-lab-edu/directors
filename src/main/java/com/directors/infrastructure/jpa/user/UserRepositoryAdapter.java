@@ -53,7 +53,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         .and(hasScheduleExpression(hasSchedule))
                         .and(containExpression(user.nickname, searchText)
                                 .or(containExpression(user.name, searchText))
-                                .or(containExpression(specialty.specialtyInfo.description, searchText))
+                                .or(containExpression(specialty.description, searchText))
                         )
                         .and(propertyExpression(property))
                 )
@@ -97,7 +97,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
     private BooleanExpression propertyExpression(SpecialtyProperty property) {
         if (property != null) {
-            return specialty.specialtyInfo.property.eq(property);
+            return specialty.property.eq(property);
         } else {
             return Expressions.asBoolean(true).isTrue();
         }

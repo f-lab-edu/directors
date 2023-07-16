@@ -65,7 +65,7 @@ class RegionRepositoryTest extends IntegrationTestSupport {
 
         // when
         List<Region> regionWithin = regionRepository
-                .findRegionWithin(region.getPoint(), givenDistance);
+                .findRegionWithin(region.getPoint().getX(), region.getPoint().getY(), givenDistance);
 
         // then
         assertThat(regionWithin).hasSize(3)

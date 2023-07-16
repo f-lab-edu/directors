@@ -1,5 +1,7 @@
 package com.directors.domain.region;
 
+import org.locationtech.jts.geom.Point;
+
 import java.util.List;
 import java.util.Optional;
 

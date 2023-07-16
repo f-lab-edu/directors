@@ -24,10 +24,14 @@ public class SpecialtyService {
 
     @Transactional
     public CreateSpecialtyResponse createSpecialty(CreateSpecialtyRequest request, String userId) {
-        Specialty specialty = request.toEntity();
         var user = userRepository.findByIdAndUserStatus(userId, UserStatus.JOINED)
                 .orElseThrow(() -> new NoSuchUserException(userId));
-        specialty.setUser(user);
+
+        Specialty specialty = Specialty.builder()
+                .property(SpecialtyProperty.fromValue(request.specialtyProperty()))
+                .description(request.description())
+                .user(user)
+                .build();
 
         return CreateSpecialtyResponse.from(specialtyRepository.save(specialty));
     }
@@ -37,7 +41,7 @@ public class SpecialtyService {
         var specialty = specialtyRepository.findById(request.id())
                 .orElseThrow(NoSuchSpecialtyException::new);
 
-        specialty.setSpecialtyInfo(SpecialtyProperty.fromValue(request.property()), request.description());
+        specialty.setDescription(request.description());
 
         return UpdateSpecialtyResponse.from(specialty);
     }
