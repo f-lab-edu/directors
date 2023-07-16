@@ -2,6 +2,7 @@ package com.directors.infrastructure.jpa.region;
 
 import com.directors.domain.region.Region;
 import com.directors.domain.region.RegionRepository;
+import org.locationtech.jts.geom.Point;
 
 import java.util.*;
 

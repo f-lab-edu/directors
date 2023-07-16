@@ -12,8 +12,8 @@ public record UpdateSpecialtyResponse(
     public static UpdateSpecialtyResponse from(Specialty specialty) {
         return UpdateSpecialtyResponse.builder()
                 .id(specialty.getId())
-                .property(specialty.getSpecialtyInfo().getProperty().getValue())
-                .description(specialty.getSpecialtyInfo().getDescription())
+                .property(specialty.getProperty().getValue())
+                .description(specialty.getDescription())
                 .build();
     }
 }

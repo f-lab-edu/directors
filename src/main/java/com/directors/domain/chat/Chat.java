@@ -9,10 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +27,14 @@ public class Chat {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Builder
+    public Chat(Long roomId, String content, String sendUserId, LocalDateTime sendTime) {
+        this.roomId = roomId;
+        this.content = content;
+        this.sendUserId = sendUserId;
+        this.sendTime = sendTime;
     }
 
     public static Chat of(Long roomId, String content, String sendUserId, LocalDateTime sendTime) {

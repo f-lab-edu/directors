@@ -12,10 +12,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "feedback")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@Getter
 public class Feedback extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +39,49 @@ public class Feedback extends BaseEntity {
     @JoinColumn(name = "questioner_id", referencedColumnName = "id")
     private User questioner;
 
-    public void updateFeedback(FeedbackRating rating, List<FeedbackCheck> checkedList, String description) {
-        this.feedbackRating = rating;
-        this.feedbackCheckList = checkedList;
+    @Builder
+    public Feedback(FeedbackRating feedbackRating, List<FeedbackCheck> feedbackCheckList, String description, Question question, User director, User questioner) {
+        this.feedbackRating = feedbackRating;
+        this.feedbackCheckList = feedbackCheckList;
         this.description = description;
+        this.question = question;
+        this.director = director;
+        this.questioner = questioner;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public FeedbackRating getFeedbackRating() {
+        return feedbackRating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public User getDirector() {
+        return director;
+    }
+
+    public User getQuestioner() {
+        return questioner;
     }
 
     public List<String> getFeedbackCheckValues() {
         return feedbackCheckList.stream()
                 .map(FeedbackCheck::getValue)
                 .collect(Collectors.toList());
+    }
+
+    public void updateFeedback(FeedbackRating rating, List<FeedbackCheck> checkedList, String description) {
+        this.feedbackRating = rating;
+        this.feedbackCheckList = checkedList;
+        this.description = description;
     }
 }

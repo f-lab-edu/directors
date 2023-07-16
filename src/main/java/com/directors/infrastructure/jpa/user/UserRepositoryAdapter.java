@@ -44,23 +44,29 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public List<User> findWithSearchConditions(List<Long> regionIds, boolean hasSchedule, String searchText, SpecialtyProperty property, int offset, int limit) {
-        return queryFactory.selectFrom(user)
-                .leftJoin(schedule).on(schedule.user.id.eq(user.id)).fetchJoin()
-                .leftJoin(specialty).on(specialty.user.id.eq(user.id)).fetchJoin()
-                .where(user.region.id.in(regionIds)
+        List<String> userIds = queryFactory.select(user.id)
+                .from(user)
+                .join(user.specialtyList, specialty)
+                .join(user.scheduleList, schedule)
+                .where(regionExpression(regionIds)
                         .and(user.userStatus.eq(UserStatus.JOINED))
                         .and(hasScheduleExpression(hasSchedule))
                         .and(containExpression(user.nickname, searchText)
                                 .or(containExpression(user.name, searchText))
-                                .or(containExpression(specialty.specialtyInfo.description, searchText))
+                                .or(containExpression(specialty.description, searchText))
                         )
                         .and(propertyExpression(property))
                 )
-                .offset(offset)
-                .limit(limit)
                 .distinct()
-                .orderBy(user.createdTime.desc())
+            .offset(offset)
+            .limit(limit)
+            .fetch();
+
+        return queryFactory.selectFrom(user)
+                .join(user.specialtyList, specialty).fetchJoin()
+                .where(user.id.in(userIds))
                 .fetch();
+
     }
 
     @Override
@@ -68,22 +74,32 @@ public class UserRepositoryAdapter implements UserRepository {
         userRepository.saveAll(user);
     }
 
+    private BooleanExpression regionExpression(List<Long> regionIds) {
+        if (regionIds == null || regionIds.isEmpty()) {
+            return Expressions.asBoolean(true).isTrue();
+        }
+        return user.region.id.in(regionIds);
+    }
+
     private BooleanExpression hasScheduleExpression(boolean hasSchedule) {
-        return hasSchedule ?
-                schedule.startTime.after(LocalDateTime.now()).and(schedule.status.eq(ScheduleStatus.OPENED)) : null;
+        if (!hasSchedule) {
+            return Expressions.asBoolean(true).isTrue();
+        }
+        return schedule.startTime.after(LocalDateTime.now()).and(schedule.status.eq(ScheduleStatus.OPENED));
     }
 
     private BooleanExpression containExpression(final StringPath stringPath, final String searchText) {
-        if (searchText == null) {
-            return Expressions.asBoolean(true).isTrue();
+        if (searchText != null) {
+            return stringPath.likeIgnoreCase("%" + searchText + "%");
         }
-        return stringPath.likeIgnoreCase("%" + searchText + "%");
+        return Expressions.asBoolean(true).isTrue();
     }
 
     private BooleanExpression propertyExpression(SpecialtyProperty property) {
-        if (property == null) {
+        if (property != null) {
+            return specialty.property.eq(property);
+        } else {
             return Expressions.asBoolean(true).isTrue();
         }
-        return specialty.specialtyInfo.property.eq(property);
     }
 }

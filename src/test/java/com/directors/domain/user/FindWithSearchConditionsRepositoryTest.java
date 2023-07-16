@@ -6,7 +6,6 @@ import com.directors.application.user.UserTestSupport;
 import com.directors.domain.region.Address;
 import com.directors.domain.region.RegionApiClient;
 import com.directors.domain.specialty.Specialty;
-import com.directors.domain.specialty.SpecialtyInfo;
 import com.directors.domain.specialty.SpecialtyProperty;
 import com.directors.domain.specialty.SpecialtyRepository;
 import com.directors.presentation.user.request.AuthenticateRegionRequest;
@@ -190,9 +189,10 @@ public class FindWithSearchConditionsRepositoryTest extends UserTestSupport {
                 .build();
     }
 
-    private static Specialty createSpecialty(User user, SpecialtyProperty specialtyProperty) {
+    private static Specialty createSpecialty(User user, SpecialtyProperty property) {
         return Specialty.builder()
-                .specialtyInfo(new SpecialtyInfo(specialtyProperty, "매우 잘함."))
+                .property(property)
+                .description("매우 잘함.")
                 .user(user)
                 .build();
     }

@@ -1,22 +1,25 @@
 package com.directors.presentation.user.response;
 
-import com.directors.domain.specialty.SpecialtyInfo;
+import com.directors.domain.specialty.Specialty;
 import com.directors.domain.user.User;
-import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Builder
-public record SearchDirectorResponse(
-        String directorId,
-        String directorName,
-        List<SpecialtyInfo> specialtyInfos
-) {
+@Getter
+public class SearchDirectorResponse {
+    String id;
+    String name;
+    List<Specialty> specialtyList;
+
+    private SearchDirectorResponse(String id, String name, List<Specialty> specialtyList) {
+        this.id = id;
+        this.name = name;
+        this.specialtyList = specialtyList;
+    }
+
     public static SearchDirectorResponse from(User user) {
-        return SearchDirectorResponse.builder()
-                .directorId(user.getId())
-                .directorName(user.getName())
-                .specialtyInfos(user.getSpecialtyInfoList())
-                .build();
+        return new SearchDirectorResponse(user.getId(), user.getNickname(), user.getSpecialtyList());
     }
 }

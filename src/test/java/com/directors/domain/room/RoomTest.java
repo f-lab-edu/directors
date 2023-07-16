@@ -18,7 +18,6 @@ class RoomTest {
         User questioner = User.builder().id("questionerId").build();
 
         Room room = Room.builder()
-                .id(1L)
                 .director(director)
                 .questioner(questioner)
                 .build();
@@ -39,7 +38,6 @@ class RoomTest {
         User questioner = User.builder().id("questionerId").build();
 
         Room room = Room.builder()
-                .id(1L)
                 .director(director)
                 .questioner(questioner)
                 .build();

@@ -12,8 +12,8 @@ public record CreateSpecialtyResponse(
     public static CreateSpecialtyResponse from(Specialty specialty) {
         return CreateSpecialtyResponse.builder()
                 .id(specialty.getId())
-                .specialtyProperty(specialty.getSpecialtyInfo().getProperty().getValue())
-                .description(specialty.getSpecialtyInfo().getDescription())
+                .specialtyProperty(specialty.getProperty().getValue())
+                .description(specialty.getDescription())
                 .build();
     }
 }

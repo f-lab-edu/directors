@@ -9,10 +9,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "room")
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Builder
 public class Room extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +28,11 @@ public class Room extends BaseEntity {
     @JoinColumn(name = "questioner_id")
     private User questioner;
 
-    public void setId(Long id) {
-        this.id = id;
+    @Builder
+    public Room(Question question, User director, User questioner) {
+        this.question = question;
+        this.director = director;
+        this.questioner = questioner;
     }
 
     public static Room of(Question question, User director, User questioner) {
@@ -40,6 +41,10 @@ public class Room extends BaseEntity {
                 .director(director)
                 .questioner(questioner)
                 .build();
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void validateRoomUser(String sendUserId) {
