@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -64,9 +65,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
         return queryFactory.selectFrom(user)
                 .join(user.specialtyList, specialty).fetchJoin()
-                .where(user.id.in(userIds))
-                .fetch();
-
+                .where(user.id.in(userIds)).fetch();
     }
 
     @Override
