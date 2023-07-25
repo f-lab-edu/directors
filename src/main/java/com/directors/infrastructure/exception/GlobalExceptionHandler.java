@@ -1,5 +1,6 @@
 package com.directors.infrastructure.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -242,6 +243,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ErrorMessage connectException(CannotCreateRoomException e) {
 		log.info("ConnectException occurred. Please check redis connection.");
 		return new ErrorMessage("잠시 후 다시 시도해주세요");
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ErrorMessage constraintViolationException(ConstraintViolationException e) {
+		log.info("ConstraintViolationException occurred.");
+		return new ErrorMessage(e.getMessage());
 	}
 }
 

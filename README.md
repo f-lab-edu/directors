@@ -1,24 +1,31 @@
-# _Directors_
+# _Directors_ 
 ![di_logo](https://github.com/f-lab-edu/directors/assets/76680394/6580c1fd-efb8-448f-93d5-649717b5e654)
 
-## 📌프로젝트 개요
-- 지역 기반으로 취준생들과 경력 있는 전문가들 간의 인적 네트워크를 중개하는 플랫폼 서비스
+## 📌[서비스 링크](https://www.directors.run )
+[➡️ Directors 프론트 레포](https://github.com/tilsong/directors_front)
+
+<br>
+
+## 📌직무 탐색을 위한 플랫폼 서비스
+
+```프로젝트 기간: 2023.03 ~```
+
+>  지역 기반으로 취준생들과 경력 있는 전문가들 간의 인적 네트워크를 중개하는 플랫폼 서비스
   
 - 이 서비스를 통해 취준생들은 자신의 직업과 직무에 대한 궁금한 점을 1:1 대면으로 해결할 수 있고, 경력 있는 전문가들은 자신의 지식과 경험을 나누며 멘토링의 역할을 수행할 수 있습니다.
-<br>
-
-
-## ✅ 사용 기술 및 개발 환경
-Java, Spring Boot, Jpa, Gradle, MySQL, QueryDsl, Redis, Junit, Naver Cloud, Github Action, Docker, Nodejs
-
-
-## 🖥️ https://www.directors.run (접속 가능)
-### 현재 프론트엔드 코드를 작성 중에 있습니다.
-- 위 URL를 통해 현재 프론트 작업 내용을 확인하실 수 있습니다.
-- Front Github: https://github.com/tilsong/directors_front
-- 프론트는 vue.js를 사용하여 개발했습니다.
 
 <br>
+
+
+## ✅ 기술 스택
+
+`Spring boot 3.0`, `Java 17`  
+`Mysql 8.0`,`Spring Data JPA`,`QueryDsl`  
+`Junit`, `Gradle`     
+`Naver Cloud`, `Github Action`, `Docker`     
+`Redis`, `Nodejs`
+
+<BR>
 
 
 ## 📰 기술적 issue 

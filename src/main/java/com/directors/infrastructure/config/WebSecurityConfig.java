@@ -29,7 +29,8 @@ public class WebSecurityConfig {
                 .requestMatchers(
                         new AntPathRequestMatcher("/user/signUp", "POST"),
                         new AntPathRequestMatcher("/user/logIn", "POST"),
-                        new AntPathRequestMatcher("/user/refreshAuthentication", "POST")
+                        new AntPathRequestMatcher("/user/refreshAuthentication", "POST"),
+                        new AntPathRequestMatcher("/user/duplicated/**", "GET")
                 ).permitAll()
                 .anyRequest().authenticated().and() // 인증 정보가 없을 경우 JwtAuthenticationEntryPoint.commerce() 메서드로 처리
                 .addFilterBefore(jf, UsernamePasswordAuthenticationFilter.class)
