@@ -11,11 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
+@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
@@ -35,7 +37,7 @@ public class UserController {
 
     @GetMapping("/duplicated/{id}")
     public ResponseEntity<HttpStatus> isDuplicateId(
-            @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.")
+            @Valid @PathVariable @NotBlank(message = "입력 값이 존재하지않습니다.")
             @Size(min = 8, max = 20, message = "아이디의 길이가 8-20글자 사이로 입력되지 않았습니다.") String id
     ) {
         signUpService.isDuplicatedUser(id);

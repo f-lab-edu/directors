@@ -16,17 +16,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtAuthenticationManager jm;
 
-    private final List<String> excludedPaths = List.of("/user/logIn", "/user/signUp", "/user/refreshAuthentication");
+    private final List<String> excludedPaths = List.of("/user/logIn", "/user/signUp", "/user/refreshAuthentication", "/chat");
+
+    private final Pattern duplicatedPattern = Pattern.compile("/user/duplicated/.*");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (excludedPaths.contains(request.getServletPath())) {
+        String path = request.getServletPath();
+        if (excludedPaths.contains(path) || duplicatedPattern.matcher(path).matches()) {
             filterChain.doFilter(request, response);
             return;
         }
