@@ -47,7 +47,6 @@ dependencies {
 
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.locationtech.proj4j:proj4j:1.2.3'
 }
 
 def querydslDir = "$buildDir/generated/querydsl"

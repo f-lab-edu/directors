@@ -14,12 +14,28 @@ class RegionApiClientManagerTest extends IntegrationTestSupport {
     @Autowired
     private RegionApiClientManager regionApiClientManager;
 
-    @DisplayName("UTM-K 기반 위치 정보를 통해 주소를 조회한다.")
+//    @DisplayName("UTM-K 기반 위치 정보를 통해 주소를 조회한다.")
+//    @Test
+//    void findRegionAddressByLocation() {
+//        // given
+//        long latitude = 961487;
+//        long longitude = 1949977;
+//
+//        // when
+//        Address address = regionApiClientManager.findRegionAddressByLocation(latitude, longitude);
+//
+//        // then
+//        assertThat(address)
+//                .extracting("fullAddress", "unitAddress")
+//                .contains("서울특별시 성동구 송정동", "송정동");
+//    }
+
+    @DisplayName("WGS84 기반 위치 정보를 통해 주소를 조회한다.")
     @Test
-    void findRegionAddressByLocation() {
+    void findRegionAddressByLocationWithWgs84Coordinate() {
         // given
-        long latitude = 961487;
-        long longitude = 1949977;
+        double latitude = 37.4923615;
+        double longitude = 127.0292881;
 
         // when
         Address address = regionApiClientManager.findRegionAddressByLocation(latitude, longitude);

@@ -61,7 +61,7 @@ public class GetAdministrativeDistrictTest {
         accessToken = resultMap.get("accessToken");
     }
 
-    @Disabled
+//    @Disabled
     @Test
     public void 지오코딩_API요청_성공테스트() {
         // GIVEN
@@ -83,6 +83,160 @@ public class GetAdministrativeDistrictTest {
 
         assertThat(map.get("x")).isEqualTo("953739.014246382052");
         assertThat(map.get("y")).isEqualTo("1951021.30829999992");
+    }
+    @Test
+    public void 현위치_주소toUtmk() {
+        // GIVEN
+        UriComponents uri = UriComponentsBuilder  // 요청 uri 정의
+                .fromHttpUrl(지오코딩RequestUrl)
+                .queryParam("address", "서울시 강남구 역삼동 817-36")
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        Map<String, Object> result = (Map<String, Object>) response.getBody().get("result");
+        ArrayList<Object> resultMap = (ArrayList<Object>) result.get("resultdata");
+        HashMap<String, String> map = (HashMap<String, String>) resultMap.get(0);
+
+        assertThat(map.get("x")).isEqualTo("958303.970240979");
+        assertThat(map.get("y")).isEqualTo("1944717.29345359");
+    }
+
+    @Test
+    public void 현위치_utmkToAddress() {
+        // GIVEN
+        String x = "958303.970240979";  // UTM-K 기반 x, y 좌표
+        String y = "1944717.29345359";
+        UriComponents uri = UriComponentsBuilder  // 요청 uri 정의
+                .fromHttpUrl(리버스지오코딩RequestUrl)
+                .queryParam("x_coor", x)
+                .queryParam("y_coor", y)
+                .queryParam("addr_type", 21)
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        ArrayList<Object> result = (ArrayList<Object>) response.getBody().get("result");
+        Map<String, String> resultMap = (Map<String, String>) result.get(0);
+        assertThat(resultMap.get("full_addr")).isEqualTo("서울특별시 강남구 역삼1동 817-36");
+        assertThat(resultMap.get("sido_nm")).isEqualTo("서울특별시");
+        assertThat(resultMap.get("sgg_nm")).isEqualTo("강남구");
+        assertThat(resultMap.get("emdong_nm")).isEqualTo("역삼1동");
+    }
+    // utmk to wgs84
+    @Test
+    public void 현위치_utmkToWgs84() {
+        // GIVEN
+        String x = "958303.970240979";  // EPSG:4326 기반 x, y 좌표
+        String y = "1944717.29345359";
+        UriComponents uri = UriComponentsBuilder
+                .fromHttpUrl(좌표변환RequestUrl)
+                .queryParam("src", "EPSG:5179") // to   경위도
+                .queryParam("dst", "EPSG:4326") // from UTM-K
+                .queryParam("posX", x)
+                .queryParam("posY", y)
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        Map<String, Double> resultMap = (Map<String, Double>) response.getBody().get("result");
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        assertThat(resultMap.get("posX")).isEqualTo(127.02826897688016);
+        assertThat(resultMap.get("posY")).isEqualTo(37.500779468280044);
+    }
+    // wgs84 to utmk
+    @Test
+    public void 현위치_wgs84ToUtmk() {
+        // GIVEN
+        String x = "127.02826897688016";  // EPSG:4326 기반 x, y 좌표
+        String y = "37.500779468280044";
+        UriComponents uri = UriComponentsBuilder
+                .fromHttpUrl(좌표변환RequestUrl)
+                .queryParam("src", "EPSG:4326") // to   경위도
+                .queryParam("dst", "EPSG:5179") // from UTM-K
+                .queryParam("posX", x)
+                .queryParam("posY", y)
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        Map<String, Double> resultMap = (Map<String, Double>) response.getBody().get("result");
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        assertThat(resultMap.get("posX")).isEqualTo(958303.9702409793);
+        assertThat(resultMap.get("posY")).isEqualTo(1944717.2934535905);
+    }
+
+    @Test
+    public void 브라우저기반_현위치_wgs84ToUtmk() {
+        // GIVEN
+        String x = "127.0292881";  // EPSG:4326 기반 x, y 좌표
+        String y = "37.4923615";
+        UriComponents uri = UriComponentsBuilder
+                .fromHttpUrl(좌표변환RequestUrl)
+                .queryParam("src", "EPSG:4326") // to   경위도
+                .queryParam("dst", "EPSG:5179") // from UTM-K
+                .queryParam("posX", x)
+                .queryParam("posY", y)
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        Map<String, Double> resultMap = (Map<String, Double>) response.getBody().get("result");
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        assertThat(resultMap.get("posX")).isEqualTo(958389.3799514596);
+        assertThat(resultMap.get("posY")).isEqualTo(1943782.9230910526);
+    }
+
+    @Test
+    public void 브라우저기반_현위치_utmkToAddress() {
+        // GIVEN
+        String x = "958389.3799514596";  // UTM-K 기반 x, y 좌표
+        String y = "1943782.9230910526";
+        UriComponents uri = UriComponentsBuilder  // 요청 uri 정의
+                .fromHttpUrl(리버스지오코딩RequestUrl)
+                .queryParam("x_coor", x)
+                .queryParam("y_coor", y)
+                .queryParam("addr_type", 21)
+                .queryParam("accessToken", accessToken)
+                .build();
+
+        // WHEN
+        ResponseEntity<Map> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
+
+        // THEN
+        assertThat(response.getStatusCode().toString()).isEqualTo("200 OK");
+
+        ArrayList<Object> result = (ArrayList<Object>) response.getBody().get("result");
+        Map<String, String> resultMap = (Map<String, String>) result.get(0);
+        assertThat(resultMap.get("full_addr")).isEqualTo("서울특별시 강남구 역삼1동 817-36");
+        assertThat(resultMap.get("sido_nm")).isEqualTo("서울특별시");
+        assertThat(resultMap.get("sgg_nm")).isEqualTo("강남구");
+        assertThat(resultMap.get("emdong_nm")).isEqualTo("역삼1동");
     }
 
     @Test
@@ -113,7 +267,9 @@ public class GetAdministrativeDistrictTest {
         assertThat(resultMap.get("emdong_nm")).isEqualTo("송정동");
     }
 
-    @Disabled
+
+
+//    @Disabled
     @Test
     public void 좌표에_대한_행정동_획득_동이아닌_지역명_API요청_성공테스트() {
         // GIVEN
@@ -147,8 +303,8 @@ public class GetAdministrativeDistrictTest {
     @Test
     public void 좌표변환_API요청_성공테스트() {
         // GIVEN
-        String x = "37.522917";  // EPSG:4326 기반 x, y 좌표
-        String y = "128.176325";
+        String x = "128.176325";  // EPSG:4326 기반 x, y 좌표
+        String y = "37.522917";
         UriComponents uri = UriComponentsBuilder
                 .fromHttpUrl(좌표변환RequestUrl)
                 .queryParam("src", "EPSG:4326") // from 경위도
@@ -196,4 +352,5 @@ public class GetAdministrativeDistrictTest {
         assertThat(resultMap.get("posX")).isEqualTo(126.97622773654358);
         assertThat(resultMap.get("posY")).isEqualTo(37.55738157695487);
     }
+
 }
