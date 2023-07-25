@@ -11,15 +11,30 @@ import java.util.stream.Collectors;
 public class SearchDirectorResponse {
     String id;
     String name;
-    List<Specialty> specialtyList;
+    List<SpecialtyValue> specialtyList;
 
-    private SearchDirectorResponse(String id, String name, List<Specialty> specialtyList) {
+    private SearchDirectorResponse(String id, String name, List<SpecialtyValue> specialtyList) {
         this.id = id;
         this.name = name;
         this.specialtyList = specialtyList;
     }
 
     public static SearchDirectorResponse from(User user) {
-        return new SearchDirectorResponse(user.getId(), user.getNickname(), user.getSpecialtyList());
+        List<SpecialtyValue> specialtyValues = user.getSpecialtyList().stream().map(sp ->
+            new SpecialtyValue(sp.getProperty().getValue(), sp.getDescription())
+        ).collect(Collectors.toList());
+
+        return new SearchDirectorResponse(user.getId(), user.getNickname(), specialtyValues);
+    }
+
+    @Getter
+    public static class SpecialtyValue {
+        String propertyValue;
+        String description;
+
+        public SpecialtyValue(String propertyValue, String description) {
+            this.propertyValue = propertyValue;
+            this.description = description;
+        }
     }
 }
