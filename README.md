@@ -4,6 +4,8 @@
 ## 📌[서비스 링크](https://www.directors.run )
 [➡️ Directors 프론트 레포](https://github.com/tilsong/directors_front)
 
+<br>
+
 ## 📌직무 탐색을 위한 플랫폼 서비스
 
 ```프로젝트 기간: 2023.03 ~```
@@ -16,10 +18,11 @@
 
 
 ## ✅ 기술 스택
-`Spring Boot 3.0`, `Java 17`
-`MySQL 8.0`, `Jpa`, `QueryDsl`
-`Junit`, `Gradle`
-`Naver Cloud`, `Github Action`, `Docker`
+
+`Spring boot 3.0`, `Java 17`  
+`Mysql 8.0`,`Spring Data JPA`,`QueryDsl`  
+`Junit`, `Gradle`     
+`Naver Cloud`, `Github Action`, `Docker`     
 `Redis`, `Nodejs`
 
 <BR>
