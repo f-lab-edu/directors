@@ -4,6 +4,15 @@
 ## 📌[서비스 링크](https://www.directors.run )
 [➡️ Directors 프론트 레포](https://github.com/tilsong/directors_front)
 
+- 서비스 링크에 로그인 하실 수 있는 테스트 계정
+
+| Id        | Password |
+|-----------|----------|
+| test12345 | test1234 |
+*지역 인증이 수행된 계정입니다. 
+  따라서 현재 계신 지역을 통해 데이터를 조회하고 싶으시다면 새로 회원가입을 하시는 것을 추천 드립니다. 
+
+
 <br>
 
 ## 📌직무 탐색을 위한 플랫폼 서비스
